@@ -44,11 +44,10 @@ class _HomePageState extends State<HomePage> {
     SharedPreferences.getInstance().then((prefs) {
       prefs.setString('groupId', newGroupId);
     });
-    // 地図共有画面に遷移（戻れないようにpushReplacement）
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => MapSharePage(groupId: newGroupId),
-      ),
+    // 地図共有画面に遷移（戻れないように）
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => MapSharePage(groupId: newGroupId)),
+      (Route<dynamic> route) => false,
     );
   }
 
