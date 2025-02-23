@@ -29,7 +29,7 @@ class MapSharePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('GroupID: $groupId'),
+            Text('GroupID: $groupId はSharedPreferenceに保存されました'),
             const SizedBox(height: 20),
             const Text('画面全体に地図表示'),
             ElevatedButton(

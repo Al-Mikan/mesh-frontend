@@ -44,8 +44,8 @@ class _SetDetailsPageState extends State<SetDetailsPage> {
               TextFormField(
                 controller: _locationController,
                 decoration: const InputDecoration(
-                  labelText: '場所',
-                  hintText: '待ち合わせ場所を入力',
+                  labelText: '場所(後で地図から選択する方式に変更)',
+                  hintText: '場所を入力',
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -57,7 +57,7 @@ class _SetDetailsPageState extends State<SetDetailsPage> {
               TextFormField(
                 controller: _timeController,
                 decoration: const InputDecoration(
-                  labelText: '時間',
+                  labelText: '時間(後でPickerに変更)',
                   hintText: '待ち合わせ時間を入力',
                 ),
                 validator: (value) {
