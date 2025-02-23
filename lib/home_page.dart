@@ -82,7 +82,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       );
                     },
-                    child: const Text('リンクを生成'),
+                    child: const Text('まちあわせを計画する'),
                   ),
                 ],
               ),
