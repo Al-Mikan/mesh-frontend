@@ -3,6 +3,17 @@ allprojects {
         google()
         mavenCentral()
     }
+    subprojects {
+        afterEvaluate {
+            if (project.hasProperty("android")) {
+                project.extensions.configure<com.android.build.gradle.BaseExtension>("android") {
+                    if (namespace == null) {
+                        namespace = project.group.toString()
+                    }
+                }
+            }
+        }
+    }
 }
 
 val newBuildDir: Directory = rootProject.layout.buildDirectory.dir("../../build").get()
@@ -19,3 +30,4 @@ subprojects {
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
+
