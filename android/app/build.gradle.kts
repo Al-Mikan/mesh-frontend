@@ -1,3 +1,5 @@
+import java.util.Base64
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -42,3 +44,15 @@ android {
 flutter {
     source = "../.."
 }
+
+// Dart-Defines
+val dartDefines = mutableMapOf<String, String>()
+if (project.hasProperty("dart-defines")) {
+    val dartDefinesList = project.property("dart-defines") as String
+    dartDefinesList.split(",").forEach { entry ->
+        val decoded = String(Base64.getDecoder().decode(entry))
+        val (key, value) = decoded.split("=", limit = 2)
+        dartDefines[key] = value
+    }
+}
+println("Dart Defines: $dartDefines")
