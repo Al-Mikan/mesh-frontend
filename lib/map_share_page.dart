@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:mesh_frontend/home_page.dart';
 import 'dart:isolate';
 import 'dart:ui';
 import 'package:mesh_frontend/utils/location_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 //https://www.cloudbuilders.jp/articles/4214/
 class MapSharePage extends StatefulWidget {
   final String groupId;
@@ -71,7 +73,15 @@ class _MapSharePageState extends State<MapSharePage> {
 
   void onTapExit(BuildContext context) async {
     _stopBackgroundLocationTracking();
-    // ... existing exit logic ...
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('groupId');
+    if (context.mounted) {
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const HomePage()),
+        (Route<dynamic> route) => false,  // すべての前のルートを削除
+      );
+    }
+
   }
 
   @override
