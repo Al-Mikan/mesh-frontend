@@ -31,6 +31,7 @@ class _MapSharePageState extends State<MapSharePage> {
         automaticallyImplyLeading: false,
       ),
       body: GoogleMap(
+        mapType: MapType.normal,
         onMapCreated: onMapCreated,
         initialCameraPosition: CameraPosition(
           target: _center,

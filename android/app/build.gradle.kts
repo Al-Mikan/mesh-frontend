@@ -10,7 +10,18 @@ plugins {
 android {
     namespace = "com.example.mesh_frontend"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973"
+
+    // Dart-Defines
+    val dartDefines = mutableMapOf<String, String>()
+    if (project.hasProperty("dart-defines")) {
+        val dartDefinesList = project.property("dart-defines") as String
+        dartDefinesList.split(",").forEach { entry ->
+            val decoded = String(Base64.getDecoder().decode(entry))
+            val (key, value) = decoded.split("=", limit = 2)
+            dartDefines[key] = value
+        }
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -30,6 +41,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        resValue("string", "google_maps_api_key", dartDefines["GOOGLE_MAPS_API_KEY"] ?: "")
     }
 
     buildTypes {
@@ -44,15 +56,3 @@ android {
 flutter {
     source = "../.."
 }
-
-// Dart-Defines
-val dartDefines = mutableMapOf<String, String>()
-if (project.hasProperty("dart-defines")) {
-    val dartDefinesList = project.property("dart-defines") as String
-    dartDefinesList.split(",").forEach { entry ->
-        val decoded = String(Base64.getDecoder().decode(entry))
-        val (key, value) = decoded.split("=", limit = 2)
-        dartDefines[key] = value
-    }
-}
-println("Dart Defines: $dartDefines")

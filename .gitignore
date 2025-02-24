@@ -32,6 +32,7 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+**/ios/Flutter/Dart-Defines.xcconfig
 
 # Symbolication related
 app.*.symbols
@@ -44,4 +45,5 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-.vscode/
+dart_defines/*
+!dart_defines/
