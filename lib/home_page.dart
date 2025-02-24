@@ -1,8 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:mesh_frontend/map_share_page.dart';
 import 'package:mesh_frontend/set_details_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mesh_frontend/components/button.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -46,7 +46,9 @@ class _HomePageState extends State<HomePage> {
     });
     // 地図共有画面に遷移（戻れないように）
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => MapSharePage(groupId: newGroupId)),
+      MaterialPageRoute(
+        builder: (context) => MapSharePage(groupId: newGroupId),
+      ),
       (Route<dynamic> route) => false,
     );
   }
@@ -64,14 +66,25 @@ class _HomePageState extends State<HomePage> {
           return MapSharePage(groupId: snapshot.data!);
         } else {
           return Scaffold(
-            appBar: AppBar(title: const Text('ホーム')),
+            backgroundColor: Colors.white,
             body: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  const Text('まちあわせリンクを生成して共有しましょう'),
+                  Image.asset(
+                    'assets/images/logo.png',
+                    height: 200,
+                    fit: BoxFit.fitHeight,
+                  ),
                   const SizedBox(height: 30),
-                  ElevatedButton(
+                  const Text(
+                    '待ち合わせアプリ mesh',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  const Text('まちあわせリンクを生成して共有しましょう'),
+                  const SizedBox(height: 120),
+                  OriginalButton(
+                    text: '始める',
                     onPressed: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
@@ -81,7 +94,6 @@ class _HomePageState extends State<HomePage> {
                         ),
                       );
                     },
-                    child: const Text('まちあわせを計画する'),
                   ),
                 ],
               ),
