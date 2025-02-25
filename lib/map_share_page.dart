@@ -13,7 +13,7 @@ class MapSharePage extends StatelessWidget {
     if (context.mounted) {
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const HomePage()),
-        (Route<dynamic> route) => false,  // すべての前のルートを削除
+        (Route<dynamic> route) => false, // すべての前のルートを削除
       );
     }
   }
@@ -21,10 +21,6 @@ class MapSharePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('地図共有画面'),
-        automaticallyImplyLeading: false, // 戻るボタンを非表示
-      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
+import 'package:mesh_frontend/set_name_page.dart';
 
 class SetDetailsPage extends StatefulWidget {
-  final Function(String) onGenerate;
+  final String groupId;
 
-  const SetDetailsPage({super.key, required this.onGenerate});
+  const SetDetailsPage({super.key, required this.groupId});
 
   @override
   State<SetDetailsPage> createState() => _SetDetailsPageState();
@@ -24,10 +24,20 @@ class _SetDetailsPageState extends State<SetDetailsPage> {
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      // UUIDを生成
-      final uuid = Uuid();
-      final groupId = uuid.v4();
-      widget.onGenerate(groupId);
+      final location = _locationController.text.trim();
+      final time = _timeController.text.trim();
+
+      // 名前入力画面へ遷移
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder:
+              (context) => SetNamePage(
+                groupId: widget.groupId,
+                location: location,
+                time: time,
+              ),
+        ),
+      );
     }
   }
 
@@ -68,7 +78,7 @@ class _SetDetailsPageState extends State<SetDetailsPage> {
                 },
               ),
               const SizedBox(height: 20),
-              ElevatedButton(onPressed: _submit, child: const Text('リンクを生成')),
+              ElevatedButton(onPressed: _submit, child: const Text('次へ')),
             ],
           ),
         ),
