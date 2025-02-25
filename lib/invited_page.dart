@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:mesh_frontend/components/button.dart';
 import 'package:mesh_frontend/components/meeting_details_card.dart';
 import 'package:mesh_frontend/home_page.dart';
-import 'package:mesh_frontend/map_share_page.dart';
 import 'package:mesh_frontend/set_name_page.dart';
 
 class InvitedPage extends StatefulWidget {
