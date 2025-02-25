@@ -5,9 +5,11 @@ import 'dart:isolate';
 import 'dart:ui';
 import 'package:background_locator_2/background_locator.dart';
 import 'package:background_locator_2/location_dto.dart';
+import 'package:mesh_frontend/components/custom_goal_pin.dart';
 import 'package:mesh_frontend/home_page.dart';
 import 'package:mesh_frontend/utils/location_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mesh_frontend/components/custom_user_pin.dart';
 
 //https://www.cloudbuilders.jp/articles/4214/
 class MapSharePage extends StatefulWidget {
@@ -25,6 +27,16 @@ class _MapSharePageState extends State<MapSharePage> {
   final location = Location();
   static const String isolateName = "LocatorIsolate";
   ReceivePort port = ReceivePort();
+  Set<Marker> _markers = {};
+
+  //テスト用のデータ
+  final List<Map<String, dynamic>> _participants = [
+    {"name": "山田", "lat": 35.681236, "lng": 139.767125}, // 東京駅
+    {"name": "usatyo", "lat": 35.689487, "lng": 139.691711}, // 新宿
+    {"name": "mikan", "lat": 35.658581, "lng": 139.745433}, // 東京タワー
+  ];
+  // 🏁 待ち合わせ場所
+  LatLng meetingLocation = LatLng(35.669626, 139.765539);
 
   @override
   void initState() {
@@ -36,8 +48,9 @@ class _MapSharePageState extends State<MapSharePage> {
     await _requestLocationPermission();
     await _initializeLocationService();
     LocationCallbackHandler.startLocationService();
-  }
 
+    _setCustomMarkers();
+  }
 
   Future<void> _initializeLocationService() async {
     IsolateNameServer.registerPortWithName(port.sendPort, isolateName);
@@ -73,6 +86,40 @@ class _MapSharePageState extends State<MapSharePage> {
     }
   }
 
+  void _setCustomMarkers() async {
+    Set<Marker> markers = {};
+
+    for (var user in _participants) {
+      final BitmapDescriptor icon = await CustomUserPin.createCustomMarker(
+        user["name"],
+      );
+
+      markers.add(
+        Marker(
+          markerId: MarkerId(user["name"]),
+          position: LatLng(user["lat"], user["lng"]),
+          icon: icon,
+          infoWindow: InfoWindow(title: user["name"]),
+        ),
+      );
+    }
+
+    final BitmapDescriptor goalIcon = await CustomGoalPin.createGoalMarker();
+
+    markers.add(
+      Marker(
+        markerId: const MarkerId("goal"),
+        position: meetingLocation,
+        icon: goalIcon,
+        infoWindow: const InfoWindow(title: "待ち合わせ場所"),
+      ),
+    );
+
+    setState(() {
+      _markers = markers;
+    });
+  }
+
   @override
   void dispose() {
     IsolateNameServer.removePortNameMapping(isolateName);
@@ -101,6 +148,7 @@ class _MapSharePageState extends State<MapSharePage> {
             initialCameraPosition: cameraPosition,
             myLocationEnabled: true,
             myLocationButtonEnabled: false,
+            markers: _markers.toSet(),
           ),
           Positioned(
             top: 40,
