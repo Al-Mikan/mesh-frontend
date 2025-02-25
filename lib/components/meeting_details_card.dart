@@ -16,6 +16,7 @@ class MeetingDetailsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 10, // ✅ カードに少し影をつける
+      margin: EdgeInsets.symmetric(horizontal: 0, vertical: 12),
       shadowColor: Colors.grey.withOpacity(0.5),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
