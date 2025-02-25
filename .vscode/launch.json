@@ -27,7 +27,7 @@
             "request": "launch",
             "type": "dart",
             "args": [
-                "--dart-define-from-file=dart_defines/dev.env"
+                "--dart-define-from-file=dart_defines/prod.env"
             ],
             "flutterMode": "release"
         }
