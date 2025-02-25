@@ -3,6 +3,7 @@ import 'package:mesh_frontend/map_share_page.dart';
 import 'package:mesh_frontend/set_details_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mesh_frontend/components/button.dart';
+import 'package:uuid/uuid.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -24,6 +25,7 @@ class _HomePageState extends State<HomePage> {
     // SharedPreferencesを使用してグループIDの存在を確認
     final prefs = await SharedPreferences.getInstance();
     String? savedGroupId = prefs.getString('groupId');
+    print(savedGroupId);
     if (savedGroupId != null) {
       setState(() {
         groupId = savedGroupId;
@@ -36,20 +38,36 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void _generateNewGroup(String newGroupId) {
+  // void _generateNewGroup(String newGroupId) {
+  //   setState(() {
+  //     groupId = newGroupId;
+  //   });
+  //   // SharedPreferencesにグループIDを保存
+  //   SharedPreferences.getInstance().then((prefs) {
+  //     prefs.setString('groupId', newGroupId);
+  //   });
+  //   // 地図共有画面に遷移（戻れないように）
+  //   Navigator.of(context).pushAndRemoveUntil(
+  //     MaterialPageRoute(
+  //       builder: (context) => MapSharePage(groupId: newGroupId),
+  //     ),
+  //     (Route<dynamic> route) => false,
+  //   );
+  // }
+
+  void _generateNewGroup() async {
+    final uuid = Uuid();
+    final newGroupId = uuid.v4();
+
     setState(() {
       groupId = newGroupId;
     });
-    // SharedPreferencesにグループIDを保存
-    SharedPreferences.getInstance().then((prefs) {
-      prefs.setString('groupId', newGroupId);
-    });
-    // 地図共有画面に遷移（戻れないように）
-    Navigator.of(context).pushAndRemoveUntil(
+
+    // 詳細設定画面に遷移
+    Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => MapSharePage(groupId: newGroupId),
+        builder: (context) => SetDetailsPage(groupId: newGroupId),
       ),
-      (Route<dynamic> route) => false,
     );
   }
 
@@ -83,18 +101,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const Text('まちあわせリンクを生成して共有しましょう'),
                   const SizedBox(height: 120),
-                  OriginalButton(
-                    text: '始める',
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder:
-                              (context) =>
-                                  SetDetailsPage(onGenerate: _generateNewGroup),
-                        ),
-                      );
-                    },
-                  ),
+                  OriginalButton(text: '始める', onPressed: _generateNewGroup),
                 ],
               ),
             ),

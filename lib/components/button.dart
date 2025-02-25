@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
 class OriginalButton extends StatelessWidget {
-  final String text; // ✅ ボタンの表示テキスト
-  final VoidCallback onPressed; // ✅ ボタンを押した時の処理
+  final String text;
+  final VoidCallback onPressed;
+  final bool fill;
 
   const OriginalButton({
     super.key,
     required this.text,
     required this.onPressed,
+    this.fill = true,
   });
 
   @override
@@ -18,18 +20,23 @@ class OriginalButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
+          elevation: 0,
           padding: const EdgeInsets.symmetric(vertical: 20),
-          backgroundColor: const Color(0xFF332731),
+          backgroundColor: fill ? const Color(0xFF332731) : Colors.white,
+          side: BorderSide(
+            color: const Color(0xFF332731),
+            width: 2, // ✅ ボーダーの太さ
+          ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(100),
           ),
         ),
         child: Text(
           text,
-          style: const TextStyle(
-            fontSize: 18,
+          style: TextStyle(
+            fontSize: 12,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: fill ? Colors.white : const Color(0xFF332731),
           ),
         ),
       ),

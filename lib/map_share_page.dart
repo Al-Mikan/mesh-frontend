@@ -46,7 +46,6 @@ class _MapSharePageState extends State<MapSharePage> {
       if (data != null) {
         setState(() {
           _currentLocation = LocationDto.fromJson(data);
-          print('Updated location: $_currentLocation');
         });
       }
     });
@@ -84,7 +83,6 @@ class _MapSharePageState extends State<MapSharePage> {
 
   @override
   Widget build(BuildContext context) {
-    print('Building with location: $_currentLocation');
     if (_currentLocation == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
