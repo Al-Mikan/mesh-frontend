@@ -20,22 +20,34 @@ class _MapSharePageState extends State<MapSharePage> {
   }
 
   void onTapExit(BuildContext context) async {
-    // ... existing code ...
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('groupId');
+    if (context.mounted) {
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const HomePage()),
+        (Route<dynamic> route) => false, // すべての前のルートを削除
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('地図共有画面'),
-        automaticallyImplyLeading: false,
-      ),
-      body: GoogleMap(
-        mapType: MapType.normal,
-        onMapCreated: onMapCreated,
-        initialCameraPosition: CameraPosition(
-          target: _center,
-          zoom: 14.0,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('GroupID: $groupId はSharedPreferenceに保存されました'),
+            const SizedBox(height: 20),
+            const Text('画面全体に地図表示'),
+            ElevatedButton(
+              onPressed: () async {
+                onTapExit(context);
+              },
+              child: const Text('グループから抜ける'),
+            ),
+            // ここに地図表示Widgetを追加
+          ],
         ),
         myLocationEnabled: true,
         myLocationButtonEnabled: true,
