@@ -53,39 +53,37 @@ class _MyAppState extends State<MyApp> {
 
   void handleDeepLink(Uri uri) {
     if (uri.scheme == 'mesh' && uri.host == 'invite') {
-      final String? groupId = uri.pathSegments.last;
-      if (groupId != null) {
-        SharedPreferences.getInstance().then((prefs) {
-          final String? savedGroupId = prefs.getString('groupId');
-          if (savedGroupId == null) {
-            navigatorKey.currentState?.pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (context) => InvitedPage(groupId: groupId),
-              ),
-              (Route<dynamic> route) => false,
-            );
-          } else {
-          // 既に別のグループに参加している場合、ダイアログを表示
-          showCupertinoDialog(
-            context: navigatorKey.currentContext!,
-            builder: (BuildContext context) {
-              return CupertinoAlertDialog(
-                title: const Text('別のグループに参加中'),
-                content: const Text('新しいグループに参加するには、一度退出してください。'),
-                actions: <Widget>[
-                  CupertinoDialogAction(
-                    child: const Text('OK'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            },
+      final String groupId = uri.pathSegments.last;
+      SharedPreferences.getInstance().then((prefs) {
+        final String? savedGroupId = prefs.getString('groupId');
+        if (savedGroupId == null) {
+          navigatorKey.currentState?.pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => InvitedPage(groupId: groupId),
+            ),
+            (Route<dynamic> route) => false,
           );
-          }
-        });
-      }
+        } else {
+        // 既に別のグループに参加している場合、ダイアログを表示
+        showCupertinoDialog(
+          context: navigatorKey.currentContext!,
+          builder: (BuildContext context) {
+            return CupertinoAlertDialog(
+              title: const Text('別のグループに参加中'),
+              content: const Text('新しいグループに参加するには、一度退出してください。'),
+              actions: <Widget>[
+                CupertinoDialogAction(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+        }
+      });
     }
   }
 

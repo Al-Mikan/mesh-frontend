@@ -55,6 +55,7 @@ class _MapSharePageState extends State<MapSharePage> {
   Future<void> _initializeLocationService() async {
     IsolateNameServer.registerPortWithName(port.sendPort, isolateName);
     port.listen((dynamic data) {
+      debugPrint("received location: $data");
       if (data != null) {
         setState(() {
           _currentLocation = LocationDto.fromJson(data);

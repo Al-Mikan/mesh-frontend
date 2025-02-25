@@ -52,6 +52,6 @@ class CustomGoalPin {
     );
     final Uint8List bytes = byteData!.buffer.asUint8List();
 
-    return BitmapDescriptor.fromBytes(bytes);
+    return BitmapDescriptor.bytes(bytes);
   }
 }

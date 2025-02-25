@@ -17,7 +17,7 @@ class MeetingDetailsCard extends StatelessWidget {
     return Card(
       elevation: 10, // ✅ カードに少し影をつける
       margin: EdgeInsets.symmetric(horizontal: 0, vertical: 12),
-      shadowColor: Colors.grey.withOpacity(0.5),
+      shadowColor: Colors.grey.withValues(alpha: 0.5), // ✅ 影の色を指定
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
         padding: const EdgeInsets.all(16),

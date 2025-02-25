@@ -17,7 +17,7 @@ class _InvitedPageState extends State<InvitedPage> {
   @override
   void initState() {
     super.initState();
-    print('InvitedPage initState');
+    debugPrint('InvitedPage initState');
   }
 
   @override

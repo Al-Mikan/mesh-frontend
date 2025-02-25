@@ -41,19 +41,21 @@ class _SetNamePageState extends State<SetNamePage> {
       final shareUrl = 'https://example.com/share/123456'; // 仮のURL
 
       // ✅ `ShareLinkPage` に遷移し、戻れないようにする
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder:
-              (context) => ShareLinkPage(
-                shareUrl: shareUrl,
-                groupId: widget.groupId,
-                location: widget.location,
-                time: widget.time,
-                userName: userName,
-              ),
-        ),
-        (Route<dynamic> route) => false,
-      );
+      if (mounted) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder:
+                (context) => ShareLinkPage( //fixme: リンク参加した時もShareLinkへ遷移されてしまう
+                  shareUrl: shareUrl,
+                  groupId: widget.groupId,
+                  location: widget.location,
+                  time: widget.time,
+                  userName: userName,
+                ),
+          ),
+          (Route<dynamic> route) => false,
+        );
+      }
     }
   }
 

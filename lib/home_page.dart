@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
     // SharedPreferencesを使用してグループIDの存在を確認
     final prefs = await SharedPreferences.getInstance();
     String? savedGroupId = prefs.getString('groupId');
-    print(savedGroupId);
+    debugPrint(savedGroupId);
     if (savedGroupId != null) {
       setState(() {
         groupId = savedGroupId;

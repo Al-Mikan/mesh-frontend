@@ -7,6 +7,7 @@ import 'package:background_locator_2/settings/android_settings.dart';
 import 'package:background_locator_2/settings/ios_settings.dart';
 import 'package:background_locator_2/settings/locator_settings.dart' as s;
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -21,7 +22,7 @@ final dio = Dio(
 
 Future<void> initPlatformState() async {
   await BackgroundLocator.initialize();
-  print('Locator service started');
+  debugPrint('Locator service started');
 }
 
 @pragma('vm:entry-point')
@@ -30,22 +31,22 @@ class LocationCallbackHandler {
 
   @pragma('vm:entry-point')
   static Future<void> _initCallback(Map<dynamic, dynamic> params) async {
-    print('initCallback');
+    debugPrint('initCallback');
   }
 
   @pragma('vm:entry-point')
   static Future<void> _disposeCallback() async {
-    print('disposeCallback');
+    debugPrint('disposeCallback');
   }
 
   @pragma('vm:entry-point')
   static Future<void> _callback(LocationDto locationDto) async {
     final SendPort? send = IsolateNameServer.lookupPortByName(isolateName);
     if (send != null) {
-      print('Sending location');
+      debugPrint('Sending location');
       send.send(locationDto.toJson());
     } else {
-      print('SendPort not found');
+      debugPrint('SendPort not found');
     }
     // await dio.post('/location', data: {
     //   'latitude': locationDto.latitude,
@@ -81,7 +82,7 @@ class RequestLocationPermission {
 
     // 位置情報の権限状態を確認
     var permissionStatus = await Permission.location.status;
-    print('位置情報の権限状態: $permissionStatus');
+    debugPrint('位置情報の権限状態: $permissionStatus');
     
     // 権限が拒否されている場合
     if (permissionStatus.isDenied) {
@@ -96,7 +97,7 @@ class RequestLocationPermission {
 
     // バックグラウンドでの位置情報アクセス許可を確認
     var backgroundPermissionStatus = await Permission.locationAlways.status;
-    print('バックグラウンドでの位置情報アクセス許可: $backgroundPermissionStatus');
+    debugPrint('バックグラウンドでの位置情報アクセス許可: $backgroundPermissionStatus');
     if (backgroundPermissionStatus.isDenied) {
       backgroundPermissionStatus = await Permission.locationAlways.request();
       
