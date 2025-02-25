@@ -8,18 +8,27 @@
         {
             "name": "mesh_frontend",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "args": [
+                "--dart-define-from-file=dart_defines/dev.env"
+            ]
         },
         {
             "name": "mesh_frontend (profile mode)",
             "request": "launch",
             "type": "dart",
+            "args": [
+                "--dart-define-from-file=dart_defines/dev.env"
+            ],
             "flutterMode": "profile"
         },
         {
             "name": "mesh_frontend (release mode)",
             "request": "launch",
             "type": "dart",
+            "args": [
+                "--dart-define-from-file=dart_defines/dev.env"
+            ],
             "flutterMode": "release"
         }
     ]

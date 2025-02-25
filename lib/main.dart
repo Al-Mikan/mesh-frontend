@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mesh_frontend/home_page.dart';
 
-void main() => runApp(const MyApp());
+
+void main() async {
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
