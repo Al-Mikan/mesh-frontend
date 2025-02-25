@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:mesh_frontend/home_page.dart';
+import 'package:location/location.dart';
 import 'dart:isolate';
 import 'dart:ui';
+import 'package:background_locator_2/background_locator.dart';
+import 'package:background_locator_2/location_dto.dart';
+import 'package:mesh_frontend/home_page.dart';
 import 'package:mesh_frontend/utils/location_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 //https://www.cloudbuilders.jp/articles/4214/
 class MapSharePage extends StatefulWidget {
   final String groupId;
@@ -18,53 +21,40 @@ class MapSharePage extends StatefulWidget {
 
 class _MapSharePageState extends State<MapSharePage> {
   late GoogleMapController mapController;
-  LatLng _center = const LatLng(35.681236, 139.767125);
-  Position? _currentPosition;
+  LocationDto? _currentLocation;
+  final location = Location();
+  static const String isolateName = "LocatorIsolate";
   ReceivePort port = ReceivePort();
 
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation();
-    _initializeLocationService();
-    _startBackgroundLocationTracking();
+    _initializeServices();
   }
 
-  Future<void> _getCurrentLocation() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return;
-    }
-
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return;
-      }
-    }
-
-    Position position = await Geolocator.getCurrentPosition();
-    setState(() {
-      _currentPosition = position;
-    });
+  Future<void> _initializeServices() async {
+    await _requestLocationPermission();
+    await _initializeLocationService();
+    LocationCallbackHandler.startLocationService();
   }
+
 
   Future<void> _initializeLocationService() async {
-    await LocationService.initPlatformState();
-    IsolateNameServer.registerPortWithName(port.sendPort, LocationService.isolateName);
+    IsolateNameServer.registerPortWithName(port.sendPort, isolateName);
     port.listen((dynamic data) {
-      // バックグラウンドで取得した位置情報を処理
-      print('Background location: $data');
+      print('Received location data: $data');
+      if (data != null) {
+        setState(() {
+          _currentLocation = LocationDto.fromJson(data);
+          print('Updated location: $_currentLocation');
+        });
+      }
     });
+    await initPlatformState();
   }
 
-  void _startBackgroundLocationTracking() {
-    LocationService.startLocationService();
-  }
-
-  void _stopBackgroundLocationTracking() {
-    LocationService.stopLocationService();
+  Future<void> _requestLocationPermission() async {
+    await RequestLocationPermission.request(location);
   }
 
   void onMapCreated(GoogleMapController controller) {
@@ -72,37 +62,35 @@ class _MapSharePageState extends State<MapSharePage> {
   }
 
   void onTapExit(BuildContext context) async {
-    _stopBackgroundLocationTracking();
+    IsolateNameServer.removePortNameMapping(isolateName);
+    BackgroundLocator.unRegisterLocationUpdate();
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('groupId');
     if (context.mounted) {
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const HomePage()),
-        (Route<dynamic> route) => false,  // すべての前のルートを削除
+        (Route<dynamic> route) => false, // すべての前のルートを削除
       );
     }
-
   }
 
   @override
   void dispose() {
-    IsolateNameServer.removePortNameMapping(LocationService.isolateName);
+    IsolateNameServer.removePortNameMapping(isolateName);
+    BackgroundLocator.unRegisterLocationUpdate();
     port.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_currentPosition == null) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+    print('Building with location: $_currentLocation');
+    if (_currentLocation == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     final cameraPosition = CameraPosition(
-      target: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+      target: LatLng(_currentLocation!.latitude, _currentLocation!.longitude),
       zoom: 14.0,
     );
 
