@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-// ... existing imports ...
+import 'package:location/location.dart';
+import 'dart:isolate';
+import 'dart:ui';
+import 'package:background_locator_2/background_locator.dart';
+import 'package:background_locator_2/location_dto.dart';
+import 'package:mesh_frontend/home_page.dart';
+import 'package:mesh_frontend/utils/location_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+//https://www.cloudbuilders.jp/articles/4214/
 class MapSharePage extends StatefulWidget {
   final String groupId;
 
@@ -13,13 +21,48 @@ class MapSharePage extends StatefulWidget {
 
 class _MapSharePageState extends State<MapSharePage> {
   late GoogleMapController mapController;
-  final LatLng _center = const LatLng(35.681236, 139.767125); // 東京駅の座標
+  LocationDto? _currentLocation;
+  final location = Location();
+  static const String isolateName = "LocatorIsolate";
+  ReceivePort port = ReceivePort();
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeServices();
+  }
+
+  Future<void> _initializeServices() async {
+    await _requestLocationPermission();
+    await _initializeLocationService();
+    LocationCallbackHandler.startLocationService();
+  }
+
+
+  Future<void> _initializeLocationService() async {
+    IsolateNameServer.registerPortWithName(port.sendPort, isolateName);
+    port.listen((dynamic data) {
+      print('Received location data: $data');
+      if (data != null) {
+        setState(() {
+          _currentLocation = LocationDto.fromJson(data);
+        });
+      }
+    });
+    await initPlatformState();
+  }
+
+  Future<void> _requestLocationPermission() async {
+    await RequestLocationPermission.request(location);
+  }
 
   void onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
 
   void onTapExit(BuildContext context) async {
+    IsolateNameServer.removePortNameMapping(isolateName);
+    BackgroundLocator.unRegisterLocationUpdate();
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('groupId');
     if (context.mounted) {
@@ -31,30 +74,69 @@ class _MapSharePageState extends State<MapSharePage> {
   }
 
   @override
+  void dispose() {
+    IsolateNameServer.removePortNameMapping(isolateName);
+    BackgroundLocator.unRegisterLocationUpdate();
+    port.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_currentLocation == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    final cameraPosition = CameraPosition(
+      target: LatLng(_currentLocation!.latitude, _currentLocation!.longitude),
+      zoom: 14.0,
+    );
+
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('GroupID: $groupId はSharedPreferenceに保存されました'),
-            const SizedBox(height: 20),
-            const Text('画面全体に地図表示'),
-            ElevatedButton(
-              onPressed: () async {
-                onTapExit(context);
-              },
-              child: const Text('グループから抜ける'),
+      body: Stack(
+        children: [
+          GoogleMap(
+            mapType: MapType.normal,
+            onMapCreated: onMapCreated,
+            initialCameraPosition: cameraPosition,
+            myLocationEnabled: true,
+            myLocationButtonEnabled: false,
+          ),
+          Positioned(
+            top: 40,
+            right: 20,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              onPressed: () => onTapExit(context),
+              child: const Text('退出', style: TextStyle(color: Colors.black)),
             ),
-            // ここに地図表示Widgetを追加
-          ],
-        ),
-        myLocationEnabled: true,
-        myLocationButtonEnabled: true,
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => onTapExit(context),
-        child: const Icon(Icons.exit_to_app),
+          ),
+          Positioned(
+            bottom: 20,
+            left: 20,
+            right: 20,
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('○月○日 14:00集合'),
+                  const Text('あと10分20秒'),
+                  const Text('山田, usatyo, mikan が到着済みです'),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
