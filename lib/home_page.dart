@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mesh_frontend/map_share_page.dart';
-import 'package:mesh_frontend/set_details_page.dart';
+import 'package:mesh_frontend/set_location_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mesh_frontend/components/button.dart';
 import 'package:uuid/uuid.dart';
@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
     // 詳細設定画面に遷移
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => SetDetailsPage(groupId: newGroupId),
+        builder: (context) => SetLocationPage(groupId: newGroupId),
       ),
     );
   }
