@@ -1,9 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mesh_frontend/set_name_page.dart';
+import 'package:mesh_frontend/share_link_page.dart';
 import 'package:mesh_frontend/components/button.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
     as picker;
 import 'package:intl/intl.dart'; // 日付のフォーマットに使用
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SetDetailsPage extends StatefulWidget {
   final String groupId;
@@ -16,13 +18,22 @@ class SetDetailsPage extends StatefulWidget {
   });
 
   @override
-  State<SetDetailsPage> createState() => _SetDetailsPageState();
+  State<SetDetailsPage> createState() => _SetDetailsAndNamePageState();
 }
 
-class _SetDetailsPageState extends State<SetDetailsPage> {
+class _SetDetailsAndNamePageState extends State<SetDetailsPage> {
   DateTime? _selectedDateTime;
+  final _nameController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool _isSubmitting = false; // 🔹 ローディング制御用
 
-  /// 日時ピッカー
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  /// 📌 日時ピッカー
   void _pickDateTime() {
     picker.DatePicker.showDateTimePicker(
       context,
@@ -40,78 +51,130 @@ class _SetDetailsPageState extends State<SetDetailsPage> {
     );
   }
 
-  /// 「次へ」ボタンを押したとき
-  void _submitDetails() {
-    if (_selectedDateTime == null) {
+  /// 📌 「次へ」ボタンを押したとき
+  void _submitDetails() async {
+    if (!_formKey.currentState!.validate() || _selectedDateTime == null) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('日時を選択してください')));
+      ).showSnackBar(const SnackBar(content: Text('日時と名前を入力してください')));
       return;
     }
 
-    // 🔸 yyyy年MM月dd日 HH:mm 形式にフォーマット
+    setState(() {
+      _isSubmitting = true; // 🔹 ローディング開始
+    });
+
     final formattedDateTime = DateFormat(
       'MM月dd日 HH:mm',
     ).format(_selectedDateTime!);
+    final userName = _nameController.text.trim();
 
-    // 🔽 名前入力ページへ遷移
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder:
-            (context) => SetNamePage(
-              groupId: widget.groupId,
-              location: widget.location,
-              time: formattedDateTime,
-            ),
-      ),
-    );
+    // ✅ `groupId` と `userName` をローカルに保存
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('groupId', widget.groupId);
+    await prefs.setString('userName', userName);
+
+    final shareUrl = 'https://example.com/share/123456'; // 仮のURL
+
+    // ✅ `ShareLinkPage` に遷移し、戻れないようにする
+    if (mounted) {
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder:
+              (context) => ShareLinkPage(
+                shareUrl: shareUrl,
+                groupId: widget.groupId,
+                location: widget.location,
+                time: formattedDateTime,
+                userName: userName,
+              ),
+        ),
+        (Route<dynamic> route) => false,
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // 🔸 TextFormField の表示用 (日時を文字列に変換)
-    final displayText =
+    final displayDateTime =
         _selectedDateTime == null
             ? '日付と時間を選択してください'
             : DateFormat('MM月dd日 HH:mm').format(_selectedDateTime!);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('詳細設定')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              '選択された場所: ${widget.location}',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-
-            // 🔸 flutter_datetime_picker_plus を使う
-            GestureDetector(
-              onTap: _pickDateTime,
-              child: AbsorbPointer(
-                child: TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: '待ち合わせ日時',
-                    hintText: '日付と時間を選択',
-                    suffixIcon: Icon(Icons.calendar_today),
+      appBar: CupertinoNavigationBar(middle: const Text('詳細設定')),
+      body: Stack(
+        children: [
+          // 📌 メインのコンテンツ
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                // 🔹 日時選択フィールド
+                GestureDetector(
+                  onTap: _pickDateTime,
+                  child: AbsorbPointer(
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        labelText: '待ち合わせ日時',
+                        hintText: '日付と時間を選択',
+                        suffixIcon: const Icon(Icons.calendar_today),
+                        filled: true,
+                        fillColor: Colors.grey[100],
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      controller: TextEditingController(text: displayDateTime),
+                    ),
                   ),
-                  controller: TextEditingController(text: displayText),
                 ),
-              ),
-            ),
+                const SizedBox(height: 42),
 
-            const SizedBox(height: 30),
-
-            OriginalButton(
-              text: "次へ",
-              onPressed: _submitDetails,
-              fill: true, // 背景色あり
+                // 🔹 名前入力フォーム
+                Form(
+                  key: _formKey,
+                  child: TextFormField(
+                    controller: _nameController,
+                    decoration: InputDecoration(
+                      labelText: '名前を入力',
+                      hintText: '例: たかし',
+                      prefixIcon: const Icon(Icons.person),
+                      filled: true,
+                      fillColor: Colors.grey[100],
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return '名前を入力してください';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(height: 30),
+              ],
             ),
-          ],
-        ),
+          ),
+
+          // 📌 「次へ」ボタンを `Positioned` で調整
+          Positioned(
+            bottom: 80, // 🔹 画面下から少し上に配置
+            left: 24,
+            right: 24,
+            child:
+                _isSubmitting
+                    ? const Center(child: CircularProgressIndicator())
+                    : OriginalButton(
+                      text: "次へ",
+                      onPressed: _submitDetails,
+                      fill: true,
+                    ),
+          ),
+        ],
       ),
     );
   }

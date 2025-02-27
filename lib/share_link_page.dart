@@ -37,66 +37,82 @@ class ShareLinkPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              '待ち合わせが作成されました！',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 10),
-            const Text('🎉', style: TextStyle(fontSize: 40)),
-            const SizedBox(height: 20),
+      body: Stack(
+        children: [
+          // 📌 メインコンテンツ
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                const Text(
+                  '待ち合わせが作成されました！',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 10),
+                const Text('🎉', style: TextStyle(fontSize: 40)),
+                const SizedBox(height: 20),
 
-            // ✅ 待ち合わせの詳細情報（新コンポーネント）
-            MeetingDetailsCard(
-              location: location,
-              time: time,
-              userName: userName,
-            ),
+                // ✅ 待ち合わせの詳細情報（新コンポーネント）
+                MeetingDetailsCard(
+                  location: location,
+                  time: time,
+                  userName: userName,
+                ),
 
-            const SizedBox(height: 20),
+                const SizedBox(height: 20),
 
-            // ✅ URL 表示 & コピー機能
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.grey.shade400),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      shareUrl,
-                      style: const TextStyle(fontSize: 16, color: Colors.blue),
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                // ✅ URL 表示 & コピー機能
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 16,
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.copy, color: Colors.blue),
-                    onPressed: () => _copyToClipboard(context),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.grey.shade400),
                   ),
-                ],
-              ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          shareUrl,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.blue,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.copy, color: Colors.blue),
+                        onPressed: () => _copyToClipboard(context),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
+          ),
 
-            const SizedBox(height: 30),
-
-            // ✅ ボタンエリア
-            OriginalButton(
+          // 📌 「次へ」ボタンの配置
+          Positioned(
+            bottom: 80, // 🔹 画面下から少し上に配置
+            left: 20,
+            right: 20,
+            child: OriginalButton(
               text: 'リンクをコピーして次へ',
-              onPressed:
-                  () => {_copyToClipboard(context), _navigateToMap(context)},
+              onPressed: () {
+                _copyToClipboard(context);
+                _navigateToMap(context);
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
