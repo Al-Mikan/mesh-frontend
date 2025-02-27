@@ -45,6 +45,8 @@ dependencies:
   app_links: ^6.4.0
   flutter_datetime_picker_plus: ^2.2.0
   intl: ^0.20.2
+  grpc: ^4.0.1
+  protobuf: ^3.1.0
 
 dev_dependencies:
   flutter_test:
