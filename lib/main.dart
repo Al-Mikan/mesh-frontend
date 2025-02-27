@@ -91,7 +91,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: '待ち合わせアプリ',
-      theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: false),
+      theme: ThemeData(primarySwatch: Colors.orange, useMaterial3: false),
       home: const HomePage(),
       navigatorKey: navigatorKey,
     );

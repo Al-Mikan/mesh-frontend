@@ -138,7 +138,11 @@ class _SetLocationPageState extends State<SetLocationPage> {
     return Scaffold(
       body:
           _selectedLocation == null
-              ? const Center(child: CircularProgressIndicator())
+              ? const Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFAE3E2)),
+                ),
+              )
               : Stack(
                 children: [
                   GoogleMap(
@@ -161,7 +165,7 @@ class _SetLocationPageState extends State<SetLocationPage> {
                         const Icon(
                           Icons.location_on,
                           size: 50,
-                          color: Colors.red,
+                          color: Color.fromARGB(255, 255, 118, 33),
                         ),
                         const SizedBox(height: 10),
                       ],

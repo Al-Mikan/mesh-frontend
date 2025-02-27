@@ -9,23 +9,37 @@ class CustomGoalPin {
     final Canvas canvas = Canvas(recorder);
     const double size = 40;
 
-    final Paint circlePaint = Paint()..color = Colors.red;
+    final Rect rect = Rect.fromCircle(
+      center: const Offset(size / 2, size / 2),
+      radius: size / 2,
+    );
+
+    // 🔹 グラデーションを作成
+    final Paint gradientPaint =
+        Paint()
+          ..shader = ui.Gradient.linear(rect.topCenter, rect.bottomCenter, [
+            const Color(0xFFF86594), // ピンク
+            const Color(0xFFFCC373), // オレンジ
+          ]);
+
     final Paint borderPaint =
         Paint()
           ..color = Colors.white
           ..style = PaintingStyle.fill;
 
-    // 丸い枠の背景を描画
+    // 🔹 外枠（白）を描画
     canvas.drawCircle(const Offset(size / 2, size / 2), size / 2, borderPaint);
+
+    // 🔹 グラデーションの丸を描画
     canvas.drawCircle(
       const Offset(size / 2, size / 2),
       size / 2.5,
-      circlePaint,
+      gradientPaint,
     );
 
     final TextPainter iconPainter = TextPainter(
       text: TextSpan(
-        text: String.fromCharCode(Icons.flag.codePoint), // Flutter のアイコンを取得
+        text: String.fromCharCode(Icons.flag.codePoint), // 旗アイコン
         style: TextStyle(
           fontSize: 24,
           fontFamily: Icons.flag.fontFamily,

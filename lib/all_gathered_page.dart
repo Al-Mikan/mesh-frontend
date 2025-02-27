@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mesh_frontend/home_page.dart';
-import 'package:mesh_frontend/components/button.dart'; // ✅ 追加
-import 'package:shared_preferences/shared_preferences.dart'; // ✅ 追加
+import 'package:mesh_frontend/components/button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AllGatheredPage extends StatelessWidget {
   const AllGatheredPage({super.key});
@@ -22,36 +22,55 @@ class AllGatheredPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              "全員集合！",
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+      body: Stack(
+        children: [
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.celebration,
+                  size: 80,
+                  color: Colors.orangeAccent,
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  "全員集合",
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 15),
+                const Text(
+                  "全員揃いました！\n楽しい時間を過ごしましょう",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18, color: Colors.black),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  "位置情報は自動的に解除されます。",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, color: Colors.black45),
+                ),
+              ],
             ),
-            const SizedBox(height: 20),
-            const Text(
-              "全員揃いました！楽しい時間を過ごしましょう 🎉",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18),
+          ),
+
+          // 🔹 OKボタンを下に配置（画面の高さに応じて調整）
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 80, left: 20, right: 20),
+              child: OriginalButton(
+                text: "OK",
+                onPressed: () => _handleOkButton(context),
+                fill: true,
+              ),
             ),
-            const SizedBox(height: 20),
-            // 🔽 位置情報の解除についての文言を追加
-            const Text(
-              "位置情報は自動的に解除されます。",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-            const SizedBox(height: 30),
-            // ✅ `OriginalButton` を使用
-            OriginalButton(
-              text: "OK",
-              onPressed: () => _handleOkButton(context), // ✅ `OK` 押下時の処理
-              fill: true, // 背景色あり
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -167,7 +167,13 @@ class _SetDetailsAndNamePageState extends State<SetDetailsPage> {
             right: 24,
             child:
                 _isSubmitting
-                    ? const Center(child: CircularProgressIndicator())
+                    ? const Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Color(0xFFFAE3E2),
+                        ),
+                      ),
+                    )
                     : OriginalButton(
                       text: "次へ",
                       onPressed: _submitDetails,

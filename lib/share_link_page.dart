@@ -22,9 +22,14 @@ class ShareLinkPage extends StatelessWidget {
 
   void _copyToClipboard(BuildContext context) {
     Clipboard.setData(ClipboardData(text: shareUrl));
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('リンクをコピーしました！')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('リンクをコピーしました！'),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 
   void _navigateToMap(BuildContext context) {
@@ -64,37 +69,33 @@ class ShareLinkPage extends StatelessWidget {
 
                 const SizedBox(height: 20),
 
-                // ✅ URL 表示 & コピー機能
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12,
-                    horizontal: 16,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.grey.shade400),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          shareUrl,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.blue,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.copy, color: Colors.blue),
-                        onPressed: () => _copyToClipboard(context),
-                      ),
-                    ],
-                  ),
-                ),
+                // ✅ URL 表示 & コピー機能（シンプルデザイン）
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     Expanded(
+                //       child: Text(
+                //         shareUrl,
+                //         style: const TextStyle(
+                //           fontSize: 16,
+                //           fontWeight: FontWeight.w500,
+                //           color: Colors.blue,
+                //         ),
+                //         overflow: TextOverflow.ellipsis,
+                //         textAlign: TextAlign.center,
+                //       ),
+                //     ),
+                //     const SizedBox(width: 10),
+                //     GestureDetector(
+                //       onTap: () => _copyToClipboard(context),
+                //       child: Icon(
+                //         Icons.copy,
+                //         color: Colors.blue.shade700,
+                //         size: 22,
+                //       ),
+                //     ),
+                //   ],
+                // ),
               ],
             ),
           ),

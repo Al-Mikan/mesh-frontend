@@ -14,37 +14,79 @@ class MeetingDetailsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 10, // ✅ カードに少し影をつける
-      margin: EdgeInsets.symmetric(horizontal: 0, vertical: 12),
-      shadowColor: Colors.grey.withValues(alpha: 0.5), // ✅ 影の色を指定
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildDetailRow(Icons.location_on, '場所', location),
-            const SizedBox(height: 10),
-            _buildDetailRow(Icons.access_time, '時間', time),
-            const SizedBox(height: 10),
-            _buildDetailRow(Icons.person, '作成者', userName),
-          ],
-        ),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white, // 背景色
+        borderRadius: BorderRadius.circular(16), // 角丸
+        border: Border.all(color: Colors.grey.shade300, width: 0.8), // ごく薄い枠線
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3), // 軽めの影
+            blurRadius: 6,
+            spreadRadius: 1,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildDetailRow(
+            Icons.location_on,
+            '場所',
+            location,
+            const Color(0xFFF86594),
+          ),
+          const SizedBox(height: 12),
+          _buildDetailRow(
+            Icons.access_time,
+            '時間',
+            time,
+            const Color(0xFFFCC373),
+          ),
+          const SizedBox(height: 12),
+          _buildDetailRow(Icons.person, '作成者', userName, Colors.black87),
+        ],
       ),
     );
   }
 
-  // ✅ 情報を表示するウィジェット
-  Widget _buildDetailRow(IconData icon, String title, String value) {
+  /// **詳細情報のレイアウト**
+  Widget _buildDetailRow(
+    IconData icon,
+    String title,
+    String value,
+    Color iconColor,
+  ) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Icon(icon),
-        const SizedBox(width: 5),
+        Icon(icon, size: 24, color: iconColor), // 🎨 カスタム色
+        const SizedBox(width: 12),
         Expanded(
-          child: Text(
-            '$title：$value',
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey.shade700,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
           ),
         ),
       ],

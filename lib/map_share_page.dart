@@ -214,7 +214,13 @@ class _MapSharePageState extends State<MapSharePage> {
   @override
   Widget build(BuildContext context) {
     if (_currentLocation == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFAE3E2)),
+          ),
+        ),
+      );
     }
 
     final cameraPosition = CameraPosition(
@@ -298,7 +304,7 @@ class _MapSharePageState extends State<MapSharePage> {
           Positioned(
             left: 20,
             right: 20,
-            bottom: 120,
+            bottom: 300,
             child: ElevatedButton(
               onPressed: () {
                 Navigator.pushAndRemoveUntil(
@@ -347,7 +353,11 @@ class _MapSharePageState extends State<MapSharePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.timer, size: 20, color: Colors.blue),
+                        const Icon(
+                          Icons.timer,
+                          size: 20,
+                          color: Colors.deepOrange,
+                        ),
                         const SizedBox(width: 6),
                         const Text(
                           '残り10分20秒', // ここは動的に変更可能

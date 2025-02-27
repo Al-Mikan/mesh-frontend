@@ -79,7 +79,9 @@ class _HomePageState extends State<HomePage> {
       ),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
+          return const CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFAE3E2)),
+          );
         } else if (snapshot.hasData && snapshot.data != null) {
           return MapSharePage(groupId: snapshot.data!);
         } else {
