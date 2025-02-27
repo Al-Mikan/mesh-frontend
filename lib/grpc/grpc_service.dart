@@ -1,5 +1,5 @@
 import 'package:grpc/grpc.dart';
-import 'package:mesh_frontend/grpc_gen/server.pbgrpc.dart';
+import 'package:mesh_frontend/grpc/gen/server.pbgrpc.dart';
 
 class GrpcService {
   static Future<GetCurrentUserResponse> getCurrentUser(
