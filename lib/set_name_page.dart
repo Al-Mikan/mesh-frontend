@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:mesh_frontend/grpc/grpc_channel_provider.dart';
+import 'package:mesh_frontend/grpc/grpc_service.dart';
 import 'package:mesh_frontend/share_link_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mesh_frontend/components/button.dart'; // ✅ `OriginalButton` を使用
 
-class SetNamePage extends StatefulWidget {
+class SetNamePage extends ConsumerStatefulWidget {
   final String groupId;
   final String location;
   final String time;
@@ -16,10 +19,10 @@ class SetNamePage extends StatefulWidget {
   });
 
   @override
-  State<SetNamePage> createState() => _SetNamePageState();
+  ConsumerState<SetNamePage> createState() => _SetNamePageState();
 }
 
-class _SetNamePageState extends State<SetNamePage> {
+class _SetNamePageState extends ConsumerState<SetNamePage> {
   final _nameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
@@ -33,6 +36,10 @@ class _SetNamePageState extends State<SetNamePage> {
     if (_formKey.currentState!.validate()) {
       final userName = _nameController.text.trim();
 
+      final channel = ref.read(grpcChannelProvider);
+      final res = await GrpcService.anonymousSignUp(channel, userName);
+      print(res); // デバッグ用
+
       // ✅ `groupId` と `userName` をローカルに保存
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('groupId', widget.groupId);
@@ -45,7 +52,8 @@ class _SetNamePageState extends State<SetNamePage> {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
             builder:
-                (context) => ShareLinkPage( //fixme: リンク参加した時もShareLinkへ遷移されてしまう
+                (context) => ShareLinkPage(
+                  //fixme: リンク参加した時もShareLinkへ遷移されてしまう
                   shareUrl: shareUrl,
                   groupId: widget.groupId,
                   location: widget.location,
