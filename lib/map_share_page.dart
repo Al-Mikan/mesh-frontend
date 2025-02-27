@@ -37,9 +37,24 @@ class _MapSharePageState extends State<MapSharePage> {
 
   //テスト用のデータ
   final List<Map<String, dynamic>> _participants = [
-    {"name": "山田", "lat": 35.681236, "lng": 139.777125}, // 東京駅
-    {"name": "usatyo", "lat": 35.689487, "lng": 139.691711}, // 新宿
-    {"name": "mikan", "lat": 35.658581, "lng": 139.745433}, // 東京タワー
+    {
+      "name": "山田",
+      "lat": 35.681236,
+      "lng": 139.777125,
+      "isArrived": true,
+    }, // 東京駅
+    {
+      "name": "usatyo",
+      "lat": 35.689487,
+      "lng": 139.691711,
+      "isArrived": false,
+    }, // 新宿
+    {
+      "name": "mikan",
+      "lat": 35.658581,
+      "lng": 139.745433,
+      "isArrived": false,
+    }, // 東京タワー
   ];
   // 待ち合わせ場所
   // LatLng meetingLocation = LatLng(35.669626, 139.765539);
@@ -302,19 +317,121 @@ class _MapSharePageState extends State<MapSharePage> {
             bottom: 20,
             left: 20,
             right: 20,
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
+            child: Card(
+              shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('○月○日 14:00集合'),
-                  const Text('残り10分20秒'),
-                  const Text('山田, usatyo, mikan が到着済みです'),
-                ],
+              elevation: 5,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 20,
+                  horizontal: 20,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // 🔹 待ち合わせ日時
+                    const Center(
+                      child: Text(
+                        '○月○日 14:00 集合', // ここは動的に変更可能
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    // 🔹 残り時間の表示
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.timer, size: 20, color: Colors.blue),
+                        const SizedBox(width: 6),
+                        const Text(
+                          '残り10分20秒', // ここは動的に変更可能
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+
+                    // 🔹 区切り線
+                    const Divider(
+                      thickness: 1,
+                      color: Color.fromARGB(255, 184, 184, 184),
+                    ),
+
+                    // 🔹 メンバー一覧
+                    Theme(
+                      data: Theme.of(
+                        context,
+                      ).copyWith(dividerColor: Colors.transparent),
+                      child: ExpansionTile(
+                        title: Text(
+                          "${_participants.length}人中 ${_participants.where((p) => p["isArrived"]).length}人が到着済み",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            // fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        children:
+                            _participants.map((user) {
+                              bool isArrived = user["isArrived"];
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 6,
+                                  horizontal: 10,
+                                ),
+                                child: Row(
+                                  children: [
+                                    // 🔹 メンバー名 (左側)
+                                    Text(
+                                      user["name"],
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+
+                                    // 🔹 スペースを追加し、アイコンを右寄せ
+                                    const Spacer(),
+
+                                    // 🔹 到着状況 (右側)
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          isArrived
+                                              ? Icons.check_circle
+                                              : Icons.access_time,
+                                          color:
+                                              isArrived
+                                                  ? Colors.green
+                                                  : Colors.grey,
+                                          size: 20,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          isArrived ? "到着済み" : "未到着",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color:
+                                                isArrived
+                                                    ? Colors.green
+                                                    : Colors.grey,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
