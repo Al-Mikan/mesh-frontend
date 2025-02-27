@@ -47,6 +47,8 @@ dependencies:
   intl: ^0.20.2
   grpc: ^4.0.1
   protobuf: ^3.1.0
+  hooks_riverpod: ^2.6.1
+  flutter_hooks: ^0.21.2
 
 dev_dependencies:
   flutter_test:
