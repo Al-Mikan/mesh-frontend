@@ -10,7 +10,7 @@ class CustomUserPin {
   static Future<BitmapDescriptor> createCustomMarker(String name) async {
     final ui.PictureRecorder recorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(recorder);
-    const double size = 100;
+    const double size = 40;
 
     // ランダムな色を生成
     final Color randomColor = Color.fromARGB(
@@ -37,7 +37,7 @@ class CustomUserPin {
       text: TextSpan(
         text: name.length > 3 ? name.substring(0, 3) : name, // 3文字まで表示
         style: const TextStyle(
-          fontSize: 30,
+          fontSize: 14,
           color: Colors.black,
           fontWeight: FontWeight.bold,
         ),

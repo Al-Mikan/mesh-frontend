@@ -7,7 +7,7 @@ class CustomGoalPin {
   static Future<BitmapDescriptor> createGoalMarker() async {
     final ui.PictureRecorder recorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(recorder);
-    const double size = 100;
+    const double size = 40;
 
     final Paint circlePaint = Paint()..color = Colors.red;
     final Paint borderPaint =
@@ -23,12 +23,11 @@ class CustomGoalPin {
       circlePaint,
     );
 
-    // 旗のアイコンを描画
     final TextPainter iconPainter = TextPainter(
       text: TextSpan(
         text: String.fromCharCode(Icons.flag.codePoint), // Flutter のアイコンを取得
         style: TextStyle(
-          fontSize: 50,
+          fontSize: 24,
           fontFamily: Icons.flag.fontFamily,
           color: Colors.white, // 旗の色
         ),
