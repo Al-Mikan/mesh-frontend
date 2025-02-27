@@ -8,6 +8,7 @@ import 'dart:isolate';
 import 'dart:ui';
 import 'package:background_locator_2/background_locator.dart';
 import 'package:background_locator_2/location_dto.dart';
+import 'package:mesh_frontend/all_gathered_page.dart';
 import 'package:mesh_frontend/components/custom_goal_pin.dart';
 import 'package:mesh_frontend/home_page.dart';
 import 'package:mesh_frontend/utils/location_service.dart';
@@ -140,6 +141,13 @@ class _MapSharePageState extends State<MapSharePage> {
     return distance < 50; // 50メートル以内なら到着とみなす
   }
 
+  /// 参加者全員が到着したかをチェック
+  bool _checkAllArrived() {
+    //TODO: 参加者全員が到着したかをチェックする処理を実装
+
+    return false;
+  }
+
   /// Haversine Formula で距離を計算
   double _calculateDistance(
     double lat1,
@@ -270,6 +278,23 @@ class _MapSharePageState extends State<MapSharePage> {
                   label: const Text("退出", style: TextStyle(fontSize: 14)),
                 ),
               ],
+            ),
+          ),
+          Positioned(
+            left: 20,
+            right: 20,
+            bottom: 120,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AllGatheredPage(),
+                  ),
+                  (Route<dynamic> route) => false,
+                );
+              },
+              child: const Text("全員集合ページへ"),
             ),
           ),
 
