@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:app_links/app_links.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mesh_frontend/home_page.dart';
 import 'package:mesh_frontend/invited_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 void main() async {
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -23,7 +23,7 @@ class _MyAppState extends State<MyApp> {
   StreamSubscription<Uri>? _linkSubscription;
   final navigatorKey = GlobalKey<NavigatorState>();
   bool _isDeepLinkHandled = false;
-  
+
   @override
   void initState() {
     super.initState();
@@ -45,8 +45,8 @@ class _MyAppState extends State<MyApp> {
         handleDeepLink(uri);
         _isDeepLinkHandled = true;
         Future.delayed(const Duration(seconds: 1), () {
-        _isDeepLinkHandled = false;
-      });
+          _isDeepLinkHandled = false;
+        });
       }
     });
   }
@@ -64,24 +64,24 @@ class _MyAppState extends State<MyApp> {
             (Route<dynamic> route) => false,
           );
         } else {
-        // 既に別のグループに参加している場合、ダイアログを表示
-        showCupertinoDialog(
-          context: navigatorKey.currentContext!,
-          builder: (BuildContext context) {
-            return CupertinoAlertDialog(
-              title: const Text('別のグループに参加中'),
-              content: const Text('新しいグループに参加するには、一度退出してください。'),
-              actions: <Widget>[
-                CupertinoDialogAction(
-                  child: const Text('OK'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
-        );
+          // 既に別のグループに参加している場合、ダイアログを表示
+          showCupertinoDialog(
+            context: navigatorKey.currentContext!,
+            builder: (BuildContext context) {
+              return CupertinoAlertDialog(
+                title: const Text('別のグループに参加中'),
+                content: const Text('新しいグループに参加するには、一度退出してください。'),
+                actions: <Widget>[
+                  CupertinoDialogAction(
+                    child: const Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
         }
       });
     }
