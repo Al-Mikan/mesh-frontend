@@ -313,9 +313,11 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
     );
 
     if (group == null) {
-      return const Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFAE3E2)),
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFAE3E2)),
+          ),
         ),
       );
     }
