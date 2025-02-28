@@ -37,6 +37,10 @@ class ServiceClient extends $grpc.Client {
       '/Server.Service/GetCurrentShareGroup',
       ($0.GetCurrentShareGroupRequest value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.GetCurrentShareGroupResponse.fromBuffer(value));
+  static final _$getShareGroupByLinkKey = $grpc.ClientMethod<$0.GetShareGroupByLinkKeyRequest, $0.GetShareGroupByLinkKeyResponse>(
+      '/Server.Service/GetShareGroupByLinkKey',
+      ($0.GetShareGroupByLinkKeyRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.GetShareGroupByLinkKeyResponse.fromBuffer(value));
   static final _$updatePosition = $grpc.ClientMethod<$0.UpdatePositionRequest, $0.UpdatePositionResponse>(
       '/Server.Service/UpdatePosition',
       ($0.UpdatePositionRequest value) => value.writeToBuffer(),
@@ -70,6 +74,10 @@ class ServiceClient extends $grpc.Client {
 
   $grpc.ResponseFuture<$0.GetCurrentShareGroupResponse> getCurrentShareGroup($0.GetCurrentShareGroupRequest request, {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$getCurrentShareGroup, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$0.GetShareGroupByLinkKeyResponse> getShareGroupByLinkKey($0.GetShareGroupByLinkKeyRequest request, {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$getShareGroupByLinkKey, request, options: options);
   }
 
   $grpc.ResponseFuture<$0.UpdatePositionResponse> updatePosition($0.UpdatePositionRequest request, {$grpc.CallOptions? options}) {
@@ -118,6 +126,13 @@ abstract class ServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $0.GetCurrentShareGroupRequest.fromBuffer(value),
         ($0.GetCurrentShareGroupResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.GetShareGroupByLinkKeyRequest, $0.GetShareGroupByLinkKeyResponse>(
+        'GetShareGroupByLinkKey',
+        getShareGroupByLinkKey_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $0.GetShareGroupByLinkKeyRequest.fromBuffer(value),
+        ($0.GetShareGroupByLinkKeyResponse value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.UpdatePositionRequest, $0.UpdatePositionResponse>(
         'UpdatePosition',
         updatePosition_Pre,
@@ -157,6 +172,10 @@ abstract class ServiceBase extends $grpc.Service {
     return getCurrentShareGroup(call, await request);
   }
 
+  $async.Future<$0.GetShareGroupByLinkKeyResponse> getShareGroupByLinkKey_Pre($grpc.ServiceCall call, $async.Future<$0.GetShareGroupByLinkKeyRequest> request) async {
+    return getShareGroupByLinkKey(call, await request);
+  }
+
   $async.Future<$0.UpdatePositionResponse> updatePosition_Pre($grpc.ServiceCall call, $async.Future<$0.UpdatePositionRequest> request) async {
     return updatePosition(call, await request);
   }
@@ -173,6 +192,7 @@ abstract class ServiceBase extends $grpc.Service {
   $async.Future<$0.CreateShareGroupResponse> createShareGroup($grpc.ServiceCall call, $0.CreateShareGroupRequest request);
   $async.Future<$0.JoinShareGroupResponse> joinShareGroup($grpc.ServiceCall call, $0.JoinShareGroupRequest request);
   $async.Future<$0.GetCurrentShareGroupResponse> getCurrentShareGroup($grpc.ServiceCall call, $0.GetCurrentShareGroupRequest request);
+  $async.Future<$0.GetShareGroupByLinkKeyResponse> getShareGroupByLinkKey($grpc.ServiceCall call, $0.GetShareGroupByLinkKeyRequest request);
   $async.Future<$0.UpdatePositionResponse> updatePosition($grpc.ServiceCall call, $0.UpdatePositionRequest request);
   $async.Future<$0.GetCurrentUserResponse> getCurrentUser($grpc.ServiceCall call, $0.GetCurrentUserRequest request);
   $async.Future<$0.LeaveShareGroupResponse> leaveShareGroup($grpc.ServiceCall call, $0.LeaveShareGroupRequest request);

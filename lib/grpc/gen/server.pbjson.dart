@@ -24,6 +24,8 @@ const ShareGroup$json = {
     {'1': 'users', '3': 5, '4': 3, '5': 11, '6': '.Server.User', '10': 'users'},
     {'1': 'meetingTime', '3': 6, '4': 1, '5': 9, '10': 'meetingTime'},
     {'1': 'inviteUrl', '3': 7, '4': 1, '5': 9, '10': 'inviteUrl'},
+    {'1': 'address', '3': 8, '4': 1, '5': 9, '10': 'address'},
+    {'1': 'adminUser', '3': 9, '4': 1, '5': 11, '6': '.Server.User', '10': 'adminUser'},
   ],
 };
 
@@ -32,7 +34,8 @@ final $typed_data.Uint8List shareGroupDescriptor = $convert.base64Decode(
     'CgpTaGFyZUdyb3VwEg4KAmlkGAEgASgEUgJpZBIYCgdsaW5rS2V5GAIgASgJUgdsaW5rS2V5Eh'
     'gKB2Rlc3RMb24YAyABKAFSB2Rlc3RMb24SGAoHZGVzdExhdBgEIAEoAVIHZGVzdExhdBIiCgV1'
     'c2VycxgFIAMoCzIMLlNlcnZlci5Vc2VyUgV1c2VycxIgCgttZWV0aW5nVGltZRgGIAEoCVILbW'
-    'VldGluZ1RpbWUSHAoJaW52aXRlVXJsGAcgASgJUglpbnZpdGVVcmw=');
+    'VldGluZ1RpbWUSHAoJaW52aXRlVXJsGAcgASgJUglpbnZpdGVVcmwSGAoHYWRkcmVzcxgIIAEo'
+    'CVIHYWRkcmVzcxIqCglhZG1pblVzZXIYCSABKAsyDC5TZXJ2ZXIuVXNlclIJYWRtaW5Vc2Vy');
 
 @$core.Deprecated('Use userDescriptor instead')
 const User$json = {
@@ -85,16 +88,18 @@ final $typed_data.Uint8List anonymousSignUpResponseDescriptor = $convert.base64D
 const CreateShareGroupRequest$json = {
   '1': 'CreateShareGroupRequest',
   '2': [
-    {'1': 'destLon', '3': 3, '4': 1, '5': 1, '10': 'destLon'},
-    {'1': 'destLat', '3': 4, '4': 1, '5': 1, '10': 'destLat'},
-    {'1': 'meetingTime', '3': 5, '4': 1, '5': 9, '10': 'meetingTime'},
+    {'1': 'destLon', '3': 1, '4': 1, '5': 1, '10': 'destLon'},
+    {'1': 'destLat', '3': 2, '4': 1, '5': 1, '10': 'destLat'},
+    {'1': 'meetingTime', '3': 3, '4': 1, '5': 9, '10': 'meetingTime'},
+    {'1': 'address', '3': 4, '4': 1, '5': 9, '10': 'address'},
   ],
 };
 
 /// Descriptor for `CreateShareGroupRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List createShareGroupRequestDescriptor = $convert.base64Decode(
-    'ChdDcmVhdGVTaGFyZUdyb3VwUmVxdWVzdBIYCgdkZXN0TG9uGAMgASgBUgdkZXN0TG9uEhgKB2'
-    'Rlc3RMYXQYBCABKAFSB2Rlc3RMYXQSIAoLbWVldGluZ1RpbWUYBSABKAlSC21lZXRpbmdUaW1l');
+    'ChdDcmVhdGVTaGFyZUdyb3VwUmVxdWVzdBIYCgdkZXN0TG9uGAEgASgBUgdkZXN0TG9uEhgKB2'
+    'Rlc3RMYXQYAiABKAFSB2Rlc3RMYXQSIAoLbWVldGluZ1RpbWUYAyABKAlSC21lZXRpbmdUaW1l'
+    'EhgKB2FkZHJlc3MYBCABKAlSB2FkZHJlc3M=');
 
 @$core.Deprecated('Use createShareGroupResponseDescriptor instead')
 const CreateShareGroupResponse$json = {
@@ -134,18 +139,40 @@ final $typed_data.Uint8List joinShareGroupResponseDescriptor = $convert.base64De
     'ChZKb2luU2hhcmVHcm91cFJlc3BvbnNlEjIKCnNoYXJlR3JvdXAYASABKAsyEi5TZXJ2ZXIuU2'
     'hhcmVHcm91cFIKc2hhcmVHcm91cA==');
 
+@$core.Deprecated('Use getShareGroupByLinkKeyRequestDescriptor instead')
+const GetShareGroupByLinkKeyRequest$json = {
+  '1': 'GetShareGroupByLinkKeyRequest',
+  '2': [
+    {'1': 'linkKey', '3': 1, '4': 1, '5': 9, '10': 'linkKey'},
+  ],
+};
+
+/// Descriptor for `GetShareGroupByLinkKeyRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getShareGroupByLinkKeyRequestDescriptor = $convert.base64Decode(
+    'Ch1HZXRTaGFyZUdyb3VwQnlMaW5rS2V5UmVxdWVzdBIYCgdsaW5rS2V5GAEgASgJUgdsaW5rS2'
+    'V5');
+
+@$core.Deprecated('Use getShareGroupByLinkKeyResponseDescriptor instead')
+const GetShareGroupByLinkKeyResponse$json = {
+  '1': 'GetShareGroupByLinkKeyResponse',
+  '2': [
+    {'1': 'shareGroup', '3': 1, '4': 1, '5': 11, '6': '.Server.ShareGroup', '10': 'shareGroup'},
+  ],
+};
+
+/// Descriptor for `GetShareGroupByLinkKeyResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getShareGroupByLinkKeyResponseDescriptor = $convert.base64Decode(
+    'Ch5HZXRTaGFyZUdyb3VwQnlMaW5rS2V5UmVzcG9uc2USMgoKc2hhcmVHcm91cBgBIAEoCzISLl'
+    'NlcnZlci5TaGFyZUdyb3VwUgpzaGFyZUdyb3Vw');
+
 @$core.Deprecated('Use getCurrentShareGroupRequestDescriptor instead')
 const GetCurrentShareGroupRequest$json = {
   '1': 'GetCurrentShareGroupRequest',
-  '2': [
-    {'1': 'groupId', '3': 1, '4': 1, '5': 9, '10': 'groupId'},
-  ],
 };
 
 /// Descriptor for `GetCurrentShareGroupRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List getCurrentShareGroupRequestDescriptor = $convert.base64Decode(
-    'ChtHZXRDdXJyZW50U2hhcmVHcm91cFJlcXVlc3QSGAoHZ3JvdXBJZBgBIAEoCVIHZ3JvdXBJZA'
-    '==');
+    'ChtHZXRDdXJyZW50U2hhcmVHcm91cFJlcXVlc3Q=');
 
 @$core.Deprecated('Use getCurrentShareGroupResponseDescriptor instead')
 const GetCurrentShareGroupResponse$json = {

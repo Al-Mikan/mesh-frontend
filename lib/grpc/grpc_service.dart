@@ -26,6 +26,7 @@ class GrpcService {
     double destLat,
     double destLon,
     String meetingTime,
+    String address,
     String accessToken,
   ) async {
     final client = ServiceClient(channel);
@@ -34,8 +35,20 @@ class GrpcService {
         destLat: destLat,
         destLon: destLon,
         meetingTime: meetingTime,
+        address: address,
       ),
       options: CallOptions(metadata: {'token': accessToken}),
+    );
+    return res;
+  }
+
+  static Future<GetShareGroupByLinkKeyResponse> getShareGroupByLinkKey(
+    ClientChannel channel,
+    String groupId, // TODO: 名前を統一
+  ) async {
+    final client = ServiceClient(channel);
+    final res = await client.getShareGroupByLinkKey(
+      GetShareGroupByLinkKeyRequest(linkKey: groupId),
     );
     return res;
   }
