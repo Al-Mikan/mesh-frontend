@@ -8,9 +8,7 @@ import 'package:location/location.dart';
 const String _googleApiKey = String.fromEnvironment("GOOGLE_MAPS_API_KEY");
 
 class SetLocationPage extends StatefulWidget {
-  final String groupId;
-
-  const SetLocationPage({super.key, required this.groupId});
+  const SetLocationPage({super.key});
 
   @override
   State<SetLocationPage> createState() => _SetLocationPageState();
@@ -120,15 +118,12 @@ class _SetLocationPageState extends State<SetLocationPage> {
   void _confirmLocation() {
     if (_selectedLocation == null) return;
 
-    final locationString =
-        "${_selectedLocation!.latitude}, ${_selectedLocation!.longitude}";
+    final destLat = _selectedLocation!.latitude;
+    final destLon = _selectedLocation!.longitude;
     Navigator.of(context).push(
       MaterialPageRoute(
         builder:
-            (context) => SetDetailsPage(
-              groupId: widget.groupId,
-              location: locationString,
-            ),
+            (context) => SetDetailsPage(destLat: destLat, destLon: destLon),
       ),
     );
   }

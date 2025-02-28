@@ -20,4 +20,23 @@ class GrpcService {
     );
     return res;
   }
+
+  static Future<CreateShareGroupResponse> createShareGroup(
+    ClientChannel channel,
+    double destLat,
+    double destLon,
+    String meetingTime,
+    String accessToken,
+  ) async {
+    final client = ServiceClient(channel);
+    final res = await client.createShareGroup(
+      CreateShareGroupRequest(
+        destLat: destLat,
+        destLon: destLon,
+        meetingTime: meetingTime,
+      ),
+      options: CallOptions(metadata: {'token': accessToken}),
+    );
+    return res;
+  }
 }
