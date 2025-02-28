@@ -121,6 +121,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
     BackgroundLocator.unRegisterLocationUpdate();
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('groupId');
+    await prefs.remove('accessToken');
     if (context.mounted) {
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const HomePage()),
