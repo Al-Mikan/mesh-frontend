@@ -43,13 +43,16 @@ const User$json = {
   '2': [
     {'1': 'id', '3': 1, '4': 1, '5': 4, '10': 'id'},
     {'1': 'name', '3': 2, '4': 1, '5': 9, '10': 'name'},
-    {'1': 'shareGroup', '3': 3, '4': 1, '5': 11, '6': '.Server.ShareGroup', '10': 'shareGroup'},
-    {'1': 'shareGroupId', '3': 4, '4': 1, '5': 4, '10': 'shareGroupId'},
-    {'1': 'lat', '3': 5, '4': 1, '5': 1, '9': 0, '10': 'lat', '17': true},
-    {'1': 'lon', '3': 6, '4': 1, '5': 1, '9': 1, '10': 'lon', '17': true},
-    {'1': 'positionAt', '3': 7, '4': 1, '5': 9, '9': 2, '10': 'positionAt', '17': true},
+    {'1': 'isArrived', '3': 3, '4': 1, '5': 8, '10': 'isArrived'},
+    {'1': 'shareGroup', '3': 4, '4': 1, '5': 11, '6': '.Server.ShareGroup', '9': 0, '10': 'shareGroup', '17': true},
+    {'1': 'shareGroupId', '3': 5, '4': 1, '5': 4, '9': 1, '10': 'shareGroupId', '17': true},
+    {'1': 'lat', '3': 6, '4': 1, '5': 1, '9': 2, '10': 'lat', '17': true},
+    {'1': 'lon', '3': 7, '4': 1, '5': 1, '9': 3, '10': 'lon', '17': true},
+    {'1': 'positionAt', '3': 8, '4': 1, '5': 9, '9': 4, '10': 'positionAt', '17': true},
   ],
   '8': [
+    {'1': '_shareGroup'},
+    {'1': '_shareGroupId'},
     {'1': '_lat'},
     {'1': '_lon'},
     {'1': '_positionAt'},
@@ -58,11 +61,12 @@ const User$json = {
 
 /// Descriptor for `User`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List userDescriptor = $convert.base64Decode(
-    'CgRVc2VyEg4KAmlkGAEgASgEUgJpZBISCgRuYW1lGAIgASgJUgRuYW1lEjIKCnNoYXJlR3JvdX'
-    'AYAyABKAsyEi5TZXJ2ZXIuU2hhcmVHcm91cFIKc2hhcmVHcm91cBIiCgxzaGFyZUdyb3VwSWQY'
-    'BCABKARSDHNoYXJlR3JvdXBJZBIVCgNsYXQYBSABKAFIAFIDbGF0iAEBEhUKA2xvbhgGIAEoAU'
-    'gBUgNsb26IAQESIwoKcG9zaXRpb25BdBgHIAEoCUgCUgpwb3NpdGlvbkF0iAEBQgYKBF9sYXRC'
-    'BgoEX2xvbkINCgtfcG9zaXRpb25BdA==');
+    'CgRVc2VyEg4KAmlkGAEgASgEUgJpZBISCgRuYW1lGAIgASgJUgRuYW1lEhwKCWlzQXJyaXZlZB'
+    'gDIAEoCFIJaXNBcnJpdmVkEjcKCnNoYXJlR3JvdXAYBCABKAsyEi5TZXJ2ZXIuU2hhcmVHcm91'
+    'cEgAUgpzaGFyZUdyb3VwiAEBEicKDHNoYXJlR3JvdXBJZBgFIAEoBEgBUgxzaGFyZUdyb3VwSW'
+    'SIAQESFQoDbGF0GAYgASgBSAJSA2xhdIgBARIVCgNsb24YByABKAFIA1IDbG9uiAEBEiMKCnBv'
+    'c2l0aW9uQXQYCCABKAlIBFIKcG9zaXRpb25BdIgBAUINCgtfc2hhcmVHcm91cEIPCg1fc2hhcm'
+    'VHcm91cElkQgYKBF9sYXRCBgoEX2xvbkINCgtfcG9zaXRpb25BdA==');
 
 @$core.Deprecated('Use anonymousSignUpRequestDescriptor instead')
 const AnonymousSignUpRequest$json = {
@@ -263,4 +267,25 @@ const LeaveShareGroupResponse$json = {
 final $typed_data.Uint8List leaveShareGroupResponseDescriptor = $convert.base64Decode(
     'ChdMZWF2ZVNoYXJlR3JvdXBSZXNwb25zZRIgCgR1c2VyGAEgASgLMgwuU2VydmVyLlVzZXJSBH'
     'VzZXI=');
+
+@$core.Deprecated('Use arriveDestRequestDescriptor instead')
+const ArriveDestRequest$json = {
+  '1': 'ArriveDestRequest',
+};
+
+/// Descriptor for `ArriveDestRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List arriveDestRequestDescriptor = $convert.base64Decode(
+    'ChFBcnJpdmVEZXN0UmVxdWVzdA==');
+
+@$core.Deprecated('Use arriveDestResponseDescriptor instead')
+const ArriveDestResponse$json = {
+  '1': 'ArriveDestResponse',
+  '2': [
+    {'1': 'user', '3': 1, '4': 1, '5': 11, '6': '.Server.User', '10': 'user'},
+  ],
+};
+
+/// Descriptor for `ArriveDestResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List arriveDestResponseDescriptor = $convert.base64Decode(
+    'ChJBcnJpdmVEZXN0UmVzcG9uc2USIAoEdXNlchgBIAEoCzIMLlNlcnZlci5Vc2VyUgR1c2Vy');
 

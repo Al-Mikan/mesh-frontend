@@ -176,6 +176,7 @@ class User extends $pb.GeneratedMessage {
   factory User({
     $fixnum.Int64? id,
     $core.String? name,
+    $core.bool? isArrived,
     ShareGroup? shareGroup,
     $fixnum.Int64? shareGroupId,
     $core.double? lat,
@@ -188,6 +189,9 @@ class User extends $pb.GeneratedMessage {
     }
     if (name != null) {
       $result.name = name;
+    }
+    if (isArrived != null) {
+      $result.isArrived = isArrived;
     }
     if (shareGroup != null) {
       $result.shareGroup = shareGroup;
@@ -213,11 +217,12 @@ class User extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'User', package: const $pb.PackageName(_omitMessageNames ? '' : 'Server'), createEmptyInstance: create)
     ..a<$fixnum.Int64>(1, _omitFieldNames ? '' : 'id', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
     ..aOS(2, _omitFieldNames ? '' : 'name')
-    ..aOM<ShareGroup>(3, _omitFieldNames ? '' : 'shareGroup', protoName: 'shareGroup', subBuilder: ShareGroup.create)
-    ..a<$fixnum.Int64>(4, _omitFieldNames ? '' : 'shareGroupId', $pb.PbFieldType.OU6, protoName: 'shareGroupId', defaultOrMaker: $fixnum.Int64.ZERO)
-    ..a<$core.double>(5, _omitFieldNames ? '' : 'lat', $pb.PbFieldType.OD)
-    ..a<$core.double>(6, _omitFieldNames ? '' : 'lon', $pb.PbFieldType.OD)
-    ..aOS(7, _omitFieldNames ? '' : 'positionAt', protoName: 'positionAt')
+    ..aOB(3, _omitFieldNames ? '' : 'isArrived', protoName: 'isArrived')
+    ..aOM<ShareGroup>(4, _omitFieldNames ? '' : 'shareGroup', protoName: 'shareGroup', subBuilder: ShareGroup.create)
+    ..a<$fixnum.Int64>(5, _omitFieldNames ? '' : 'shareGroupId', $pb.PbFieldType.OU6, protoName: 'shareGroupId', defaultOrMaker: $fixnum.Int64.ZERO)
+    ..a<$core.double>(6, _omitFieldNames ? '' : 'lat', $pb.PbFieldType.OD)
+    ..a<$core.double>(7, _omitFieldNames ? '' : 'lon', $pb.PbFieldType.OD)
+    ..aOS(8, _omitFieldNames ? '' : 'positionAt', protoName: 'positionAt')
     ..hasRequiredFields = false
   ;
 
@@ -261,51 +266,60 @@ class User extends $pb.GeneratedMessage {
   void clearName() => clearField(2);
 
   @$pb.TagNumber(3)
-  ShareGroup get shareGroup => $_getN(2);
+  $core.bool get isArrived => $_getBF(2);
   @$pb.TagNumber(3)
-  set shareGroup(ShareGroup v) { setField(3, v); }
+  set isArrived($core.bool v) { $_setBool(2, v); }
   @$pb.TagNumber(3)
-  $core.bool hasShareGroup() => $_has(2);
+  $core.bool hasIsArrived() => $_has(2);
   @$pb.TagNumber(3)
-  void clearShareGroup() => clearField(3);
-  @$pb.TagNumber(3)
-  ShareGroup ensureShareGroup() => $_ensure(2);
+  void clearIsArrived() => clearField(3);
 
   @$pb.TagNumber(4)
-  $fixnum.Int64 get shareGroupId => $_getI64(3);
+  ShareGroup get shareGroup => $_getN(3);
   @$pb.TagNumber(4)
-  set shareGroupId($fixnum.Int64 v) { $_setInt64(3, v); }
+  set shareGroup(ShareGroup v) { setField(4, v); }
   @$pb.TagNumber(4)
-  $core.bool hasShareGroupId() => $_has(3);
+  $core.bool hasShareGroup() => $_has(3);
   @$pb.TagNumber(4)
-  void clearShareGroupId() => clearField(4);
+  void clearShareGroup() => clearField(4);
+  @$pb.TagNumber(4)
+  ShareGroup ensureShareGroup() => $_ensure(3);
 
   @$pb.TagNumber(5)
-  $core.double get lat => $_getN(4);
+  $fixnum.Int64 get shareGroupId => $_getI64(4);
   @$pb.TagNumber(5)
-  set lat($core.double v) { $_setDouble(4, v); }
+  set shareGroupId($fixnum.Int64 v) { $_setInt64(4, v); }
   @$pb.TagNumber(5)
-  $core.bool hasLat() => $_has(4);
+  $core.bool hasShareGroupId() => $_has(4);
   @$pb.TagNumber(5)
-  void clearLat() => clearField(5);
+  void clearShareGroupId() => clearField(5);
 
   @$pb.TagNumber(6)
-  $core.double get lon => $_getN(5);
+  $core.double get lat => $_getN(5);
   @$pb.TagNumber(6)
-  set lon($core.double v) { $_setDouble(5, v); }
+  set lat($core.double v) { $_setDouble(5, v); }
   @$pb.TagNumber(6)
-  $core.bool hasLon() => $_has(5);
+  $core.bool hasLat() => $_has(5);
   @$pb.TagNumber(6)
-  void clearLon() => clearField(6);
+  void clearLat() => clearField(6);
 
   @$pb.TagNumber(7)
-  $core.String get positionAt => $_getSZ(6);
+  $core.double get lon => $_getN(6);
   @$pb.TagNumber(7)
-  set positionAt($core.String v) { $_setString(6, v); }
+  set lon($core.double v) { $_setDouble(6, v); }
   @$pb.TagNumber(7)
-  $core.bool hasPositionAt() => $_has(6);
+  $core.bool hasLon() => $_has(6);
   @$pb.TagNumber(7)
-  void clearPositionAt() => clearField(7);
+  void clearLon() => clearField(7);
+
+  @$pb.TagNumber(8)
+  $core.String get positionAt => $_getSZ(7);
+  @$pb.TagNumber(8)
+  set positionAt($core.String v) { $_setString(7, v); }
+  @$pb.TagNumber(8)
+  $core.bool hasPositionAt() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearPositionAt() => clearField(8);
 }
 
 class AnonymousSignUpRequest extends $pb.GeneratedMessage {
@@ -1127,6 +1141,90 @@ class LeaveShareGroupResponse extends $pb.GeneratedMessage {
   @$core.pragma('dart2js:noInline')
   static LeaveShareGroupResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<LeaveShareGroupResponse>(create);
   static LeaveShareGroupResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  User get user => $_getN(0);
+  @$pb.TagNumber(1)
+  set user(User v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasUser() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUser() => clearField(1);
+  @$pb.TagNumber(1)
+  User ensureUser() => $_ensure(0);
+}
+
+class ArriveDestRequest extends $pb.GeneratedMessage {
+  factory ArriveDestRequest() => create();
+  ArriveDestRequest._() : super();
+  factory ArriveDestRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ArriveDestRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ArriveDestRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'Server'), createEmptyInstance: create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ArriveDestRequest clone() => ArriveDestRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ArriveDestRequest copyWith(void Function(ArriveDestRequest) updates) => super.copyWith((message) => updates(message as ArriveDestRequest)) as ArriveDestRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static ArriveDestRequest create() => ArriveDestRequest._();
+  ArriveDestRequest createEmptyInstance() => create();
+  static $pb.PbList<ArriveDestRequest> createRepeated() => $pb.PbList<ArriveDestRequest>();
+  @$core.pragma('dart2js:noInline')
+  static ArriveDestRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ArriveDestRequest>(create);
+  static ArriveDestRequest? _defaultInstance;
+}
+
+class ArriveDestResponse extends $pb.GeneratedMessage {
+  factory ArriveDestResponse({
+    User? user,
+  }) {
+    final $result = create();
+    if (user != null) {
+      $result.user = user;
+    }
+    return $result;
+  }
+  ArriveDestResponse._() : super();
+  factory ArriveDestResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ArriveDestResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ArriveDestResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'Server'), createEmptyInstance: create)
+    ..aOM<User>(1, _omitFieldNames ? '' : 'user', subBuilder: User.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ArriveDestResponse clone() => ArriveDestResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ArriveDestResponse copyWith(void Function(ArriveDestResponse) updates) => super.copyWith((message) => updates(message as ArriveDestResponse)) as ArriveDestResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static ArriveDestResponse create() => ArriveDestResponse._();
+  ArriveDestResponse createEmptyInstance() => create();
+  static $pb.PbList<ArriveDestResponse> createRepeated() => $pb.PbList<ArriveDestResponse>();
+  @$core.pragma('dart2js:noInline')
+  static ArriveDestResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ArriveDestResponse>(create);
+  static ArriveDestResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
   User get user => $_getN(0);

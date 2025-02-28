@@ -53,6 +53,10 @@ class ServiceClient extends $grpc.Client {
       '/Server.Service/LeaveShareGroup',
       ($0.LeaveShareGroupRequest value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.LeaveShareGroupResponse.fromBuffer(value));
+  static final _$arriveDest = $grpc.ClientMethod<$0.ArriveDestRequest, $0.ArriveDestResponse>(
+      '/Server.Service/ArriveDest',
+      ($0.ArriveDestRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.ArriveDestResponse.fromBuffer(value));
 
   ServiceClient($grpc.ClientChannel channel,
       {$grpc.CallOptions? options,
@@ -90,6 +94,10 @@ class ServiceClient extends $grpc.Client {
 
   $grpc.ResponseFuture<$0.LeaveShareGroupResponse> leaveShareGroup($0.LeaveShareGroupRequest request, {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$leaveShareGroup, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$0.ArriveDestResponse> arriveDest($0.ArriveDestRequest request, {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$arriveDest, request, options: options);
   }
 }
 
@@ -154,6 +162,13 @@ abstract class ServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $0.LeaveShareGroupRequest.fromBuffer(value),
         ($0.LeaveShareGroupResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.ArriveDestRequest, $0.ArriveDestResponse>(
+        'ArriveDest',
+        arriveDest_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $0.ArriveDestRequest.fromBuffer(value),
+        ($0.ArriveDestResponse value) => value.writeToBuffer()));
   }
 
   $async.Future<$0.AnonymousSignUpResponse> anonymousSignUp_Pre($grpc.ServiceCall call, $async.Future<$0.AnonymousSignUpRequest> request) async {
@@ -188,6 +203,10 @@ abstract class ServiceBase extends $grpc.Service {
     return leaveShareGroup(call, await request);
   }
 
+  $async.Future<$0.ArriveDestResponse> arriveDest_Pre($grpc.ServiceCall call, $async.Future<$0.ArriveDestRequest> request) async {
+    return arriveDest(call, await request);
+  }
+
   $async.Future<$0.AnonymousSignUpResponse> anonymousSignUp($grpc.ServiceCall call, $0.AnonymousSignUpRequest request);
   $async.Future<$0.CreateShareGroupResponse> createShareGroup($grpc.ServiceCall call, $0.CreateShareGroupRequest request);
   $async.Future<$0.JoinShareGroupResponse> joinShareGroup($grpc.ServiceCall call, $0.JoinShareGroupRequest request);
@@ -196,4 +215,5 @@ abstract class ServiceBase extends $grpc.Service {
   $async.Future<$0.UpdatePositionResponse> updatePosition($grpc.ServiceCall call, $0.UpdatePositionRequest request);
   $async.Future<$0.GetCurrentUserResponse> getCurrentUser($grpc.ServiceCall call, $0.GetCurrentUserRequest request);
   $async.Future<$0.LeaveShareGroupResponse> leaveShareGroup($grpc.ServiceCall call, $0.LeaveShareGroupRequest request);
+  $async.Future<$0.ArriveDestResponse> arriveDest($grpc.ServiceCall call, $0.ArriveDestRequest request);
 }
