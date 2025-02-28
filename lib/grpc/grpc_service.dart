@@ -79,4 +79,16 @@ class GrpcService {
     );
     return res;
   }
+
+  static Future<ArriveDestResponse> arriveDest(
+    ClientChannel channel,
+    String accessToken,
+  ) async {
+    final client = ServiceClient(channel);
+    final res = await client.arriveDest(
+      ArriveDestRequest(),
+      options: CallOptions(metadata: {'token': accessToken}),
+    );
+    return res;
+  }
 }

@@ -78,8 +78,24 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
           group = res.shareGroup;
         });
         _setCustomMarkers();
+        if (_checkAllArrived()) {
+          //groupIdを削除
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.remove('groupId');
+          _navigateToAllGatheredPage();
+        }
       }
     });
+  }
+
+  void _navigateToAllGatheredPage() {
+    if (!mounted) return; // Widgetが破棄されていたら処理しない
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const AllGatheredPage()),
+      (Route<dynamic> route) => false, // すべての前の画面を削除
+    );
   }
 
   void _startCountdownTimer() {
@@ -216,14 +232,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
       group!.destLon,
     );
 
-    return distance < 50; // 50メートル以内なら到着とみなす
-  }
-
-  /// 参加者全員が到着したかをチェック
-  bool _checkAllArrived() {
-    //TODO: 参加者全員が到着したかをチェックする処理を実装
-
-    return false;
+    return distance < 500; // 50メートル以内なら到着とみなす
   }
 
   /// Haversine Formula で距離を計算
@@ -247,23 +256,33 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
 
   /// 「到着」ボタンが押されたとき
   void _onArrived() async {
-    setState(() {
-      hasArrived = true;
-    });
+    if (accessToken == null) return; // 認証情報がない場合は処理しない
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('hasArrived', true);
+    final channel = ref.read(grpcChannelProvider);
+
+    try {
+      // 🔹 サーバーに到着情報を送信
+      await GrpcService.arriveDest(channel, accessToken!);
+
+      // 🔹 最新のグループ情報を取得して画面を更新
+      await _fetchGroup();
+    } catch (e) {
+      debugPrint("到着処理エラー: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("到着情報の更新に失敗しました"),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
-  /// 保存されている到着状況を取得
-  Future<void> _checkArrivalStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    bool? arrived = prefs.getBool('hasArrived');
-    if (arrived != null) {
-      setState(() {
-        hasArrived = arrived;
-      });
+  /// 参加者全員が到着したかをチェック
+  bool _checkAllArrived() {
+    if (group == null || group!.users.isEmpty) {
+      return false;
     }
+    return group!.users.every((user) => user.isArrived);
   }
 
   @override
@@ -495,7 +514,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
                       ).copyWith(dividerColor: Colors.transparent),
                       child: ExpansionTile(
                         title: Text(
-                          "${group!.users.length}人中 ${group!.users.where((p) => true).length}人が到着済み",
+                          "${group!.users.length}人中 ${group!.users.where((p) => p.isArrived).length}人が到着済み",
                           style: const TextStyle(
                             fontSize: 16,
                             // fontWeight: FontWeight.bold,
@@ -503,7 +522,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
                         ),
                         children:
                             group!.users.map((user) {
-                              bool isArrived = true;
+                              bool isArrived = user.isArrived;
                               return Padding(
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 6,
