@@ -92,6 +92,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
 
     // ✅ `groupId` と `userName` をローカルに保存
     final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('groupId', createShareGroupRes.shareGroup.linkKey);
     await prefs.setString('userName', userName);
     await prefs.setString('accessToken', anonymousSignUpRes.accessToken);
 

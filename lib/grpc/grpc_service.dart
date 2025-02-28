@@ -52,4 +52,17 @@ class GrpcService {
     );
     return res;
   }
+
+  static Future<JoinShareGroupResponse> joinShareGroupRequest(
+    ClientChannel channel,
+    String groupId, // TODO: 名前を統一
+    String accessToken,
+  ) async {
+    final client = ServiceClient(channel);
+    final res = await client.joinShareGroup(
+      JoinShareGroupRequest(linkKey: groupId),
+      options: CallOptions(metadata: {'token': accessToken}),
+    );
+    return res;
+  }
 }

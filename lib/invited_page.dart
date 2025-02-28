@@ -77,11 +77,8 @@ class _InvitedPageState extends ConsumerState<InvitedPage> {
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder:
-                                    (context) => SetNamePage(
-                                      groupId: widget.groupId,
-                                      time: '2021/12/31 18:00',
-                                      location: '東京タワー',
-                                    ), //後で変える
+                                    (context) =>
+                                        SetNamePage(groupId: widget.groupId),
                               ),
                             ),
                           },
