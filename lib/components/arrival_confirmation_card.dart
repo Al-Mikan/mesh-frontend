@@ -52,15 +52,23 @@ class ArrivalConfirmationCard extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green, // ボタンの色
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(100),
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
                 onPressed: onArrived,
-                icon: const Icon(Icons.check_circle_outline, size: 24),
+                icon: const Icon(
+                  Icons.check_circle_outline,
+                  size: 24,
+                  color: Colors.white,
+                ),
                 label: const Text(
                   "到着しました",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
