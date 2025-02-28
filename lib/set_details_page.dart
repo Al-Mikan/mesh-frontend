@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:mesh_frontend/grpc/grpc_channel_provider.dart';
+import 'package:mesh_frontend/grpc/grpc_service.dart';
 import 'package:mesh_frontend/share_link_page.dart';
 import 'package:mesh_frontend/components/button.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
@@ -7,21 +10,23 @@ import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
 import 'package:intl/intl.dart'; // 日付のフォーマットに使用
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SetDetailsPage extends StatefulWidget {
-  final String groupId;
-  final String location;
+class SetDetailsPage extends ConsumerStatefulWidget {
+  final double destLon;
+  final double destLat;
+  final String? address;
 
   const SetDetailsPage({
     super.key,
-    required this.groupId,
-    required this.location,
+    required this.destLon,
+    required this.destLat,
+    this.address,
   });
 
   @override
-  State<SetDetailsPage> createState() => _SetDetailsAndNamePageState();
+  ConsumerState<SetDetailsPage> createState() => _SetDetailsAndNamePageState();
 }
 
-class _SetDetailsAndNamePageState extends State<SetDetailsPage> {
+class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
   DateTime? _selectedDateTime;
   final _nameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -69,12 +74,27 @@ class _SetDetailsAndNamePageState extends State<SetDetailsPage> {
     ).format(_selectedDateTime!);
     final userName = _nameController.text.trim();
 
+    // 匿名ログイン
+    final channel = ref.read(grpcChannelProvider);
+    var anonymousSignUpRes = await GrpcService.anonymousSignUp(
+      channel,
+      userName,
+    );
+
+    final createShareGroupRes = await GrpcService.createShareGroup(
+      channel,
+      widget.destLat,
+      widget.destLon,
+      _selectedDateTime!.toIso8601String(), // JSTのみ考慮する
+      widget.address ?? "",
+      anonymousSignUpRes.accessToken,
+    );
+
     // ✅ `groupId` と `userName` をローカルに保存
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('groupId', widget.groupId);
+    await prefs.setString('groupId', createShareGroupRes.shareGroup.linkKey);
     await prefs.setString('userName', userName);
-
-    final shareUrl = 'https://example.com/share/123456'; // 仮のURL
+    await prefs.setString('accessToken', anonymousSignUpRes.accessToken);
 
     // ✅ `ShareLinkPage` に遷移し、戻れないようにする
     if (mounted) {
@@ -82,11 +102,12 @@ class _SetDetailsAndNamePageState extends State<SetDetailsPage> {
         MaterialPageRoute(
           builder:
               (context) => ShareLinkPage(
-                shareUrl: shareUrl,
-                groupId: widget.groupId,
-                location: widget.location,
+                shareUrl: createShareGroupRes.shareGroup.inviteUrl,
+                groupId: createShareGroupRes.shareGroup.linkKey,
+                location: "${widget.destLat}, ${widget.destLon}",
                 time: formattedDateTime,
                 userName: userName,
+                address: widget.address,
               ),
         ),
         (Route<dynamic> route) => false,

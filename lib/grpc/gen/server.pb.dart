@@ -23,6 +23,8 @@ class ShareGroup extends $pb.GeneratedMessage {
     $core.Iterable<User>? users,
     $core.String? meetingTime,
     $core.String? inviteUrl,
+    $core.String? address,
+    User? adminUser,
   }) {
     final $result = create();
     if (id != null) {
@@ -46,6 +48,12 @@ class ShareGroup extends $pb.GeneratedMessage {
     if (inviteUrl != null) {
       $result.inviteUrl = inviteUrl;
     }
+    if (address != null) {
+      $result.address = address;
+    }
+    if (adminUser != null) {
+      $result.adminUser = adminUser;
+    }
     return $result;
   }
   ShareGroup._() : super();
@@ -60,6 +68,8 @@ class ShareGroup extends $pb.GeneratedMessage {
     ..pc<User>(5, _omitFieldNames ? '' : 'users', $pb.PbFieldType.PM, subBuilder: User.create)
     ..aOS(6, _omitFieldNames ? '' : 'meetingTime', protoName: 'meetingTime')
     ..aOS(7, _omitFieldNames ? '' : 'inviteUrl', protoName: 'inviteUrl')
+    ..aOS(8, _omitFieldNames ? '' : 'address')
+    ..aOM<User>(9, _omitFieldNames ? '' : 'adminUser', protoName: 'adminUser', subBuilder: User.create)
     ..hasRequiredFields = false
   ;
 
@@ -140,6 +150,26 @@ class ShareGroup extends $pb.GeneratedMessage {
   $core.bool hasInviteUrl() => $_has(6);
   @$pb.TagNumber(7)
   void clearInviteUrl() => clearField(7);
+
+  @$pb.TagNumber(8)
+  $core.String get address => $_getSZ(7);
+  @$pb.TagNumber(8)
+  set address($core.String v) { $_setString(7, v); }
+  @$pb.TagNumber(8)
+  $core.bool hasAddress() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearAddress() => clearField(8);
+
+  @$pb.TagNumber(9)
+  User get adminUser => $_getN(8);
+  @$pb.TagNumber(9)
+  set adminUser(User v) { setField(9, v); }
+  @$pb.TagNumber(9)
+  $core.bool hasAdminUser() => $_has(8);
+  @$pb.TagNumber(9)
+  void clearAdminUser() => clearField(9);
+  @$pb.TagNumber(9)
+  User ensureAdminUser() => $_ensure(8);
 }
 
 class User extends $pb.GeneratedMessage {
@@ -399,6 +429,7 @@ class CreateShareGroupRequest extends $pb.GeneratedMessage {
     $core.double? destLon,
     $core.double? destLat,
     $core.String? meetingTime,
+    $core.String? address,
   }) {
     final $result = create();
     if (destLon != null) {
@@ -410,6 +441,9 @@ class CreateShareGroupRequest extends $pb.GeneratedMessage {
     if (meetingTime != null) {
       $result.meetingTime = meetingTime;
     }
+    if (address != null) {
+      $result.address = address;
+    }
     return $result;
   }
   CreateShareGroupRequest._() : super();
@@ -417,9 +451,10 @@ class CreateShareGroupRequest extends $pb.GeneratedMessage {
   factory CreateShareGroupRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'CreateShareGroupRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'Server'), createEmptyInstance: create)
-    ..a<$core.double>(3, _omitFieldNames ? '' : 'destLon', $pb.PbFieldType.OD, protoName: 'destLon')
-    ..a<$core.double>(4, _omitFieldNames ? '' : 'destLat', $pb.PbFieldType.OD, protoName: 'destLat')
-    ..aOS(5, _omitFieldNames ? '' : 'meetingTime', protoName: 'meetingTime')
+    ..a<$core.double>(1, _omitFieldNames ? '' : 'destLon', $pb.PbFieldType.OD, protoName: 'destLon')
+    ..a<$core.double>(2, _omitFieldNames ? '' : 'destLat', $pb.PbFieldType.OD, protoName: 'destLat')
+    ..aOS(3, _omitFieldNames ? '' : 'meetingTime', protoName: 'meetingTime')
+    ..aOS(4, _omitFieldNames ? '' : 'address')
     ..hasRequiredFields = false
   ;
 
@@ -444,32 +479,41 @@ class CreateShareGroupRequest extends $pb.GeneratedMessage {
   static CreateShareGroupRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<CreateShareGroupRequest>(create);
   static CreateShareGroupRequest? _defaultInstance;
 
-  @$pb.TagNumber(3)
+  @$pb.TagNumber(1)
   $core.double get destLon => $_getN(0);
-  @$pb.TagNumber(3)
+  @$pb.TagNumber(1)
   set destLon($core.double v) { $_setDouble(0, v); }
-  @$pb.TagNumber(3)
+  @$pb.TagNumber(1)
   $core.bool hasDestLon() => $_has(0);
-  @$pb.TagNumber(3)
-  void clearDestLon() => clearField(3);
+  @$pb.TagNumber(1)
+  void clearDestLon() => clearField(1);
 
-  @$pb.TagNumber(4)
+  @$pb.TagNumber(2)
   $core.double get destLat => $_getN(1);
-  @$pb.TagNumber(4)
+  @$pb.TagNumber(2)
   set destLat($core.double v) { $_setDouble(1, v); }
-  @$pb.TagNumber(4)
+  @$pb.TagNumber(2)
   $core.bool hasDestLat() => $_has(1);
-  @$pb.TagNumber(4)
-  void clearDestLat() => clearField(4);
+  @$pb.TagNumber(2)
+  void clearDestLat() => clearField(2);
 
-  @$pb.TagNumber(5)
+  @$pb.TagNumber(3)
   $core.String get meetingTime => $_getSZ(2);
-  @$pb.TagNumber(5)
+  @$pb.TagNumber(3)
   set meetingTime($core.String v) { $_setString(2, v); }
-  @$pb.TagNumber(5)
+  @$pb.TagNumber(3)
   $core.bool hasMeetingTime() => $_has(2);
-  @$pb.TagNumber(5)
-  void clearMeetingTime() => clearField(5);
+  @$pb.TagNumber(3)
+  void clearMeetingTime() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get address => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set address($core.String v) { $_setString(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasAddress() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearAddress() => clearField(4);
 }
 
 class CreateShareGroupResponse extends $pb.GeneratedMessage {
@@ -626,22 +670,115 @@ class JoinShareGroupResponse extends $pb.GeneratedMessage {
   ShareGroup ensureShareGroup() => $_ensure(0);
 }
 
-class GetCurrentShareGroupRequest extends $pb.GeneratedMessage {
-  factory GetCurrentShareGroupRequest({
-    $core.String? groupId,
+class GetShareGroupByLinkKeyRequest extends $pb.GeneratedMessage {
+  factory GetShareGroupByLinkKeyRequest({
+    $core.String? linkKey,
   }) {
     final $result = create();
-    if (groupId != null) {
-      $result.groupId = groupId;
+    if (linkKey != null) {
+      $result.linkKey = linkKey;
     }
     return $result;
   }
+  GetShareGroupByLinkKeyRequest._() : super();
+  factory GetShareGroupByLinkKeyRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetShareGroupByLinkKeyRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GetShareGroupByLinkKeyRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'Server'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'linkKey', protoName: 'linkKey')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetShareGroupByLinkKeyRequest clone() => GetShareGroupByLinkKeyRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetShareGroupByLinkKeyRequest copyWith(void Function(GetShareGroupByLinkKeyRequest) updates) => super.copyWith((message) => updates(message as GetShareGroupByLinkKeyRequest)) as GetShareGroupByLinkKeyRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetShareGroupByLinkKeyRequest create() => GetShareGroupByLinkKeyRequest._();
+  GetShareGroupByLinkKeyRequest createEmptyInstance() => create();
+  static $pb.PbList<GetShareGroupByLinkKeyRequest> createRepeated() => $pb.PbList<GetShareGroupByLinkKeyRequest>();
+  @$core.pragma('dart2js:noInline')
+  static GetShareGroupByLinkKeyRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetShareGroupByLinkKeyRequest>(create);
+  static GetShareGroupByLinkKeyRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get linkKey => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set linkKey($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasLinkKey() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearLinkKey() => clearField(1);
+}
+
+class GetShareGroupByLinkKeyResponse extends $pb.GeneratedMessage {
+  factory GetShareGroupByLinkKeyResponse({
+    ShareGroup? shareGroup,
+  }) {
+    final $result = create();
+    if (shareGroup != null) {
+      $result.shareGroup = shareGroup;
+    }
+    return $result;
+  }
+  GetShareGroupByLinkKeyResponse._() : super();
+  factory GetShareGroupByLinkKeyResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetShareGroupByLinkKeyResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GetShareGroupByLinkKeyResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'Server'), createEmptyInstance: create)
+    ..aOM<ShareGroup>(1, _omitFieldNames ? '' : 'shareGroup', protoName: 'shareGroup', subBuilder: ShareGroup.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetShareGroupByLinkKeyResponse clone() => GetShareGroupByLinkKeyResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetShareGroupByLinkKeyResponse copyWith(void Function(GetShareGroupByLinkKeyResponse) updates) => super.copyWith((message) => updates(message as GetShareGroupByLinkKeyResponse)) as GetShareGroupByLinkKeyResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetShareGroupByLinkKeyResponse create() => GetShareGroupByLinkKeyResponse._();
+  GetShareGroupByLinkKeyResponse createEmptyInstance() => create();
+  static $pb.PbList<GetShareGroupByLinkKeyResponse> createRepeated() => $pb.PbList<GetShareGroupByLinkKeyResponse>();
+  @$core.pragma('dart2js:noInline')
+  static GetShareGroupByLinkKeyResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetShareGroupByLinkKeyResponse>(create);
+  static GetShareGroupByLinkKeyResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  ShareGroup get shareGroup => $_getN(0);
+  @$pb.TagNumber(1)
+  set shareGroup(ShareGroup v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasShareGroup() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearShareGroup() => clearField(1);
+  @$pb.TagNumber(1)
+  ShareGroup ensureShareGroup() => $_ensure(0);
+}
+
+class GetCurrentShareGroupRequest extends $pb.GeneratedMessage {
+  factory GetCurrentShareGroupRequest() => create();
   GetCurrentShareGroupRequest._() : super();
   factory GetCurrentShareGroupRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory GetCurrentShareGroupRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GetCurrentShareGroupRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'Server'), createEmptyInstance: create)
-    ..aOS(1, _omitFieldNames ? '' : 'groupId', protoName: 'groupId')
     ..hasRequiredFields = false
   ;
 
@@ -665,15 +802,6 @@ class GetCurrentShareGroupRequest extends $pb.GeneratedMessage {
   @$core.pragma('dart2js:noInline')
   static GetCurrentShareGroupRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetCurrentShareGroupRequest>(create);
   static GetCurrentShareGroupRequest? _defaultInstance;
-
-  @$pb.TagNumber(1)
-  $core.String get groupId => $_getSZ(0);
-  @$pb.TagNumber(1)
-  set groupId($core.String v) { $_setString(0, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasGroupId() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearGroupId() => clearField(1);
 }
 
 class GetCurrentShareGroupResponse extends $pb.GeneratedMessage {

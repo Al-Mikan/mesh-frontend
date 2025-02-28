@@ -56,19 +56,10 @@ class _HomePageState extends State<HomePage> {
   // }
 
   void _generateNewGroup() async {
-    final uuid = Uuid();
-    final newGroupId = uuid.v4();
-
-    setState(() {
-      groupId = newGroupId;
-    });
-
     // 詳細設定画面に遷移
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => SetLocationPage(groupId: newGroupId),
-      ),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (context) => SetLocationPage()));
   }
 
   @override

@@ -10,6 +10,7 @@ class ShareLinkPage extends StatelessWidget {
   final String location;
   final String time;
   final String userName;
+  final String? address;
 
   const ShareLinkPage({
     super.key,
@@ -18,6 +19,7 @@ class ShareLinkPage extends StatelessWidget {
     required this.location,
     required this.time,
     required this.userName,
+    this.address,
   });
 
   void _copyToClipboard(BuildContext context) {
@@ -62,7 +64,7 @@ class ShareLinkPage extends StatelessWidget {
 
                 // ✅ 待ち合わせの詳細情報（新コンポーネント）
                 MeetingDetailsCard(
-                  location: location,
+                  location: address ?? location,
                   time: time,
                   userName: userName,
                 ),

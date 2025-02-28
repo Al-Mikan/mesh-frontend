@@ -2,21 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mesh_frontend/grpc/grpc_channel_provider.dart';
 import 'package:mesh_frontend/grpc/grpc_service.dart';
-import 'package:mesh_frontend/share_link_page.dart';
+import 'package:mesh_frontend/map_share_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mesh_frontend/components/button.dart'; // ✅ `OriginalButton` を使用
 
 class SetNamePage extends ConsumerStatefulWidget {
   final String groupId;
-  final String location;
-  final String time;
 
-  const SetNamePage({
-    super.key,
-    required this.groupId,
-    required this.location,
-    required this.time,
-  });
+  const SetNamePage({super.key, required this.groupId});
 
   @override
   ConsumerState<SetNamePage> createState() => _SetNamePageState();
@@ -37,29 +30,27 @@ class _SetNamePageState extends ConsumerState<SetNamePage> {
       final userName = _nameController.text.trim();
 
       final channel = ref.read(grpcChannelProvider);
-      final res = await GrpcService.anonymousSignUp(channel, userName);
-      print(res); // デバッグ用
+      final anonymousSignUpRes = await GrpcService.anonymousSignUp(
+        channel,
+        userName,
+      );
+      final joinShareGroupRes = await GrpcService.joinShareGroupRequest(
+        channel,
+        widget.groupId,
+        anonymousSignUpRes.accessToken,
+      );
 
       // ✅ `groupId` と `userName` をローカルに保存
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('groupId', widget.groupId);
       await prefs.setString('userName', userName);
-
-      final shareUrl = 'https://example.com/share/123456'; // 仮のURL
+      await prefs.setString('accessToken', anonymousSignUpRes.accessToken);
 
       // ✅ `ShareLinkPage` に遷移し、戻れないようにする
       if (mounted) {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-            builder:
-                (context) => ShareLinkPage(
-                  //fixme: リンク参加した時もShareLinkへ遷移されてしまう
-                  shareUrl: shareUrl,
-                  groupId: widget.groupId,
-                  location: widget.location,
-                  time: widget.time,
-                  userName: userName,
-                ),
+            builder: (context) => MapSharePage(groupId: widget.groupId),
           ),
           (Route<dynamic> route) => false,
         );

@@ -8,9 +8,7 @@ import 'package:location/location.dart';
 const String _googleApiKey = String.fromEnvironment("GOOGLE_MAPS_API_KEY");
 
 class SetLocationPage extends StatefulWidget {
-  final String groupId;
-
-  const SetLocationPage({super.key, required this.groupId});
+  const SetLocationPage({super.key});
 
   @override
   State<SetLocationPage> createState() => _SetLocationPageState();
@@ -20,6 +18,7 @@ class _SetLocationPageState extends State<SetLocationPage> {
   GoogleMapController? _mapController;
   LatLng? _selectedLocation;
   String? _fetchedAddress;
+  String? _fetchedAddressErrMessage;
   bool _isFetchingAddress = false; // 🔹 住所取得中かどうかのフラグ
 
   final geo.GoogleMapsGeocoding _geocoding = geo.GoogleMapsGeocoding(
@@ -105,13 +104,15 @@ class _SetLocationPageState extends State<SetLocationPage> {
         });
       } else {
         setState(() {
-          _fetchedAddress = "住所が取得できませんでした";
+          _fetchedAddress = null;
+          _fetchedAddressErrMessage = "住所が取得できませんでした";
         });
       }
     } catch (e) {
       debugPrint("Error fetching address: $e");
       setState(() {
-        _fetchedAddress = "住所を取得中にエラーが発生しました";
+        _fetchedAddress = null;
+        _fetchedAddressErrMessage = "住所を取得中にエラーが発生しました";
       });
     }
   }
@@ -120,14 +121,15 @@ class _SetLocationPageState extends State<SetLocationPage> {
   void _confirmLocation() {
     if (_selectedLocation == null) return;
 
-    final locationString =
-        "${_selectedLocation!.latitude}, ${_selectedLocation!.longitude}";
+    final destLat = _selectedLocation!.latitude;
+    final destLon = _selectedLocation!.longitude;
     Navigator.of(context).push(
       MaterialPageRoute(
         builder:
             (context) => SetDetailsPage(
-              groupId: widget.groupId,
-              location: locationString,
+              destLat: destLat,
+              destLon: destLon,
+              address: _fetchedAddress,
             ),
       ),
     );
@@ -204,6 +206,7 @@ class _SetLocationPageState extends State<SetLocationPage> {
                               _isFetchingAddress
                                   ? "住所取得中..."
                                   : _fetchedAddress ??
+                                      _fetchedAddressErrMessage ??
                                       "${_selectedLocation!.latitude.toStringAsFixed(6)}, ${_selectedLocation!.longitude.toStringAsFixed(6)}",
                               style: const TextStyle(fontSize: 16),
                               textAlign: TextAlign.center,
