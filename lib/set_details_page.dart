@@ -85,7 +85,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
       channel,
       widget.destLat,
       widget.destLon,
-      formattedDateTime,
+      _selectedDateTime!.toIso8601String(), // JSTのみ考慮する
       anonymousSignUpRes.accessToken,
     );
 
