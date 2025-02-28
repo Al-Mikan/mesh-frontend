@@ -10,6 +10,7 @@ class ArrivalConfirmationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       color: Colors.white,
+      margin: const EdgeInsets.all(0),
       elevation: 6, // カードの影を強めに
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(

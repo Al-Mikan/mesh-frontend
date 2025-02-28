@@ -334,55 +334,14 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
           ),
           if (!hasArrived && _isNearMeetingPoint()) // 近くにいるかつ未到着なら表示
             Positioned(
-              top: 100,
+              top: 120,
               left: 20,
               right: 20,
               child: ArrivalConfirmationCard(onArrived: _onArrived),
             ),
-
           Positioned(
-            top: 50,
-            left: 20,
+            top: 60,
             right: 20,
-            child: Card(
-              color: const Color.fromARGB(255, 255, 255, 255), // 半透明の黒背景
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(100),
-              ),
-              elevation: 3,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 12,
-                  horizontal: 16,
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // 🔹 旗アイコン
-                    const Icon(Icons.flag, size: 26, color: Colors.amber),
-                    const SizedBox(width: 8),
-
-                    // 🔹 住所
-                    Expanded(
-                      child: Text(
-                        group!.address, // 住所を表示
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 220,
-            left: 20,
             child: Row(
               children: [
                 // 🔹 招待をコピーするボタン
@@ -435,142 +394,173 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
               ],
             ),
           ),
-          Positioned(
-            left: 20,
-            right: 20,
-            bottom: 300,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AllGatheredPage(),
-                  ),
-                  (Route<dynamic> route) => false,
-                );
-              },
-              child: const Text("全員集合ページへ"),
-            ),
-          ),
 
           Positioned(
             bottom: 20,
             left: 20,
             right: 20,
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              elevation: 5,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 20,
-                  horizontal: 20,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // 🔹 待ち合わせ日時
-                    Center(
-                      child: Text(
-                        '${formatDateTime(group!.meetingTime)} 集合', // ここは動的に変更可能
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+            child: Column(
+              children: [
+                Card(
+                  margin: const EdgeInsets.all(0),
+                  color: const Color.fromARGB(255, 255, 255, 255), // 半透明の黒背景
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(24),
+                      bottom: Radius.circular(8),
                     ),
-                    const SizedBox(height: 8),
-
-                    // 🔹 残り時間の表示
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                  ),
+                  elevation: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 16,
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const Icon(
-                          Icons.timer,
-                          size: 20,
-                          color: Colors.deepOrange,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          remainingTimeText,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
+                        // 🔹 旗アイコン
+                        const Icon(Icons.flag, size: 26, color: Colors.amber),
+                        const SizedBox(width: 8),
+
+                        // 🔹 住所
+                        Expanded(
+                          child: Text(
+                            group!.address, // 住所を表示
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    // 🔹 区切り線
-                    const Divider(
-                      thickness: 1,
-                      color: Color.fromARGB(255, 184, 184, 184),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(8),
+                      bottom: Radius.circular(32),
                     ),
-
-                    // 🔹 メンバー一覧
-                    Theme(
-                      data: Theme.of(
-                        context,
-                      ).copyWith(dividerColor: Colors.transparent),
-                      child: ExpansionTile(
-                        title: Text(
-                          "${group!.users.length}人中 ${group!.users.where((p) => p.isArrived).length}人が到着済み",
-                          style: const TextStyle(
-                            fontSize: 16,
-                            // fontWeight: FontWeight.bold,
+                  ),
+                  elevation: 4,
+                  margin: const EdgeInsets.all(0),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 20,
+                      horizontal: 20,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // 🔹 待ち合わせ日時
+                        Center(
+                          child: Text(
+                            '${formatDateTime(group!.meetingTime)} 集合', // ここは動的に変更可能
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                        children:
-                            group!.users.map((user) {
-                              bool isArrived = user.isArrived;
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 6,
-                                  horizontal: 10,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      user.name,
-                                      style: const TextStyle(fontSize: 16),
+                        const SizedBox(height: 8),
+
+                        // 🔹 残り時間の表示
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.timer,
+                              size: 20,
+                              color: Colors.deepOrange,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              remainingTimeText,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        // 🔹 区切り線
+                        const Divider(
+                          thickness: 1,
+                          color: Color.fromARGB(255, 184, 184, 184),
+                        ),
+
+                        // 🔹 メンバー一覧
+                        Theme(
+                          data: Theme.of(
+                            context,
+                          ).copyWith(dividerColor: Colors.transparent),
+                          child: ExpansionTile(
+                            title: Text(
+                              "${group!.users.length}人中 ${group!.users.where((p) => p.isArrived).length}人が到着済み",
+                              style: const TextStyle(
+                                fontSize: 16,
+                                // fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            children:
+                                group!.users.map((user) {
+                                  bool isArrived = user.isArrived;
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 6,
+                                      horizontal: 10,
                                     ),
-                                    const Spacer(),
-                                    Row(
+                                    child: Row(
                                       children: [
-                                        Icon(
-                                          isArrived
-                                              ? Icons.check_circle
-                                              : Icons.access_time,
-                                          color:
-                                              isArrived
-                                                  ? Colors.green
-                                                  : Colors.grey,
-                                          size: 20,
-                                        ),
-                                        const SizedBox(width: 4),
                                         Text(
-                                          isArrived ? "到着済み" : "未到着",
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color:
-                                                isArrived
-                                                    ? Colors.green
-                                                    : Colors.grey,
-                                          ),
+                                          user.name,
+                                          style: const TextStyle(fontSize: 16),
+                                        ),
+                                        const Spacer(),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              isArrived
+                                                  ? Icons.check_circle
+                                                  : Icons.access_time,
+                                              color:
+                                                  isArrived
+                                                      ? Colors.green
+                                                      : Colors.grey,
+                                              size: 20,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              isArrived ? "到着済み" : "未到着",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color:
+                                                    isArrived
+                                                        ? Colors.green
+                                                        : Colors.grey,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
-                                  ],
-                                ),
-                              );
-                            }).toList(),
-                      ),
+                                  );
+                                }).toList(),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ],
