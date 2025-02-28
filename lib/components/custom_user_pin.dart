@@ -1,45 +1,47 @@
 import 'dart:ui' as ui;
 import 'dart:typed_data';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class CustomUserPin {
-  static final Random _random = Random();
-
-  static Future<BitmapDescriptor> createCustomMarker(String name) async {
+  static Future<BitmapDescriptor> createCustomMarker(String userName) async {
     final ui.PictureRecorder recorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(recorder);
     const double size = 40;
 
-    // ランダムな色を生成
-    final Color randomColor = Color.fromARGB(
-      255,
-      _random.nextInt(256),
-      _random.nextInt(256),
-      _random.nextInt(256),
-    );
+    // **ユーザーごとに固定の色を決める**
+    final Color userColor = _getUserColor(userName);
 
-    final Paint circlePaint = Paint()..color = Colors.white; // 🔹 内側の白い丸
+    final Paint circlePaint = Paint()..color = userColor;
     final Paint borderPaint =
         Paint()
-          ..color = randomColor
-          ..style = PaintingStyle.fill;
+          ..color = Colors.white
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2;
 
+    // **外枠を描画**
     canvas.drawCircle(const Offset(size / 2, size / 2), size / 2, borderPaint);
+    // **中央の丸を描画（ユーザー固有の色）**
     canvas.drawCircle(
       const Offset(size / 2, size / 2),
       size / 2.5,
       circlePaint,
     );
 
+    // **ユーザー名の冒頭3文字を取得**
+    String displayText =
+        userName.isNotEmpty
+            ? userName.substring(0, userName.length < 3 ? userName.length : 3)
+            : "？";
+
+    // **ユーザー名を描画**
     final TextPainter textPainter = TextPainter(
       text: TextSpan(
-        text: name.length > 3 ? name.substring(0, 3) : name, // 3文字まで表示
+        text: displayText,
         style: const TextStyle(
-          fontSize: 14,
-          color: Colors.black,
+          fontSize: 14, // 少し小さめに調整
           fontWeight: FontWeight.bold,
+          color: Colors.white,
         ),
       ),
       textDirection: TextDirection.ltr,
@@ -52,7 +54,6 @@ class CustomUserPin {
       Offset((size - textPainter.width) / 2, (size - textPainter.height) / 2),
     );
 
-    // 🔹 画像を生成して `BitmapDescriptor` に変換
     final ui.Image img = await recorder.endRecording().toImage(
       size.toInt(),
       size.toInt(),
@@ -63,5 +64,12 @@ class CustomUserPin {
     final Uint8List bytes = byteData!.buffer.asUint8List();
 
     return BitmapDescriptor.bytes(bytes);
+  }
+
+  /// **ユーザー名から固定の色を生成**
+  static Color _getUserColor(String userName) {
+    List<Color> colors = Colors.primaries;
+    int hash = userName.codeUnits.fold(0, (prev, code) => prev + code);
+    return colors[hash % colors.length];
   }
 }

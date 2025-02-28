@@ -180,6 +180,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
           position: LatLng(user.lat, user.lon),
           icon: icon,
           infoWindow: InfoWindow(title: user.name),
+          zIndex: 1,
         ),
       );
     }
@@ -192,6 +193,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
         position: LatLng(group!.destLat, group!.destLon),
         icon: goalIcon,
         infoWindow: const InfoWindow(title: "待ち合わせ場所"),
+        zIndex: 2,
       ),
     );
 

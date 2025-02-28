@@ -7,7 +7,7 @@ class CustomGoalPin {
   static Future<BitmapDescriptor> createGoalMarker() async {
     final ui.PictureRecorder recorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(recorder);
-    const double size = 40;
+    const double size = 46;
 
     final Rect rect = Rect.fromCircle(
       center: const Offset(size / 2, size / 2),
@@ -24,13 +24,10 @@ class CustomGoalPin {
 
     final Paint borderPaint =
         Paint()
-          ..color = Colors.white
+          ..color = const ui.Color.fromARGB(255, 255, 255, 255)
           ..style = PaintingStyle.fill;
 
-    // 🔹 外枠（白）を描画
     canvas.drawCircle(const Offset(size / 2, size / 2), size / 2, borderPaint);
-
-    // 🔹 グラデーションの丸を描画
     canvas.drawCircle(
       const Offset(size / 2, size / 2),
       size / 2.5,
