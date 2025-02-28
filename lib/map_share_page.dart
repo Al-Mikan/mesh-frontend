@@ -74,6 +74,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
         setState(() {
           group = res.shareGroup;
         });
+        _setCustomMarkers();
       }
     });
   }
@@ -82,8 +83,6 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
     await _requestLocationPermission();
     await _initializeLocationService();
     LocationCallbackHandler.startLocationService();
-
-    _setCustomMarkers();
   }
 
   Future<void> _initializeLocationService() async {
@@ -103,7 +102,6 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
             _currentLocation!.longitude,
             accessToken!,
           );
-          print(res);
         }
       }
     });
@@ -164,9 +162,11 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
       ),
     );
 
-    setState(() {
-      _markers = markers;
-    });
+    if (mounted) {
+      setState(() {
+        _markers = markers;
+      });
+    }
   }
 
   /// 目的地との距離を計算
@@ -272,7 +272,6 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
             mapType: MapType.normal,
             onMapCreated: onMapCreated,
             initialCameraPosition: cameraPosition,
-            myLocationEnabled: true,
             myLocationButtonEnabled: false,
             markers: _markers.toSet(),
           ),
