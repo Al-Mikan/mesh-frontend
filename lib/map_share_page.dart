@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:location/location.dart';
 import 'dart:isolate';
 import 'dart:ui';
@@ -10,23 +12,27 @@ import 'package:background_locator_2/background_locator.dart';
 import 'package:background_locator_2/location_dto.dart';
 import 'package:mesh_frontend/all_gathered_page.dart';
 import 'package:mesh_frontend/components/custom_goal_pin.dart';
+import 'package:mesh_frontend/grpc/gen/server.pb.dart';
+import 'package:mesh_frontend/grpc/grpc_channel_provider.dart';
+import 'package:mesh_frontend/grpc/grpc_service.dart';
 import 'package:mesh_frontend/home_page.dart';
+import 'package:mesh_frontend/utils/format_date.dart';
 import 'package:mesh_frontend/utils/location_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mesh_frontend/components/custom_user_pin.dart';
 import 'package:mesh_frontend/components/arrival_confirmation_card.dart';
 
 //https://www.cloudbuilders.jp/articles/4214/
-class MapSharePage extends StatefulWidget {
+class MapSharePage extends ConsumerStatefulWidget {
   final String groupId;
 
   const MapSharePage({super.key, required this.groupId});
 
   @override
-  State<MapSharePage> createState() => _MapSharePageState();
+  ConsumerState<MapSharePage> createState() => _MapSharePageState();
 }
 
-class _MapSharePageState extends State<MapSharePage> {
+class _MapSharePageState extends ConsumerState<MapSharePage> {
   late GoogleMapController mapController;
   LocationDto? _currentLocation;
   final location = Location();
@@ -34,54 +40,69 @@ class _MapSharePageState extends State<MapSharePage> {
   ReceivePort port = ReceivePort();
   Set<Marker> _markers = {};
   bool hasArrived = false; // 到着済みかどうかのフラグ
+  ShareGroup? group;
+  String? accessToken;
 
-  //テスト用のデータ
-  final List<Map<String, dynamic>> _participants = [
-    {
-      "name": "山田",
-      "lat": 35.681236,
-      "lng": 139.777125,
-      "isArrived": true,
-    }, // 東京駅
-    {
-      "name": "usatyo",
-      "lat": 35.689487,
-      "lng": 139.691711,
-      "isArrived": false,
-    }, // 新宿
-    {
-      "name": "mikan",
-      "lat": 35.658581,
-      "lng": 139.745433,
-      "isArrived": false,
-    }, // 東京タワー
-  ];
-  // 待ち合わせ場所
-  // LatLng meetingLocation = LatLng(35.669626, 139.765539);
-  LatLng meetingLocation = LatLng(35.6813, 139.767066);
+  // timer
+  Timer? fetchTimer;
 
   @override
   void initState() {
     super.initState();
+    _loadAccessToken();
     _initializeServices();
+    _fetchGroup();
+  }
+
+  Future<void> _loadAccessToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    accessToken = prefs.getString('accessToken');
+  }
+
+  Future<void> _fetchGroup() async {
+    final channel = ref.read(grpcChannelProvider);
+
+    fetchTimer = Timer.periodic(const Duration(seconds: 3), (
+      Timer timer,
+    ) async {
+      final res = await GrpcService.getShareGroupByLinkKey(
+        channel,
+        widget.groupId,
+      );
+
+      if (mounted) {
+        setState(() {
+          group = res.shareGroup;
+        });
+        _setCustomMarkers();
+      }
+    });
   }
 
   Future<void> _initializeServices() async {
     await _requestLocationPermission();
     await _initializeLocationService();
     LocationCallbackHandler.startLocationService();
-
-    _setCustomMarkers();
   }
 
   Future<void> _initializeLocationService() async {
     IsolateNameServer.registerPortWithName(port.sendPort, isolateName);
-    port.listen((dynamic data) {
+    port.listen((dynamic data) async {
       debugPrint("received location: $data");
       if (data != null) {
         setState(() {
           _currentLocation = LocationDto.fromJson(data);
         });
+
+        if (accessToken != null) {
+          final channel = ref.read(grpcChannelProvider);
+          final res = await GrpcService.updatePosition(
+            channel,
+            _currentLocation!.latitude,
+            _currentLocation!.longitude,
+            accessToken!,
+          );
+        }
       }
     });
     await initPlatformState();
@@ -100,6 +121,7 @@ class _MapSharePageState extends State<MapSharePage> {
     BackgroundLocator.unRegisterLocationUpdate();
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('groupId');
+    await prefs.remove('accessToken');
     if (context.mounted) {
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const HomePage()),
@@ -109,19 +131,23 @@ class _MapSharePageState extends State<MapSharePage> {
   }
 
   void _setCustomMarkers() async {
+    if (group == null) return;
+
     Set<Marker> markers = {};
 
-    for (var user in _participants) {
+    for (var user in group!.users) {
+      if (!user.hasLat() || !user.hasLon()) continue;
+
       final BitmapDescriptor icon = await CustomUserPin.createCustomMarker(
-        user["name"],
+        user.name,
       );
 
       markers.add(
         Marker(
-          markerId: MarkerId(user["name"]),
-          position: LatLng(user["lat"], user["lng"]),
+          markerId: MarkerId(user.name),
+          position: LatLng(user.lat, user.lon),
           icon: icon,
-          infoWindow: InfoWindow(title: user["name"]),
+          infoWindow: InfoWindow(title: user.name),
         ),
       );
     }
@@ -131,26 +157,29 @@ class _MapSharePageState extends State<MapSharePage> {
     markers.add(
       Marker(
         markerId: const MarkerId("goal"),
-        position: meetingLocation,
+        position: LatLng(group!.destLat, group!.destLon),
         icon: goalIcon,
         infoWindow: const InfoWindow(title: "待ち合わせ場所"),
       ),
     );
 
-    setState(() {
-      _markers = markers;
-    });
+    if (mounted) {
+      setState(() {
+        _markers = markers;
+      });
+    }
   }
 
   /// 目的地との距離を計算
   bool _isNearMeetingPoint() {
     if (_currentLocation == null) return false;
+    if (group == null) return false;
 
     double distance = _calculateDistance(
       _currentLocation!.latitude,
       _currentLocation!.longitude,
-      meetingLocation.latitude,
-      meetingLocation.longitude,
+      group!.destLat,
+      group!.destLon,
     );
 
     return distance < 50; // 50メートル以内なら到着とみなす
@@ -208,6 +237,7 @@ class _MapSharePageState extends State<MapSharePage> {
     IsolateNameServer.removePortNameMapping(isolateName);
     BackgroundLocator.unRegisterLocationUpdate();
     port.close();
+    fetchTimer?.cancel();
     super.dispose();
   }
 
@@ -228,6 +258,14 @@ class _MapSharePageState extends State<MapSharePage> {
       zoom: 14.0,
     );
 
+    if (group == null) {
+      return const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFAE3E2)),
+        ),
+      );
+    }
+
     return Scaffold(
       body: Stack(
         children: [
@@ -235,7 +273,6 @@ class _MapSharePageState extends State<MapSharePage> {
             mapType: MapType.normal,
             onMapCreated: onMapCreated,
             initialCameraPosition: cameraPosition,
-            myLocationEnabled: true,
             myLocationButtonEnabled: false,
             markers: _markers.toSet(),
           ),
@@ -255,7 +292,7 @@ class _MapSharePageState extends State<MapSharePage> {
                 ElevatedButton.icon(
                   onPressed: () {
                     Clipboard.setData(
-                      const ClipboardData(text: "https://example.com/invite"),
+                      ClipboardData(text: group!.inviteUrl),
                     ).then((_) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -338,9 +375,9 @@ class _MapSharePageState extends State<MapSharePage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // 🔹 待ち合わせ日時
-                    const Center(
+                    Center(
                       child: Text(
-                        '○月○日 14:00 集合', // ここは動的に変更可能
+                        '${formatDateTime(group!.meetingTime)} 集合', // ここは動的に変更可能
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -383,15 +420,15 @@ class _MapSharePageState extends State<MapSharePage> {
                       ).copyWith(dividerColor: Colors.transparent),
                       child: ExpansionTile(
                         title: Text(
-                          "${_participants.length}人中 ${_participants.where((p) => p["isArrived"]).length}人が到着済み",
+                          "${group!.users.length}人中 ${group!.users.where((p) => true).length}人が到着済み",
                           style: const TextStyle(
                             fontSize: 16,
                             // fontWeight: FontWeight.bold,
                           ),
                         ),
                         children:
-                            _participants.map((user) {
-                              bool isArrived = user["isArrived"];
+                            group!.users.map((user) {
+                              bool isArrived = true;
                               return Padding(
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 6,
@@ -401,7 +438,7 @@ class _MapSharePageState extends State<MapSharePage> {
                                   children: [
                                     // 🔹 メンバー名 (左側)
                                     Text(
-                                      user["name"],
+                                      user.name,
                                       style: const TextStyle(fontSize: 16),
                                     ),
 
