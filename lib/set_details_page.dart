@@ -31,6 +31,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
   final _nameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isSubmitting = false; // 🔹 ローディング制御用
+  bool _isDateTimeError = false; // 🔹 日時未選択時のエラー表示
 
   @override
   void dispose() {
@@ -58,15 +59,15 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
 
   /// 📌 「次へ」ボタンを押したとき
   void _submitDetails() async {
+    setState(() {
+      _isDateTimeError = _selectedDateTime == null; // 日時未選択ならエラー
+    });
     if (!_formKey.currentState!.validate() || _selectedDateTime == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('日時と名前を入力してください')));
       return;
     }
 
     setState(() {
-      _isSubmitting = true; // 🔹 ローディング開始
+      _isSubmitting = true; // ローディング開始
     });
 
     final formattedDateTime = DateFormat(
@@ -146,6 +147,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
+                        errorText: _isDateTimeError ? '日時を選択してください' : null,
                       ),
                       controller: TextEditingController(text: displayDateTime),
                     ),
@@ -196,7 +198,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                       ),
                     )
                     : OriginalButton(
-                      text: "次へ",
+                      text: "リンクを作成する",
                       onPressed: _submitDetails,
                       fill: true,
                     ),

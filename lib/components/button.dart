@@ -22,7 +22,7 @@ class OriginalButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           elevation: 0,
           padding: const EdgeInsets.symmetric(vertical: 20),
-          backgroundColor: fill ? const Color(0xFF332731) : Colors.white,
+          backgroundColor: fill ? const Color(0xFF332731) : Colors.transparent,
           side: BorderSide(
             color: const Color(0xFF332731),
             width: 2, // ✅ ボーダーの太さ

@@ -46,7 +46,7 @@ class _SetNamePageState extends ConsumerState<SetNamePage> {
       await prefs.setString('userName', userName);
       await prefs.setString('accessToken', anonymousSignUpRes.accessToken);
 
-      // ✅ `ShareLinkPage` に遷移し、戻れないようにする
+      // ✅ `MapSharePage` に遷移し、戻れないようにする
       if (mounted) {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
@@ -61,43 +61,49 @@ class _SetNamePageState extends ConsumerState<SetNamePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch, // ✅ ボタンを横幅いっぱいに
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            const Text(
-              'あなたの名前を入力してください',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-
-            const SizedBox(height: 40),
-            Form(
-              key: _formKey,
-              child: TextFormField(
-                controller: _nameController,
-                autofocus: true, // ✅ 自動でフォーカスする
-                decoration: InputDecoration(
-                  labelText: '名前を入力',
-                  hintText: '例: たかし',
-                  prefixIcon: const Icon(Icons.person), // ✅ アイコンを追加
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12), // ✅ 角丸
+            const Spacer(), // ✅ 上部のスペースを確保し、フォームを中央寄せ
+            Column(
+              children: [
+                const Text(
+                  'あなたの名前を入力してください',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 40),
+                Form(
+                  key: _formKey,
+                  child: TextFormField(
+                    controller: _nameController,
+                    autofocus: true, // ✅ 自動でフォーカスする
+                    decoration: InputDecoration(
+                      labelText: '名前を入力',
+                      hintText: '例: たかし',
+                      prefixIcon: const Icon(Icons.person), // ✅ アイコンを追加
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12), // ✅ 角丸
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return '名前を入力してください';
+                      }
+                      return null;
+                    },
                   ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return '名前を入力してください';
-                  }
-                  return null;
-                },
-              ),
+                const SizedBox(height: 40),
+              ],
             ),
-            const SizedBox(height: 40),
-            OriginalButton(text: '次へ', onPressed: _submit),
+            const Spacer(), // ✅ 下部のスペースを確保
+            Padding(
+              padding: const EdgeInsets.only(bottom: 80), // ✅ ボタンの位置を下から80pxに設定
+              child: OriginalButton(text: '次へ', onPressed: _submit),
+            ),
           ],
         ),
       ),
