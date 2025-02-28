@@ -65,4 +65,18 @@ class GrpcService {
     );
     return res;
   }
+
+  static Future<UpdatePositionResponse> updatePosition(
+    ClientChannel channel,
+    double lat,
+    double lon,
+    String accessToken,
+  ) async {
+    final client = ServiceClient(channel);
+    final res = await client.updatePosition(
+      UpdatePositionRequest(lat: lat, lon: lon),
+      options: CallOptions(metadata: {'token': accessToken}),
+    );
+    return res;
+  }
 }

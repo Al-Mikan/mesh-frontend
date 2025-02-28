@@ -16,6 +16,7 @@ import 'package:mesh_frontend/grpc/gen/server.pb.dart';
 import 'package:mesh_frontend/grpc/grpc_channel_provider.dart';
 import 'package:mesh_frontend/grpc/grpc_service.dart';
 import 'package:mesh_frontend/home_page.dart';
+import 'package:mesh_frontend/utils/format_date.dart';
 import 'package:mesh_frontend/utils/location_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mesh_frontend/components/custom_user_pin.dart';
@@ -40,6 +41,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
   Set<Marker> _markers = {};
   bool hasArrived = false; // 到着済みかどうかのフラグ
   ShareGroup? group;
+  String? accessToken;
 
   // timer
   Timer? fetchTimer;
@@ -47,8 +49,14 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
   @override
   void initState() {
     super.initState();
+    _loadAccessToken();
     _initializeServices();
     _fetchGroup();
+  }
+
+  Future<void> _loadAccessToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    accessToken = prefs.getString('accessToken');
   }
 
   Future<void> _fetchGroup() async {
@@ -62,9 +70,11 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
         widget.groupId,
       );
 
-      setState(() {
-        group = res.shareGroup;
-      });
+      if (mounted) {
+        setState(() {
+          group = res.shareGroup;
+        });
+      }
     });
   }
 
@@ -78,12 +88,23 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
 
   Future<void> _initializeLocationService() async {
     IsolateNameServer.registerPortWithName(port.sendPort, isolateName);
-    port.listen((dynamic data) {
+    port.listen((dynamic data) async {
       debugPrint("received location: $data");
       if (data != null) {
         setState(() {
           _currentLocation = LocationDto.fromJson(data);
         });
+
+        if (accessToken != null) {
+          final channel = ref.read(grpcChannelProvider);
+          final res = await GrpcService.updatePosition(
+            channel,
+            _currentLocation!.latitude,
+            _currentLocation!.longitude,
+            accessToken!,
+          );
+          print(res);
+        }
       }
     });
     await initPlatformState();
@@ -116,6 +137,8 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
     Set<Marker> markers = {};
 
     for (var user in group!.users) {
+      if (!user.hasLat() || !user.hasLon()) continue;
+
       final BitmapDescriptor icon = await CustomUserPin.createCustomMarker(
         user.name,
       );
@@ -269,7 +292,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
                 ElevatedButton.icon(
                   onPressed: () {
                     Clipboard.setData(
-                      const ClipboardData(text: "https://example.com/invite"),
+                      ClipboardData(text: group!.inviteUrl),
                     ).then((_) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -352,9 +375,9 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // 🔹 待ち合わせ日時
-                    const Center(
+                    Center(
                       child: Text(
-                        '○月○日 14:00 集合', // ここは動的に変更可能
+                        '${formatDateTime(group!.meetingTime)} 集合', // ここは動的に変更可能
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,

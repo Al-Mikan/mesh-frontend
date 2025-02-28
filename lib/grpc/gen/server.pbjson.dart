@@ -45,9 +45,14 @@ const User$json = {
     {'1': 'name', '3': 2, '4': 1, '5': 9, '10': 'name'},
     {'1': 'shareGroup', '3': 3, '4': 1, '5': 11, '6': '.Server.ShareGroup', '10': 'shareGroup'},
     {'1': 'shareGroupId', '3': 4, '4': 1, '5': 4, '10': 'shareGroupId'},
-    {'1': 'lat', '3': 5, '4': 1, '5': 1, '10': 'lat'},
-    {'1': 'lon', '3': 6, '4': 1, '5': 1, '10': 'lon'},
-    {'1': 'positionAt', '3': 7, '4': 1, '5': 9, '10': 'positionAt'},
+    {'1': 'lat', '3': 5, '4': 1, '5': 1, '9': 0, '10': 'lat', '17': true},
+    {'1': 'lon', '3': 6, '4': 1, '5': 1, '9': 1, '10': 'lon', '17': true},
+    {'1': 'positionAt', '3': 7, '4': 1, '5': 9, '9': 2, '10': 'positionAt', '17': true},
+  ],
+  '8': [
+    {'1': '_lat'},
+    {'1': '_lon'},
+    {'1': '_positionAt'},
   ],
 };
 
@@ -55,8 +60,9 @@ const User$json = {
 final $typed_data.Uint8List userDescriptor = $convert.base64Decode(
     'CgRVc2VyEg4KAmlkGAEgASgEUgJpZBISCgRuYW1lGAIgASgJUgRuYW1lEjIKCnNoYXJlR3JvdX'
     'AYAyABKAsyEi5TZXJ2ZXIuU2hhcmVHcm91cFIKc2hhcmVHcm91cBIiCgxzaGFyZUdyb3VwSWQY'
-    'BCABKARSDHNoYXJlR3JvdXBJZBIQCgNsYXQYBSABKAFSA2xhdBIQCgNsb24YBiABKAFSA2xvbh'
-    'IeCgpwb3NpdGlvbkF0GAcgASgJUgpwb3NpdGlvbkF0');
+    'BCABKARSDHNoYXJlR3JvdXBJZBIVCgNsYXQYBSABKAFIAFIDbGF0iAEBEhUKA2xvbhgGIAEoAU'
+    'gBUgNsb26IAQESIwoKcG9zaXRpb25BdBgHIAEoCUgCUgpwb3NpdGlvbkF0iAEBQgYKBF9sYXRC'
+    'BgoEX2xvbkINCgtfcG9zaXRpb25BdA==');
 
 @$core.Deprecated('Use anonymousSignUpRequestDescriptor instead')
 const AnonymousSignUpRequest$json = {
