@@ -45,6 +45,8 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
 
   // timer
   Timer? fetchTimer;
+  Timer? countdownTimer;
+  String remainingTimeText = "計算中..."; // 初期値
 
   @override
   void initState() {
@@ -52,6 +54,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
     _loadAccessToken();
     _initializeServices();
     _fetchGroup();
+    _startCountdownTimer();
   }
 
   Future<void> _loadAccessToken() async {
@@ -79,6 +82,35 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
     });
   }
 
+  void _startCountdownTimer() {
+    countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (group == null || group!.meetingTime.isEmpty) {
+        setState(() {
+          remainingTimeText = "未設定";
+        });
+        return;
+      }
+
+      DateTime meetingTime = DateTime.parse(
+        group!.meetingTime,
+      ); // 文字列からDateTimeに変換
+      Duration difference = meetingTime.difference(DateTime.now());
+
+      if (difference.isNegative) {
+        setState(() {
+          remainingTimeText = "集合時間を過ぎました";
+          countdownTimer?.cancel(); // タイマー停止
+        });
+      } else {
+        int minutes = difference.inMinutes;
+        int seconds = difference.inSeconds % 60;
+        setState(() {
+          remainingTimeText = "残り $minutes分$seconds秒";
+        });
+      }
+    });
+  }
+
   Future<void> _initializeServices() async {
     await _requestLocationPermission();
     await _initializeLocationService();
@@ -88,7 +120,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
   Future<void> _initializeLocationService() async {
     IsolateNameServer.registerPortWithName(port.sendPort, isolateName);
     port.listen((dynamic data) async {
-      debugPrint("received location: $data");
+      // debugPrint("received location: $data");
       if (data != null) {
         setState(() {
           _currentLocation = LocationDto.fromJson(data);
@@ -234,6 +266,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
 
   @override
   void dispose() {
+    countdownTimer?.cancel();
     IsolateNameServer.removePortNameMapping(isolateName);
     BackgroundLocator.unRegisterLocationUpdate();
     port.close();
@@ -396,9 +429,9 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
                           color: Colors.deepOrange,
                         ),
                         const SizedBox(width: 6),
-                        const Text(
-                          '残り10分20秒', // ここは動的に変更可能
-                          style: TextStyle(
+                        Text(
+                          remainingTimeText,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
                           ),
@@ -406,7 +439,6 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
                       ],
                     ),
                     const SizedBox(height: 16),
-
                     // 🔹 区切り線
                     const Divider(
                       thickness: 1,
@@ -436,16 +468,11 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
                                 ),
                                 child: Row(
                                   children: [
-                                    // 🔹 メンバー名 (左側)
                                     Text(
                                       user.name,
                                       style: const TextStyle(fontSize: 16),
                                     ),
-
-                                    // 🔹 スペースを追加し、アイコンを右寄せ
                                     const Spacer(),
-
-                                    // 🔹 到着状況 (右側)
                                     Row(
                                       children: [
                                         Icon(
