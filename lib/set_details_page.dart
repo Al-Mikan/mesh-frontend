@@ -13,11 +13,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SetDetailsPage extends ConsumerStatefulWidget {
   final double destLon;
   final double destLat;
+  final String? address;
 
   const SetDetailsPage({
     super.key,
     required this.destLon,
     required this.destLat,
+    this.address,
   });
 
   @override
@@ -103,6 +105,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                 location: "${widget.destLat}, ${widget.destLon}",
                 time: formattedDateTime,
                 userName: userName,
+                address: widget.address,
               ),
         ),
         (Route<dynamic> route) => false,
