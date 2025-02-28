@@ -232,7 +232,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
       group!.destLon,
     );
 
-    return distance < 500; // 50メートル以内なら到着とみなす
+    return distance < 50; // 50メートル以内なら到着とみなす
   }
 
   /// Haversine Formula で距離を計算
