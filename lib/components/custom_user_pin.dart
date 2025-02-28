@@ -12,20 +12,26 @@ class CustomUserPin {
     // **ユーザーごとに固定の色を決める**
     final Color userColor = _getUserColor(userName);
 
-    final Paint circlePaint = Paint()..color = userColor;
-    final Paint borderPaint =
-        Paint()
-          ..color = Colors.white
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2;
-
-    // **外枠を描画**
-    canvas.drawCircle(const Offset(size / 2, size / 2), size / 2, borderPaint);
     // **中央の丸を描画（ユーザー固有の色）**
+    final Paint circlePaint = Paint()..color = userColor;
     canvas.drawCircle(
       const Offset(size / 2, size / 2),
       size / 2.5,
       circlePaint,
+    );
+
+    // **外枠を描画（完全な不透明な白色）**
+    final Paint borderPaint =
+        Paint()
+          ..color = Colors.white.withOpacity(1.0) // 完全に不透明な白
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 3
+          ..blendMode = BlendMode.srcOver; // 透明にならないようにする
+
+    canvas.drawCircle(
+      const Offset(size / 2, size / 2),
+      size / 2.5,
+      borderPaint,
     );
 
     // **ユーザー名の冒頭3文字を取得**

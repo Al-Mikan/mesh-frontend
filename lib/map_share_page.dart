@@ -318,9 +318,50 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
               right: 20,
               child: ArrivalConfirmationCard(onArrived: _onArrived),
             ),
+
           Positioned(
             top: 50,
+            left: 20,
             right: 20,
+            child: Card(
+              color: const Color.fromARGB(255, 255, 255, 255), // 半透明の黒背景
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(100),
+              ),
+              elevation: 3,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 16,
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // 🔹 旗アイコン
+                    const Icon(Icons.flag, size: 26, color: Colors.amber),
+                    const SizedBox(width: 8),
+
+                    // 🔹 住所
+                    Expanded(
+                      child: Text(
+                        group!.address, // 住所を表示
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 220,
+            left: 20,
             child: Row(
               children: [
                 // 🔹 招待をコピーするボタン
