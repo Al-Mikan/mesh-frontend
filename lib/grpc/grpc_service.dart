@@ -4,9 +4,13 @@ import 'package:mesh_frontend/grpc/gen/server.pbgrpc.dart';
 class GrpcService {
   static Future<GetCurrentUserResponse> getCurrentUser(
     ClientChannel channel,
+    String accessToken,
   ) async {
     final client = ServiceClient(channel);
-    final res = await client.getCurrentUser(GetCurrentUserRequest());
+    final res = await client.getCurrentUser(
+      GetCurrentUserRequest(),
+      options: CallOptions(metadata: {'token': accessToken}),
+    );
     return res;
   }
 
