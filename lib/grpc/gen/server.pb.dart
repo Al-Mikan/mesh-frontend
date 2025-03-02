@@ -182,6 +182,7 @@ class User extends $pb.GeneratedMessage {
     $core.double? lat,
     $core.double? lon,
     $core.String? positionAt,
+    $core.String? shortMessage,
   }) {
     final $result = create();
     if (id != null) {
@@ -208,6 +209,9 @@ class User extends $pb.GeneratedMessage {
     if (positionAt != null) {
       $result.positionAt = positionAt;
     }
+    if (shortMessage != null) {
+      $result.shortMessage = shortMessage;
+    }
     return $result;
   }
   User._() : super();
@@ -223,6 +227,7 @@ class User extends $pb.GeneratedMessage {
     ..a<$core.double>(6, _omitFieldNames ? '' : 'lat', $pb.PbFieldType.OD)
     ..a<$core.double>(7, _omitFieldNames ? '' : 'lon', $pb.PbFieldType.OD)
     ..aOS(8, _omitFieldNames ? '' : 'positionAt', protoName: 'positionAt')
+    ..aOS(9, _omitFieldNames ? '' : 'shortMessage', protoName: 'shortMessage')
     ..hasRequiredFields = false
   ;
 
@@ -320,6 +325,15 @@ class User extends $pb.GeneratedMessage {
   $core.bool hasPositionAt() => $_has(7);
   @$pb.TagNumber(8)
   void clearPositionAt() => clearField(8);
+
+  @$pb.TagNumber(9)
+  $core.String get shortMessage => $_getSZ(8);
+  @$pb.TagNumber(9)
+  set shortMessage($core.String v) { $_setString(8, v); }
+  @$pb.TagNumber(9)
+  $core.bool hasShortMessage() => $_has(8);
+  @$pb.TagNumber(9)
+  void clearShortMessage() => clearField(9);
 }
 
 class AnonymousSignUpRequest extends $pb.GeneratedMessage {
@@ -1225,6 +1239,108 @@ class ArriveDestResponse extends $pb.GeneratedMessage {
   @$core.pragma('dart2js:noInline')
   static ArriveDestResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ArriveDestResponse>(create);
   static ArriveDestResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  User get user => $_getN(0);
+  @$pb.TagNumber(1)
+  set user(User v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasUser() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUser() => clearField(1);
+  @$pb.TagNumber(1)
+  User ensureUser() => $_ensure(0);
+}
+
+class UpdateShortMessageRequest extends $pb.GeneratedMessage {
+  factory UpdateShortMessageRequest({
+    $core.String? shortMessage,
+  }) {
+    final $result = create();
+    if (shortMessage != null) {
+      $result.shortMessage = shortMessage;
+    }
+    return $result;
+  }
+  UpdateShortMessageRequest._() : super();
+  factory UpdateShortMessageRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory UpdateShortMessageRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'UpdateShortMessageRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'Server'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'shortMessage', protoName: 'shortMessage')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  UpdateShortMessageRequest clone() => UpdateShortMessageRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  UpdateShortMessageRequest copyWith(void Function(UpdateShortMessageRequest) updates) => super.copyWith((message) => updates(message as UpdateShortMessageRequest)) as UpdateShortMessageRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static UpdateShortMessageRequest create() => UpdateShortMessageRequest._();
+  UpdateShortMessageRequest createEmptyInstance() => create();
+  static $pb.PbList<UpdateShortMessageRequest> createRepeated() => $pb.PbList<UpdateShortMessageRequest>();
+  @$core.pragma('dart2js:noInline')
+  static UpdateShortMessageRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UpdateShortMessageRequest>(create);
+  static UpdateShortMessageRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get shortMessage => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set shortMessage($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasShortMessage() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearShortMessage() => clearField(1);
+}
+
+class UpdateShortMessageResponse extends $pb.GeneratedMessage {
+  factory UpdateShortMessageResponse({
+    User? user,
+  }) {
+    final $result = create();
+    if (user != null) {
+      $result.user = user;
+    }
+    return $result;
+  }
+  UpdateShortMessageResponse._() : super();
+  factory UpdateShortMessageResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory UpdateShortMessageResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'UpdateShortMessageResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'Server'), createEmptyInstance: create)
+    ..aOM<User>(1, _omitFieldNames ? '' : 'user', subBuilder: User.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  UpdateShortMessageResponse clone() => UpdateShortMessageResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  UpdateShortMessageResponse copyWith(void Function(UpdateShortMessageResponse) updates) => super.copyWith((message) => updates(message as UpdateShortMessageResponse)) as UpdateShortMessageResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static UpdateShortMessageResponse create() => UpdateShortMessageResponse._();
+  UpdateShortMessageResponse createEmptyInstance() => create();
+  static $pb.PbList<UpdateShortMessageResponse> createRepeated() => $pb.PbList<UpdateShortMessageResponse>();
+  @$core.pragma('dart2js:noInline')
+  static UpdateShortMessageResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UpdateShortMessageResponse>(create);
+  static UpdateShortMessageResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
   User get user => $_getN(0);

@@ -49,6 +49,7 @@ const User$json = {
     {'1': 'lat', '3': 6, '4': 1, '5': 1, '9': 2, '10': 'lat', '17': true},
     {'1': 'lon', '3': 7, '4': 1, '5': 1, '9': 3, '10': 'lon', '17': true},
     {'1': 'positionAt', '3': 8, '4': 1, '5': 9, '9': 4, '10': 'positionAt', '17': true},
+    {'1': 'shortMessage', '3': 9, '4': 1, '5': 9, '9': 5, '10': 'shortMessage', '17': true},
   ],
   '8': [
     {'1': '_shareGroup'},
@@ -56,6 +57,7 @@ const User$json = {
     {'1': '_lat'},
     {'1': '_lon'},
     {'1': '_positionAt'},
+    {'1': '_shortMessage'},
   ],
 };
 
@@ -65,8 +67,9 @@ final $typed_data.Uint8List userDescriptor = $convert.base64Decode(
     'gDIAEoCFIJaXNBcnJpdmVkEjcKCnNoYXJlR3JvdXAYBCABKAsyEi5TZXJ2ZXIuU2hhcmVHcm91'
     'cEgAUgpzaGFyZUdyb3VwiAEBEicKDHNoYXJlR3JvdXBJZBgFIAEoBEgBUgxzaGFyZUdyb3VwSW'
     'SIAQESFQoDbGF0GAYgASgBSAJSA2xhdIgBARIVCgNsb24YByABKAFIA1IDbG9uiAEBEiMKCnBv'
-    'c2l0aW9uQXQYCCABKAlIBFIKcG9zaXRpb25BdIgBAUINCgtfc2hhcmVHcm91cEIPCg1fc2hhcm'
-    'VHcm91cElkQgYKBF9sYXRCBgoEX2xvbkINCgtfcG9zaXRpb25BdA==');
+    'c2l0aW9uQXQYCCABKAlIBFIKcG9zaXRpb25BdIgBARInCgxzaG9ydE1lc3NhZ2UYCSABKAlIBV'
+    'IMc2hvcnRNZXNzYWdliAEBQg0KC19zaGFyZUdyb3VwQg8KDV9zaGFyZUdyb3VwSWRCBgoEX2xh'
+    'dEIGCgRfbG9uQg0KC19wb3NpdGlvbkF0Qg8KDV9zaG9ydE1lc3NhZ2U=');
 
 @$core.Deprecated('Use anonymousSignUpRequestDescriptor instead')
 const AnonymousSignUpRequest$json = {
@@ -288,4 +291,30 @@ const ArriveDestResponse$json = {
 /// Descriptor for `ArriveDestResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List arriveDestResponseDescriptor = $convert.base64Decode(
     'ChJBcnJpdmVEZXN0UmVzcG9uc2USIAoEdXNlchgBIAEoCzIMLlNlcnZlci5Vc2VyUgR1c2Vy');
+
+@$core.Deprecated('Use updateShortMessageRequestDescriptor instead')
+const UpdateShortMessageRequest$json = {
+  '1': 'UpdateShortMessageRequest',
+  '2': [
+    {'1': 'shortMessage', '3': 1, '4': 1, '5': 9, '10': 'shortMessage'},
+  ],
+};
+
+/// Descriptor for `UpdateShortMessageRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List updateShortMessageRequestDescriptor = $convert.base64Decode(
+    'ChlVcGRhdGVTaG9ydE1lc3NhZ2VSZXF1ZXN0EiIKDHNob3J0TWVzc2FnZRgBIAEoCVIMc2hvcn'
+    'RNZXNzYWdl');
+
+@$core.Deprecated('Use updateShortMessageResponseDescriptor instead')
+const UpdateShortMessageResponse$json = {
+  '1': 'UpdateShortMessageResponse',
+  '2': [
+    {'1': 'user', '3': 1, '4': 1, '5': 11, '6': '.Server.User', '10': 'user'},
+  ],
+};
+
+/// Descriptor for `UpdateShortMessageResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List updateShortMessageResponseDescriptor = $convert.base64Decode(
+    'ChpVcGRhdGVTaG9ydE1lc3NhZ2VSZXNwb25zZRIgCgR1c2VyGAEgASgLMgwuU2VydmVyLlVzZX'
+    'JSBHVzZXI=');
 
