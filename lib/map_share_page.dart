@@ -141,7 +141,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
         int minutes = difference.inMinutes;
         int seconds = difference.inSeconds % 60;
         setState(() {
-          remainingTimeText = "残り $minutes分$seconds秒";
+          remainingTimeText = "集合まで残り $minutes分$seconds秒";
         });
       }
     });
@@ -462,8 +462,8 @@ class _BottomCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [          // 🔹 待ち合わせ日時
                     Text(
-                      formatDateTime(group!.meetingTime), // ここは動的に変更可能
-                      style: TextStyle(
+                      '${formatDateTime(group!.meetingTime)} 集合', // ここは動的に変更可能
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
