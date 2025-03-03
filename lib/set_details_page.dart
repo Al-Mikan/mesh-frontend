@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mesh_frontend/grpc/grpc_channel_provider.dart';
 import 'package:mesh_frontend/grpc/grpc_service.dart';
+import 'package:mesh_frontend/set_name_page.dart';
 import 'package:mesh_frontend/share_link_page.dart';
 import 'package:mesh_frontend/components/button.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
@@ -32,6 +33,14 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
   final _formKey = GlobalKey<FormState>();
   bool _isSubmitting = false; // 🔹 ローディング制御用
   bool _isDateTimeError = false; // 🔹 日時未選択時のエラー表示
+  String? _selectedIconId;
+  late final List<String> _iconIds;
+
+  @override
+  void initState() {
+    super.initState();
+    _iconIds = _getIconIds();
+  }
 
   @override
   void dispose() {
@@ -125,86 +134,115 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
 
     return Scaffold(
       appBar: CupertinoNavigationBar(middle: const Text('詳細設定')),
-      body: Stack(
-        children: [
-          // 📌 メインのコンテンツ
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                // 🔹 日時選択フィールド
-                GestureDetector(
-                  onTap: _pickDateTime,
-                  child: AbsorbPointer(
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        labelText: '待ち合わせ日時',
-                        hintText: '日付と時間を選択',
-                        suffixIcon: const Icon(Icons.calendar_today),
-                        filled: true,
-                        fillColor: Colors.grey[100],
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+      body: SizedBox(
+        height: double.infinity,
+        child: Stack(
+          children: [
+            // 📌 メインのコンテンツ
+            SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    // 🔹 日時選択フィールド
+                    GestureDetector(
+                      onTap: _pickDateTime,
+                      child: AbsorbPointer(
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            labelText: '待ち合わせ日時',
+                            hintText: '日付と時間を選択',
+                            suffixIcon: const Icon(Icons.calendar_today),
+                            filled: true,
+                            fillColor: Colors.grey[100],
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            errorText: _isDateTimeError ? '日時を選択してください' : null,
+                          ),
+                          controller: TextEditingController(text: displayDateTime),
                         ),
-                        errorText: _isDateTimeError ? '日時を選択してください' : null,
-                      ),
-                      controller: TextEditingController(text: displayDateTime),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 42),
-
-                // 🔹 名前入力フォーム
-                Form(
-                  key: _formKey,
-                  child: TextFormField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      labelText: '名前を入力',
-                      hintText: '例: たかし',
-                      prefixIcon: const Icon(Icons.person),
-                      filled: true,
-                      fillColor: Colors.grey[100],
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return '名前を入力してください';
-                      }
-                      return null;
-                    },
-                  ),
+                    const SizedBox(height: 42),
+              
+                    // 🔹 名前入力フォーム
+                    Form(
+                      key: _formKey,
+                      child: TextFormField(
+                        controller: _nameController,
+                        decoration: InputDecoration(
+                          labelText: '名前を入力',
+                          hintText: '例: たかし',
+                          prefixIcon: const Icon(Icons.person),
+                          filled: true,
+                          fillColor: Colors.grey[100],
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return '名前を入力してください';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    const Text(
+                      'アイコンを選択',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: _iconIds.map((iconId) => UserIconButton(
+                        iconId: iconId,
+                        isSelected: _selectedIconId == iconId,
+                        onTap: () => setState(() => _selectedIconId = iconId),
+                      )).toList(),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 30),
-              ],
+              ),
             ),
-          ),
-
-          // 📌 「次へ」ボタンを `Positioned` で調整
-          Positioned(
-            bottom: 80, // 🔹 画面下から少し上に配置
-            left: 24,
-            right: 24,
-            child:
-                _isSubmitting
-                    ? const Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          Color(0xFFFAE3E2),
+        
+            // 📌 「次へ」ボタンを `Positioned` で調整
+            Positioned(
+              bottom: 80, // 🔹 画面下から少し上に配置
+              left: 24,
+              right: 24,
+              child:
+                  _isSubmitting
+                      ? const Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Color(0xFFFAE3E2),
+                          ),
                         ),
+                      )
+                      : OriginalButton(
+                        text: "リンクを作成する",
+                        onPressed: _submitDetails,
+                        fill: true,
                       ),
-                    )
-                    : OriginalButton(
-                      text: "リンクを作成する",
-                      onPressed: _submitDetails,
-                      fill: true,
-                    ),
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  List<String> _getIconIds() {
+    final iconFiles = [
+      'crocodile.jpg',
+      'monkey.jpg',
+      'pig.jpg',
+      'saurus.jpg'
+    ];
+    return iconFiles.map((file) => file.split('.').first).toList();
   }
 }

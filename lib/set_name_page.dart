@@ -18,7 +18,14 @@ class SetNamePage extends ConsumerStatefulWidget {
 class _SetNamePageState extends ConsumerState<SetNamePage> {
   final _nameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  String? _selectedIconId;
+  late final List<String> _iconIds;
 
+  @override
+  void initState() {
+    super.initState();
+    _iconIds = _getIconIds();
+  }
   @override
   void dispose() {
     _nameController.dispose();
@@ -96,7 +103,22 @@ class _SetNamePageState extends ConsumerState<SetNamePage> {
                     },
                   ),
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 30),
+                const Text(
+                  'アイコンを選択',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: _iconIds.map((iconId) => UserIconButton(
+                    iconId: iconId,
+                    isSelected: _selectedIconId == iconId,
+                    onTap: () => setState(() => _selectedIconId = iconId),
+                  )).toList(),
+                ),
+                const SizedBox(height: 20),
               ],
             ),
             const Spacer(), // ✅ 下部のスペースを確保
@@ -105,6 +127,54 @@ class _SetNamePageState extends ConsumerState<SetNamePage> {
               child: OriginalButton(text: '次へ', onPressed: _submit),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  List<String> _getIconIds() {
+    final iconFiles = [
+      'crocodile.jpg',
+      'monkey.jpg',
+      'pig.jpg',
+      'saurus.jpg'
+    ];
+    return iconFiles.map((file) => file.split('.').first).toList();
+  }
+
+}
+
+class UserIconButton extends StatelessWidget {
+  final String iconId;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const UserIconButton({
+    super.key,
+    required this.iconId,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 70,
+        height: 70,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: isSelected ? Colors.orange : Colors.transparent,
+            width: 2,
+          ),
+        ),
+        child: ClipOval(
+          child: Image.asset(
+            'assets/images/user_icons/$iconId.jpg',
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );

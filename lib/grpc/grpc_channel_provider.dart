@@ -3,7 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final grpcChannelProvider = Provider.autoDispose<ClientChannel>((ref) {
   final channel =
-      true
+      false
           ? ClientChannel(
             'localhost',
             port: 8080,
