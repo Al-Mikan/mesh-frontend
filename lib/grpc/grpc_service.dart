@@ -17,10 +17,14 @@ class GrpcService {
   static Future<AnonymousSignUpResponse> anonymousSignUp(
     ClientChannel channel,
     String name,
+    String iconID,
   ) async {
     final client = ServiceClient(channel);
     final res = await client.anonymousSignUp(
-      AnonymousSignUpRequest(name: name),
+      AnonymousSignUpRequest(
+        name: name,
+        iconID: iconID
+      ),
     );
     return res;
   }

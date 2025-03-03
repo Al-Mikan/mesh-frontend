@@ -44,6 +44,7 @@ class _SetNamePageState extends ConsumerState<SetNamePage> {
       final anonymousSignUpRes = await GrpcService.anonymousSignUp(
         channel,
         userName,
+        _selectedIconId!,
       );
       final joinShareGroupRes = await GrpcService.joinShareGroupRequest(
         channel,

@@ -96,6 +96,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
     var anonymousSignUpRes = await GrpcService.anonymousSignUp(
       channel,
       userName,
+      _selectedIconId!,
     );
 
     final createShareGroupRes = await GrpcService.createShareGroup(
