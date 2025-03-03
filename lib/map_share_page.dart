@@ -72,12 +72,12 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
         channel,
         widget.groupId,
       );
-
       if (mounted) {
         setState(() {
           group = res.shareGroup;
         });
         _setCustomMarkers();
+        _fetchCurrentUser();
         if (_checkAllArrived()) {
           //groupIdを削除
           final prefs = await SharedPreferences.getInstance();
@@ -86,6 +86,25 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
         }
       }
     });
+  }
+
+  //getCurrentUserを呼び出す
+  Future<void> _fetchCurrentUser() async {
+    if (accessToken == null) return;
+
+    final channel = ref.read(grpcChannelProvider);
+    final res = await GrpcService.getCurrentUser(channel, accessToken!);
+
+    if (res.user != null && mounted) {
+      final userJson = res.user.toProto3Json() as Map<String, dynamic>?;
+
+      setState(() {
+        hasArrived =
+            userJson != null &&
+            userJson.containsKey('isArrived') &&
+            res.user.isArrived;
+      });
+    }
   }
 
   void _navigateToAllGatheredPage() {
