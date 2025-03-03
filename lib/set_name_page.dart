@@ -19,6 +19,7 @@ class _SetNamePageState extends ConsumerState<SetNamePage> {
   final _nameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   String? _selectedIconId;
+  String? _selectedIconError;
   late final List<String> _iconIds;
 
   @override
@@ -33,7 +34,10 @@ class _SetNamePageState extends ConsumerState<SetNamePage> {
   }
 
   void _submit() async {
-    if (_formKey.currentState!.validate()) {
+    setState(() {
+      _selectedIconError = _selectedIconId == null ? 'アイコンを選択してください' : null;
+    });
+    if (_formKey.currentState!.validate() && _selectedIconId != null) {
       final userName = _nameController.text.trim();
 
       final channel = ref.read(grpcChannelProvider);
@@ -75,6 +79,7 @@ class _SetNamePageState extends ConsumerState<SetNamePage> {
           children: <Widget>[
             const Spacer(), // ✅ 上部のスペースを確保し、フォームを中央寄せ
             Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
                   'あなたの名前を入力してください',
@@ -109,10 +114,17 @@ class _SetNamePageState extends ConsumerState<SetNamePage> {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
+                if (_selectedIconError != null)
+                  Text(
+                    _selectedIconError!,
+                    style: const TextStyle(color: Colors.red, fontSize: 12),
+                  ),
+                const SizedBox(height: 10),
                 Wrap(
                   spacing: 12,
                   runSpacing: 12,
-                  children: _iconIds.map((iconId) => UserIconButton(
+                  children:
+                      _iconIds.map((iconId) => UserIconButton(
                     iconId: iconId,
                     isSelected: _selectedIconId == iconId,
                     onTap: () => setState(() => _selectedIconId = iconId),
@@ -134,10 +146,14 @@ class _SetNamePageState extends ConsumerState<SetNamePage> {
 
   List<String> _getIconIds() {
     final iconFiles = [
+      'ahiru.jpg',
+      'beetle.jpg',
       'crocodile.jpg',
       'monkey.jpg',
+      'penguin.jpg',
       'pig.jpg',
-      'saurus.jpg'
+      'saurus.jpg',
+      'sunflower.jpg'
     ];
     return iconFiles.map((file) => file.split('.').first).toList();
   }
@@ -169,6 +185,13 @@ class UserIconButton extends StatelessWidget {
             color: isSelected ? Colors.orange : Colors.transparent,
             width: 2,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(2, 2),
+            ),
+          ],
         ),
         child: ClipOval(
           child: Image.asset(

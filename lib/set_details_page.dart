@@ -34,6 +34,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
   bool _isSubmitting = false; // 🔹 ローディング制御用
   bool _isDateTimeError = false; // 🔹 日時未選択時のエラー表示
   String? _selectedIconId;
+  String? _selectedIconError;
   late final List<String> _iconIds;
 
   @override
@@ -68,10 +69,16 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
 
   /// 📌 「次へ」ボタンを押したとき
   void _submitDetails() async {
+    // すべてのバリデーションをまとめて実行
     setState(() {
-      _isDateTimeError = _selectedDateTime == null; // 日時未選択ならエラー
+      _isDateTimeError = _selectedDateTime == null;
+      _selectedIconError = _selectedIconId == null ? 'アイコンを選択してください' : null;
     });
-    if (!_formKey.currentState!.validate() || _selectedDateTime == null) {
+
+    // バリデーションエラーがある場合は処理を中断
+    if (!_formKey.currentState!.validate() || 
+        _selectedDateTime == null || 
+        _selectedIconId == null) {
       return;
     }
 
@@ -141,7 +148,10 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
             // 📌 メインのコンテンツ
             SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24.0),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 40,
+                  horizontal: 24.0,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
@@ -161,12 +171,14 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                             ),
                             errorText: _isDateTimeError ? '日時を選択してください' : null,
                           ),
-                          controller: TextEditingController(text: displayDateTime),
+                          controller: TextEditingController(
+                            text: displayDateTime,
+                          ),
                         ),
                       ),
                     ),
                     const SizedBox(height: 42),
-              
+
                     // 🔹 名前入力フォーム
                     Form(
                       key: _formKey,
@@ -193,23 +205,43 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                     const SizedBox(height: 30),
                     const Text(
                       'アイコンを選択',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
+                    const SizedBox(height: 10),
+                    if (_selectedIconError != null)
+                      Text(
+                        _selectedIconError!,
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 12,
+                        ),
+                      ),
                     const SizedBox(height: 10),
                     Wrap(
                       spacing: 12,
                       runSpacing: 12,
-                      children: _iconIds.map((iconId) => UserIconButton(
-                        iconId: iconId,
-                        isSelected: _selectedIconId == iconId,
-                        onTap: () => setState(() => _selectedIconId = iconId),
-                      )).toList(),
+                      children:
+                          _iconIds
+                              .map(
+                                (iconId) => UserIconButton(
+                                  iconId: iconId,
+                                  isSelected: _selectedIconId == iconId,
+                                  onTap:
+                                      () => setState(
+                                        () => _selectedIconId = iconId,
+                                      ),
+                                ),
+                              )
+                              .toList(),
                     ),
                   ],
                 ),
               ),
             ),
-        
+
             // 📌 「次へ」ボタンを `Positioned` で調整
             Positioned(
               bottom: 80, // 🔹 画面下から少し上に配置
@@ -238,10 +270,14 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
 
   List<String> _getIconIds() {
     final iconFiles = [
+      'ahiru.jpg',
+      'beetle.jpg',
       'crocodile.jpg',
       'monkey.jpg',
+      'penguin.jpg',
       'pig.jpg',
-      'saurus.jpg'
+      'saurus.jpg',
+      'sunflower.jpg',
     ];
     return iconFiles.map((file) => file.split('.').first).toList();
   }
