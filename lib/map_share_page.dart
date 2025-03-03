@@ -461,14 +461,6 @@ class _BottomCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [          // 🔹 待ち合わせ日時
-                    Text(
-                      '${formatDateTime(group!.meetingTime)} 集合', // ここは動的に変更可能
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    // 残り時間の表示
                     Row(
                       children: [
                         const Icon(
@@ -477,6 +469,19 @@ class _BottomCard extends StatelessWidget {
                           color: Colors.red,
                         ),
                         const SizedBox(width: 6),
+                        Text(
+                          '${formatDateTime(group!.meetingTime)} 集合', // ここは動的に変更可能
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    // 残り時間の表示
+                    Row(
+                      children: [
+                        const SizedBox(width: 32),
                         Text(
                           remainingTimeText,
                           style: const TextStyle(
@@ -487,6 +492,7 @@ class _BottomCard extends StatelessWidget {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 8),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -514,17 +520,16 @@ class _BottomCard extends StatelessWidget {
                           child: Text(
                             group!.address, // 住所を表示
                             style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black54,
-                            ),
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 8),
                     const Text(
                       "メンバーへひとこと",
                       style: TextStyle(
