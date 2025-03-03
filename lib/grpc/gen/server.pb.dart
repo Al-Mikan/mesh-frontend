@@ -183,6 +183,7 @@ class User extends $pb.GeneratedMessage {
     $core.double? lon,
     $core.String? positionAt,
     $core.String? shortMessage,
+    $core.String? iconID,
   }) {
     final $result = create();
     if (id != null) {
@@ -212,6 +213,9 @@ class User extends $pb.GeneratedMessage {
     if (shortMessage != null) {
       $result.shortMessage = shortMessage;
     }
+    if (iconID != null) {
+      $result.iconID = iconID;
+    }
     return $result;
   }
   User._() : super();
@@ -228,6 +232,7 @@ class User extends $pb.GeneratedMessage {
     ..a<$core.double>(7, _omitFieldNames ? '' : 'lon', $pb.PbFieldType.OD)
     ..aOS(8, _omitFieldNames ? '' : 'positionAt', protoName: 'positionAt')
     ..aOS(9, _omitFieldNames ? '' : 'shortMessage', protoName: 'shortMessage')
+    ..aOS(10, _omitFieldNames ? '' : 'iconID', protoName: 'iconID')
     ..hasRequiredFields = false
   ;
 
@@ -334,15 +339,28 @@ class User extends $pb.GeneratedMessage {
   $core.bool hasShortMessage() => $_has(8);
   @$pb.TagNumber(9)
   void clearShortMessage() => clearField(9);
+
+  @$pb.TagNumber(10)
+  $core.String get iconID => $_getSZ(9);
+  @$pb.TagNumber(10)
+  set iconID($core.String v) { $_setString(9, v); }
+  @$pb.TagNumber(10)
+  $core.bool hasIconID() => $_has(9);
+  @$pb.TagNumber(10)
+  void clearIconID() => clearField(10);
 }
 
 class AnonymousSignUpRequest extends $pb.GeneratedMessage {
   factory AnonymousSignUpRequest({
     $core.String? name,
+    $core.String? iconID,
   }) {
     final $result = create();
     if (name != null) {
       $result.name = name;
+    }
+    if (iconID != null) {
+      $result.iconID = iconID;
     }
     return $result;
   }
@@ -352,6 +370,7 @@ class AnonymousSignUpRequest extends $pb.GeneratedMessage {
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'AnonymousSignUpRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'Server'), createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'name')
+    ..aOS(2, _omitFieldNames ? '' : 'iconID', protoName: 'iconID')
     ..hasRequiredFields = false
   ;
 
@@ -384,6 +403,15 @@ class AnonymousSignUpRequest extends $pb.GeneratedMessage {
   $core.bool hasName() => $_has(0);
   @$pb.TagNumber(1)
   void clearName() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get iconID => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set iconID($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasIconID() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearIconID() => clearField(2);
 }
 
 class AnonymousSignUpResponse extends $pb.GeneratedMessage {

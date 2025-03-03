@@ -50,6 +50,7 @@ const User$json = {
     {'1': 'lon', '3': 7, '4': 1, '5': 1, '9': 3, '10': 'lon', '17': true},
     {'1': 'positionAt', '3': 8, '4': 1, '5': 9, '9': 4, '10': 'positionAt', '17': true},
     {'1': 'shortMessage', '3': 9, '4': 1, '5': 9, '9': 5, '10': 'shortMessage', '17': true},
+    {'1': 'iconID', '3': 10, '4': 1, '5': 9, '10': 'iconID'},
   ],
   '8': [
     {'1': '_shareGroup'},
@@ -68,20 +69,23 @@ final $typed_data.Uint8List userDescriptor = $convert.base64Decode(
     'cEgAUgpzaGFyZUdyb3VwiAEBEicKDHNoYXJlR3JvdXBJZBgFIAEoBEgBUgxzaGFyZUdyb3VwSW'
     'SIAQESFQoDbGF0GAYgASgBSAJSA2xhdIgBARIVCgNsb24YByABKAFIA1IDbG9uiAEBEiMKCnBv'
     'c2l0aW9uQXQYCCABKAlIBFIKcG9zaXRpb25BdIgBARInCgxzaG9ydE1lc3NhZ2UYCSABKAlIBV'
-    'IMc2hvcnRNZXNzYWdliAEBQg0KC19zaGFyZUdyb3VwQg8KDV9zaGFyZUdyb3VwSWRCBgoEX2xh'
-    'dEIGCgRfbG9uQg0KC19wb3NpdGlvbkF0Qg8KDV9zaG9ydE1lc3NhZ2U=');
+    'IMc2hvcnRNZXNzYWdliAEBEhYKBmljb25JRBgKIAEoCVIGaWNvbklEQg0KC19zaGFyZUdyb3Vw'
+    'Qg8KDV9zaGFyZUdyb3VwSWRCBgoEX2xhdEIGCgRfbG9uQg0KC19wb3NpdGlvbkF0Qg8KDV9zaG'
+    '9ydE1lc3NhZ2U=');
 
 @$core.Deprecated('Use anonymousSignUpRequestDescriptor instead')
 const AnonymousSignUpRequest$json = {
   '1': 'AnonymousSignUpRequest',
   '2': [
     {'1': 'name', '3': 1, '4': 1, '5': 9, '10': 'name'},
+    {'1': 'iconID', '3': 2, '4': 1, '5': 9, '10': 'iconID'},
   ],
 };
 
 /// Descriptor for `AnonymousSignUpRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List anonymousSignUpRequestDescriptor = $convert.base64Decode(
-    'ChZBbm9ueW1vdXNTaWduVXBSZXF1ZXN0EhIKBG5hbWUYASABKAlSBG5hbWU=');
+    'ChZBbm9ueW1vdXNTaWduVXBSZXF1ZXN0EhIKBG5hbWUYASABKAlSBG5hbWUSFgoGaWNvbklEGA'
+    'IgASgJUgZpY29uSUQ=');
 
 @$core.Deprecated('Use anonymousSignUpResponseDescriptor instead')
 const AnonymousSignUpResponse$json = {
