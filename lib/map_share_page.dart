@@ -18,6 +18,7 @@ import 'package:mesh_frontend/grpc/grpc_channel_provider.dart';
 import 'package:mesh_frontend/grpc/grpc_service.dart';
 import 'package:mesh_frontend/home_page.dart';
 import 'package:mesh_frontend/utils/format_date.dart';
+import 'package:mesh_frontend/utils/googlemaps_direction.dart';
 import 'package:mesh_frontend/utils/location_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mesh_frontend/components/custom_user_pin.dart';
@@ -49,6 +50,11 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
   Timer? countdownTimer;
   String remainingTimeText = "計算中..."; // 初期値
 
+  //経路の時間
+  late GoogleMapsDirections directionsService;
+  TravelTime? travelTime;
+  bool isFetchedDirections = false;
+
   @override
   void initState() {
     super.initState();
@@ -61,6 +67,8 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
   Future<void> _loadAccessToken() async {
     final prefs = await SharedPreferences.getInstance();
     accessToken = prefs.getString('accessToken');
+    const apiKay = String.fromEnvironment('GOOGLE_MAPS_API_KEY');
+    directionsService = GoogleMapsDirections(apiKey: apiKay);
   }
 
   Future<void> _fetchGroup() async {
@@ -77,6 +85,9 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
         setState(() {
           group = res.shareGroup;
         });
+        if (_currentLocation != null && travelTime == null) {
+          await _calculateTravelTimes();
+        }
         _setCustomMarkers();
         _fetchCurrentUser();
         if (_checkAllArrived()) {
@@ -142,7 +153,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
         int hours = difference.inHours % 24;
         int minutes = difference.inMinutes % 60;
         int seconds = difference.inSeconds % 60;
-        
+
         String timeText = "集合まで残り ";
         if (days > 0) {
           timeText += "$days日";
@@ -154,12 +165,30 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
           timeText += "$minutes分";
         }
         timeText += "$seconds秒";
-        
+
         setState(() {
           remainingTimeText = timeText;
         });
       }
     });
+  }
+
+  // 集合場所と現在地との移動時間を計算
+  Future<void> _calculateTravelTimes() async {
+    if (_currentLocation == null || group == null) return;
+
+    final times = await directionsService.getTravelTimes(
+      _currentLocation!.latitude,
+      _currentLocation!.longitude,
+      group!.destLat,
+      group!.destLon,
+    );
+
+    if (mounted) {
+      setState(() {
+        travelTime = times;
+      });
+    }
   }
 
   Future<void> _initializeServices() async {
@@ -176,6 +205,9 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
         setState(() {
           _currentLocation = LocationDto.fromJson(data);
         });
+        if (group != null && travelTime == null) {
+          await _calculateTravelTimes();
+        }
 
         if (accessToken != null) {
           final channel = ref.read(grpcChannelProvider);
@@ -433,7 +465,12 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
             bottom: 12,
             left: 12,
             right: 12,
-            child: _BottomCard(group: group, remainingTimeText: remainingTimeText),
+            child: _BottomCard(
+              group: group,
+              remainingTimeText: remainingTimeText,
+              travelTime: travelTime,
+              currentLocation: _currentLocation,
+            ),
           ),
         ],
       ),
@@ -445,10 +482,28 @@ class _BottomCard extends StatelessWidget {
   const _BottomCard({
     required this.group,
     required this.remainingTimeText,
+    this.travelTime,
+    this.currentLocation,
   });
 
   final ShareGroup? group;
   final String remainingTimeText;
+  final TravelTime? travelTime;
+  final LocationDto? currentLocation;
+
+  String _calculateDepartureTime(int? durationMinutes) {
+    if (group == null ||
+        group!.meetingTime.isEmpty ||
+        durationMinutes == null) {
+      return '--:--';
+    }
+
+    final meetingTime = DateTime.parse(group!.meetingTime);
+    final departureTime = meetingTime.subtract(
+      Duration(minutes: durationMinutes),
+    );
+    return '${departureTime.hour}:${departureTime.minute.toString().padLeft(2, '0')}';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -475,7 +530,7 @@ class _BottomCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
-                  children: [      
+                  children: [
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -503,23 +558,19 @@ class _BottomCard extends StatelessWidget {
                           child: Text(
                             group!.address, // 住所を表示
                             style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
-                    ),    
+                    ),
                     const SizedBox(height: 2),
                     Row(
                       children: [
-                        const Icon(
-                          Icons.timer,
-                          size: 24,
-                          color: Colors.red,
-                        ),
+                        const Icon(Icons.timer, size: 24, color: Colors.red),
                         const SizedBox(width: 6),
                         Text(
                           '${formatDateTime(group!.meetingTime)} 集合', // ここは動的に変更可能
@@ -544,7 +595,7 @@ class _BottomCard extends StatelessWidget {
                         ),
                       ],
                     ),
-            
+
                     const SizedBox(height: 4),
                     const Text(
                       "出発するべき時刻",
@@ -558,27 +609,48 @@ class _BottomCard extends StatelessWidget {
                       children: [
                         MapRouteButton(
                           by: '徒歩',
-                          duration: '15分',
-                          departureTime: '22:45',
+                          duration:
+                              travelTime?.walking != null
+                                  ? '${travelTime?.walking}分'
+                                  : '--分',
+                          departureTime: _calculateDepartureTime(
+                            travelTime?.walking,
+                          ),
                           icon: Icons.directions_walk,
+                          onTap: () {},
+                          isCalculated: travelTime != null,
                         ),
                         const SizedBox(width: 8),
                         MapRouteButton(
                           by: '公共交通',
-                          duration: '10分',
-                          departureTime: '22:50',
+                          duration:
+                              travelTime?.transit != null
+                                  ? '${travelTime?.transit}分'
+                                  : '--分',
+                          departureTime: _calculateDepartureTime(
+                            travelTime?.transit,
+                          ),
                           icon: Icons.directions_bus,
+                          onTap: () {},
+                          isCalculated: travelTime != null,
                         ),
                         const SizedBox(width: 8),
                         MapRouteButton(
                           by: '車',
-                          duration: '5分', 
-                          departureTime: '22:55',
+                          duration:
+                              travelTime?.driving != null
+                                  ? '${travelTime?.driving}分'
+                                  : '--分',
+                          departureTime: _calculateDepartureTime(
+                            travelTime?.driving,
+                          ),
                           icon: Icons.directions_car,
+                          onTap: () {},
+                          isCalculated: travelTime != null,
                         ),
                       ],
                     ),
-                    
+
                     const SizedBox(height: 8),
                     const Text(
                       "メンバーへひとこと",
@@ -590,13 +662,18 @@ class _BottomCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     TextField(
                       decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 6,
+                          horizontal: 12,
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Colors.orangeAccent),
+                          borderSide: const BorderSide(
+                            color: Colors.orangeAccent,
+                          ),
                         ),
                         hintText: 'ちょっと遅れる！',
                         hintStyle: const TextStyle(color: Colors.grey),
@@ -609,7 +686,7 @@ class _BottomCard extends StatelessWidget {
                         // 送信処理
                       },
                     ),
-        
+
                     // 🔹 メンバー一覧
                     Theme(
                       data: Theme.of(
@@ -619,11 +696,7 @@ class _BottomCard extends StatelessWidget {
                         tilePadding: EdgeInsets.all(0),
                         title: Row(
                           children: [
-                            Icon(
-                              Icons.people,
-                              size: 24,
-                              color: Colors.blue,
-                            ),
+                            Icon(Icons.people, size: 24, color: Colors.blue),
                             const SizedBox(width: 6),
                             Text(
                               "${group!.users.length}人中 ${group!.users.where((p) => p.isArrived).length}人が到着済み",
@@ -699,53 +772,63 @@ class MapRouteButton extends StatelessWidget {
     required this.duration,
     required this.departureTime,
     required this.icon,
+    this.onTap,
+    this.isCalculated = false,
   });
 
   final String by;
   final String duration;
   final String departureTime;
   final IconData icon;
+  final VoidCallback? onTap;
+  final bool isCalculated;
 
   @override
   Widget build(BuildContext context) {
     return Flexible(
-      child: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: Colors.black12,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // 時間表示
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // 移動手段アイコン
-                  Icon(
-                    icon,
-                    size: 24,
-                    color: Colors.deepOrange,
-                  ),
-                  Text(
-                    departureTime,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: isCalculated ? Colors.black12 : Colors.grey[300],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      icon,
+                      size: 24,
+                      color: isCalculated ? Colors.deepOrange : Colors.grey,
                     ),
+                    Text(
+                      departureTime,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: isCalculated ? Colors.black : Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  '$byで$duration',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: isCalculated ? Colors.grey[700] : Colors.grey,
                   ),
-                ],
-              ),
-              Text(
-                '$byで$duration',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey[700]),
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
