@@ -138,10 +138,25 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
           countdownTimer?.cancel(); // タイマー停止
         });
       } else {
-        int minutes = difference.inMinutes;
+        int days = difference.inDays;
+        int hours = difference.inHours % 24;
+        int minutes = difference.inMinutes % 60;
         int seconds = difference.inSeconds % 60;
+        
+        String timeText = "集合まで残り ";
+        if (days > 0) {
+          timeText += "$days日";
+        }
+        if (hours > 0) {
+          timeText += "$hours時間";
+        }
+        if (minutes > 0) {
+          timeText += "$minutes分";
+        }
+        timeText += "$seconds秒";
+        
         setState(() {
-          remainingTimeText = "集合まで残り $minutes分$seconds秒";
+          remainingTimeText = timeText;
         });
       }
     });
@@ -460,39 +475,7 @@ class _BottomCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
-                  children: [          // 🔹 待ち合わせ日時
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.timer,
-                          size: 24,
-                          color: Colors.red,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          '${formatDateTime(group!.meetingTime)} 集合', // ここは動的に変更可能
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    // 残り時間の表示
-                    Row(
-                      children: [
-                        const SizedBox(width: 32),
-                        Text(
-                          remainingTimeText,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black54,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
+                  children: [      
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -520,7 +503,7 @@ class _BottomCard extends StatelessWidget {
                           child: Text(
                             group!.address, // 住所を表示
                             style: const TextStyle(
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                             maxLines: 2,
@@ -528,23 +511,67 @@ class _BottomCard extends StatelessWidget {
                           ),
                         ),
                       ],
+                    ),    
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.timer,
+                          size: 24,
+                          color: Colors.red,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          '${formatDateTime(group!.meetingTime)} 集合', // ここは動的に変更可能
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    // 残り時間の表示
+                    Row(
+                      children: [
+                        const SizedBox(width: 32),
+                        Text(
+                          remainingTimeText,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    ),
+            
+                    const SizedBox(height: 4),
+                    const Text(
+                      "出発するべき時刻",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Row(
                       children: [
                         MapRouteButton(
+                          by: '徒歩',
                           duration: '15分',
                           departureTime: '22:45',
                           icon: Icons.directions_walk,
                         ),
                         const SizedBox(width: 8),
                         MapRouteButton(
+                          by: '公共交通',
                           duration: '10分',
                           departureTime: '22:50',
                           icon: Icons.directions_bus,
                         ),
                         const SizedBox(width: 8),
                         MapRouteButton(
+                          by: '車',
                           duration: '5分', 
                           departureTime: '22:55',
                           icon: Icons.directions_car,
@@ -559,7 +586,6 @@ class _BottomCard extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                         color: Colors.black,
                       ),
-                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
                     TextField(
@@ -669,11 +695,13 @@ class _BottomCard extends StatelessWidget {
 class MapRouteButton extends StatelessWidget {
   const MapRouteButton({
     super.key,
+    required this.by,
     required this.duration,
     required this.departureTime,
     required this.icon,
   });
 
+  final String by;
   final String duration;
   final String departureTime;
   final IconData icon;
@@ -688,14 +716,14 @@ class MapRouteButton extends StatelessWidget {
           color: Colors.black12,
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // 時間表示
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // 移動手段アイコン
@@ -704,9 +732,8 @@ class MapRouteButton extends StatelessWidget {
                     size: 24,
                     color: Colors.deepOrange,
                   ),
-                  const SizedBox(width: 4),
                   Text(
-                    duration,
+                    departureTime,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -715,8 +742,8 @@ class MapRouteButton extends StatelessWidget {
                 ],
               ),
               Text(
-                '$departureTimeに出発',
-                style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                '$byで$duration',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey[700]),
               ),
             ],
           ),
