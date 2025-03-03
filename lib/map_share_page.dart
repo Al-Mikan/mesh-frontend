@@ -529,6 +529,29 @@ class _BottomCard extends StatelessWidget {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        MapRouteButton(
+                          duration: '15分',
+                          departureTime: '22:45',
+                          icon: Icons.directions_walk,
+                        ),
+                        const SizedBox(width: 8),
+                        MapRouteButton(
+                          duration: '10分',
+                          departureTime: '22:50',
+                          icon: Icons.directions_bus,
+                        ),
+                        const SizedBox(width: 8),
+                        MapRouteButton(
+                          duration: '5分', 
+                          departureTime: '22:55',
+                          icon: Icons.directions_car,
+                        ),
+                      ],
+                    ),
+                    
                     const SizedBox(height: 8),
                     const Text(
                       "メンバーへひとこと",
@@ -639,6 +662,66 @@ class _BottomCard extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class MapRouteButton extends StatelessWidget {
+  const MapRouteButton({
+    super.key,
+    required this.duration,
+    required this.departureTime,
+    required this.icon,
+  });
+
+  final String duration;
+  final String departureTime;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Flexible(
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: Colors.black12,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // 時間表示
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // 移動手段アイコン
+                  Icon(
+                    icon,
+                    size: 24,
+                    color: Colors.deepOrange,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    duration,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              Text(
+                '$departureTimeに出発',
+                style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
