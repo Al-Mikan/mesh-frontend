@@ -61,6 +61,10 @@ class ServiceClient extends $grpc.Client {
       '/Server.Service/UpdateShortMessage',
       ($0.UpdateShortMessageRequest value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.UpdateShortMessageResponse.fromBuffer(value));
+  static final _$getCurrentShareGroupServerStream = $grpc.ClientMethod<$0.GetCurrentShareGroupRequest, $0.GetCurrentShareGroupResponse>(
+      '/Server.Service/GetCurrentShareGroupServerStream',
+      ($0.GetCurrentShareGroupRequest value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.GetCurrentShareGroupResponse.fromBuffer(value));
 
   ServiceClient($grpc.ClientChannel channel,
       {$grpc.CallOptions? options,
@@ -106,6 +110,10 @@ class ServiceClient extends $grpc.Client {
 
   $grpc.ResponseFuture<$0.UpdateShortMessageResponse> updateShortMessage($0.UpdateShortMessageRequest request, {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$updateShortMessage, request, options: options);
+  }
+
+  $grpc.ResponseStream<$0.GetCurrentShareGroupResponse> getCurrentShareGroupServerStream($0.GetCurrentShareGroupRequest request, {$grpc.CallOptions? options}) {
+    return $createStreamingCall(_$getCurrentShareGroupServerStream, $async.Stream.fromIterable([request]), options: options);
   }
 }
 
@@ -184,6 +192,13 @@ abstract class ServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $0.UpdateShortMessageRequest.fromBuffer(value),
         ($0.UpdateShortMessageResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.GetCurrentShareGroupRequest, $0.GetCurrentShareGroupResponse>(
+        'GetCurrentShareGroupServerStream',
+        getCurrentShareGroupServerStream_Pre,
+        false,
+        true,
+        ($core.List<$core.int> value) => $0.GetCurrentShareGroupRequest.fromBuffer(value),
+        ($0.GetCurrentShareGroupResponse value) => value.writeToBuffer()));
   }
 
   $async.Future<$0.AnonymousSignUpResponse> anonymousSignUp_Pre($grpc.ServiceCall call, $async.Future<$0.AnonymousSignUpRequest> request) async {
@@ -226,6 +241,10 @@ abstract class ServiceBase extends $grpc.Service {
     return updateShortMessage(call, await request);
   }
 
+  $async.Stream<$0.GetCurrentShareGroupResponse> getCurrentShareGroupServerStream_Pre($grpc.ServiceCall call, $async.Future<$0.GetCurrentShareGroupRequest> request) async* {
+    yield* getCurrentShareGroupServerStream(call, await request);
+  }
+
   $async.Future<$0.AnonymousSignUpResponse> anonymousSignUp($grpc.ServiceCall call, $0.AnonymousSignUpRequest request);
   $async.Future<$0.CreateShareGroupResponse> createShareGroup($grpc.ServiceCall call, $0.CreateShareGroupRequest request);
   $async.Future<$0.JoinShareGroupResponse> joinShareGroup($grpc.ServiceCall call, $0.JoinShareGroupRequest request);
@@ -236,4 +255,5 @@ abstract class ServiceBase extends $grpc.Service {
   $async.Future<$0.LeaveShareGroupResponse> leaveShareGroup($grpc.ServiceCall call, $0.LeaveShareGroupRequest request);
   $async.Future<$0.ArriveDestResponse> arriveDest($grpc.ServiceCall call, $0.ArriveDestRequest request);
   $async.Future<$0.UpdateShortMessageResponse> updateShortMessage($grpc.ServiceCall call, $0.UpdateShortMessageRequest request);
+  $async.Stream<$0.GetCurrentShareGroupResponse> getCurrentShareGroupServerStream($grpc.ServiceCall call, $0.GetCurrentShareGroupRequest request);
 }
