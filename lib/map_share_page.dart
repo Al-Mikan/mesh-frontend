@@ -453,7 +453,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
               right: 12,
               child: ArrivalConfirmationCard(onArrived: _onArrived),
             ),
-          if (!(group?.isSharingLocation ?? false))
+          if (!(group?.isSharingLocation ?? true))
             Positioned(
               top: 140,
               left: 12,
