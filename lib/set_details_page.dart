@@ -76,8 +76,8 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
     });
 
     // バリデーションエラーがある場合は処理を中断
-    if (!_formKey.currentState!.validate() || 
-        _selectedDateTime == null || 
+    if (!_formKey.currentState!.validate() ||
+        _selectedDateTime == null ||
         _selectedIconId == null) {
       return;
     }
@@ -215,10 +215,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                     if (_selectedIconError != null)
                       Text(
                         _selectedIconError!,
-                        style: const TextStyle(
-                          color: Colors.red,
-                          fontSize: 12,
-                        ),
+                        style: const TextStyle(color: Colors.red, fontSize: 12),
                       ),
                     const SizedBox(height: 10),
                     Wrap(
@@ -238,31 +235,26 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                               )
                               .toList(),
                     ),
+                    const SizedBox(height: 80),
+                    _isSubmitting
+                        ? const Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Color(0xFFFAE3E2),
+                            ),
+                          ),
+                        )
+                        : OriginalButton(
+                          text: "リンクを作成する",
+                          onPressed: _submitDetails,
+                          fill: true,
+                        ),
                   ],
                 ),
               ),
             ),
 
             // 📌 「次へ」ボタンを `Positioned` で調整
-            Positioned(
-              bottom: 80, // 🔹 画面下から少し上に配置
-              left: 24,
-              right: 24,
-              child:
-                  _isSubmitting
-                      ? const Center(
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Color(0xFFFAE3E2),
-                          ),
-                        ),
-                      )
-                      : OriginalButton(
-                        text: "リンクを作成する",
-                        onPressed: _submitDetails,
-                        fill: true,
-                      ),
-            ),
           ],
         ),
       ),
