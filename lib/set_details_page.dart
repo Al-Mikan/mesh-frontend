@@ -113,6 +113,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
     await prefs.setString('groupId', createShareGroupRes.shareGroup.linkKey);
     await prefs.setString('userName', userName);
     await prefs.setString('accessToken', anonymousSignUpRes.accessToken);
+    await prefs.setInt('userId', anonymousSignUpRes.user.id.toInt());
 
     // ✅ `ShareLinkPage` に遷移し、戻れないようにする
     if (mounted) {
