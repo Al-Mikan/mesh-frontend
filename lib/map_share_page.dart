@@ -90,8 +90,8 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
           channel,
           widget.groupId,
         );
-        // グループ情報を取得(開始前)
         var group = res.shareGroup;
+        // グループ情報を取得(開始前)
         if (!res.shareGroup.isSharingLocation && accessToken != null) {
           final beforeStartRes = await GrpcService.getCurrentShareGroup(
             channel,
