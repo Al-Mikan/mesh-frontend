@@ -34,6 +34,7 @@ class _PinWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 200,
+
       height: 90,
       child: Stack(
         alignment: Alignment.center,
@@ -56,15 +57,33 @@ class _PinWidget extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
+          // ユーザー名（下に白枠テキスト、上に黒テキストの2枚重ね）
           Transform.translate(
             offset: const Offset(0, 30),
-            child: Text(
-              userName,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Text(
+                  userName,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    foreground:
+                        Paint()
+                          ..style = PaintingStyle.stroke
+                          ..strokeWidth = 3
+                          ..color = Colors.white,
+                  ),
+                ),
+                Text(
+                  userName,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ],
             ),
           ),
           if (shortMessage.isNotEmpty)
