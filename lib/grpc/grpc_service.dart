@@ -21,10 +21,7 @@ class GrpcService {
   ) async {
     final client = ServiceClient(channel);
     final res = await client.anonymousSignUp(
-      AnonymousSignUpRequest(
-        name: name,
-        iconID: iconID
-      ),
+      AnonymousSignUpRequest(name: name, iconID: iconID),
     );
     return res;
   }
@@ -95,6 +92,18 @@ class GrpcService {
     final client = ServiceClient(channel);
     final res = await client.arriveDest(
       ArriveDestRequest(),
+      options: CallOptions(metadata: {'token': accessToken}),
+    );
+    return res;
+  }
+
+  static Future<LeaveShareGroupResponse> leaveShareGroup(
+    ClientChannel channel,
+    String accessToken,
+  ) async {
+    final client = ServiceClient(channel);
+    final res = await client.leaveShareGroup(
+      LeaveShareGroupRequest(),
       options: CallOptions(metadata: {'token': accessToken}),
     );
     return res;

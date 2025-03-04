@@ -81,25 +81,28 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
     fetchTimer = Timer.periodic(const Duration(seconds: 3), (
       Timer timer,
     ) async {
-      final res = await GrpcService.getShareGroupByLinkKey(
-        channel,
-        widget.groupId,
-      );
-      if (mounted) {
-        setState(() {
-          group = res.shareGroup;
-        });
-        if (_currentLocation != null && travelTime == null) {
-          await _calculateTravelTimes();
+      try {
+        final res = await GrpcService.getShareGroupByLinkKey(
+          channel,
+          widget.groupId,
+        );
+
+        if (mounted) {
+          setState(() {
+            group = res.shareGroup;
+          });
+          if (_currentLocation != null && travelTime == null) {
+            await _calculateTravelTimes();
+          }
+          _setCustomMarkers();
+          _fetchCurrentUser();
+          if (_checkAllArrived()) {
+            _removeAuthenticationState();
+            _navigateToAllGatheredPage();
+          }
         }
-        _setCustomMarkers();
-        _fetchCurrentUser();
-        if (_checkAllArrived()) {
-          //groupIdを削除
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.remove('groupId');
-          _navigateToAllGatheredPage();
-        }
+      } catch (e) {
+        print(e);
       }
     });
   }
@@ -111,7 +114,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
     final channel = ref.read(grpcChannelProvider);
     final res = await GrpcService.getCurrentUser(channel, accessToken!);
 
-    if (res.user != null && mounted) {
+    if (mounted) {
       final userJson = res.user.toProto3Json() as Map<String, dynamic>?;
 
       setState(() {
@@ -238,11 +241,10 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
   void onTapExit(BuildContext context) async {
     IsolateNameServer.removePortNameMapping(isolateName);
     BackgroundLocator.unRegisterLocationUpdate();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('groupId');
-    await prefs.remove('accessToken');
+
     if (context.mounted) {
-      Navigator.of(context).pushAndRemoveUntil(
+      await _removeAuthenticationState();
+      await Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const HomePage()),
         (Route<dynamic> route) => false, // すべての前のルートを削除
       );
@@ -263,9 +265,10 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
       );
       final lineWidth = (user.id == userId) ? 5 : 5;
       final lineColor = (user.id == userId) ? Colors.orange : Colors.black12;
-      final linePattern = (user.id == userId) 
-          ? <PatternItem>[PatternItem.dash(70), PatternItem.gap(30)]
-          : <PatternItem>[PatternItem.dash(50), PatternItem.gap(50)];
+      final linePattern =
+          (user.id == userId)
+              ? <PatternItem>[PatternItem.dash(70), PatternItem.gap(30)]
+              : <PatternItem>[PatternItem.dash(50), PatternItem.gap(50)];
 
       markers.add(
         Marker(
@@ -381,6 +384,15 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
       return false;
     }
     return group!.users.every((user) => user.isArrived);
+  }
+
+  Future<void> _removeAuthenticationState() async {
+    final channel = ref.read(grpcChannelProvider);
+    await GrpcService.leaveShareGroup(channel, accessToken!);
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('groupId');
+    await prefs.remove('accessToken');
   }
 
   @override
