@@ -343,7 +343,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
       group!.destLon,
     );
 
-    return distance < 50; // 50メートル以内なら到着とみなす
+    return distance < 200; // 200メートル以内なら到着とみなす
   }
 
   /// Haversine Formula で距離を計算
@@ -415,12 +415,44 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_currentLocation == null) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFAE3E2)),
-          ),
+    if (_currentLocation == null || group == null) {
+      return Scaffold(
+        body: Stack(
+          children: [
+            Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFAE3E2)),
+              ),
+            ),
+            Positioned(
+              bottom: 100,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: TextButton(
+                  onPressed: () async {
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.remove('groupId');
+                    await prefs.remove('accessToken');
+                    if (context.mounted) {
+                      await Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => const HomePage()),
+                        (Route<dynamic> route) => false, // すべての前のルートを削除
+                      );
+                    }
+                  },
+                  child: const Text(
+                    '退出してホームに戻る',
+                    style: TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: 16,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       );
     }
@@ -429,16 +461,6 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
       target: LatLng(_currentLocation!.latitude, _currentLocation!.longitude),
       zoom: 14.0,
     );
-
-    if (group == null) {
-      return Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFAE3E2)),
-          ),
-        ),
-      );
-    }
 
     // フォーカスボタンが押されたときの処理
     void onTapFocus() {
