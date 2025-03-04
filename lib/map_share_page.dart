@@ -14,6 +14,7 @@ import 'package:background_locator_2/background_locator.dart';
 import 'package:background_locator_2/location_dto.dart';
 import 'package:mesh_frontend/all_gathered_page.dart';
 import 'package:mesh_frontend/components/custom_goal_pin.dart';
+import 'package:mesh_frontend/components/not_start_card.dart';
 import 'package:mesh_frontend/grpc/gen/server.pb.dart';
 import 'package:mesh_frontend/grpc/grpc_channel_provider.dart';
 import 'package:mesh_frontend/grpc/grpc_service.dart';
@@ -447,10 +448,19 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
           ),
           if (!hasArrived && _isNearMeetingPoint()) // 近くにいるかつ未到着なら表示
             Positioned(
-              top: 120,
+              top: 140,
               left: 12,
               right: 12,
               child: ArrivalConfirmationCard(onArrived: _onArrived),
+            ),
+          if (!(group?.isSharingLocation ?? false))
+            Positioned(
+              top: 140,
+              left: 12,
+              right: 12,
+              child: NotStartCard(
+                startTime: group?.sharingLocationStartTime ?? "",
+              ),
             ),
           if (group != null)
             _TopAddressCard(
