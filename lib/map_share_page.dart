@@ -275,6 +275,8 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
 
       final BitmapDescriptor icon = await CustomUserPin.createCustomMarker(
         user.name,
+        user.iconID,
+        user.shortMessage,
       );
       final lineWidth = (user.id == userId) ? 5 : 5;
       final lineColor = (user.id == userId) ? Colors.orange : Colors.black12;
@@ -290,6 +292,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
           icon: icon,
           infoWindow: InfoWindow(title: user.name),
           zIndex: 1,
+          anchor: const Offset(0.5, 0.5),
         ),
       );
 
@@ -323,6 +326,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
         icon: goalIcon,
         infoWindow: const InfoWindow(title: "待ち合わせ場所"),
         zIndex: 2,
+        anchor: const Offset(0.5, 0.5),
       ),
     );
 

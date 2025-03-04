@@ -1,81 +1,96 @@
-import 'dart:ui' as ui;
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:widget_to_marker/widget_to_marker.dart';
 
+/// カスタムマーカーを生成するクラス
 class CustomUserPin {
-  static Future<BitmapDescriptor> createCustomMarker(String userName) async {
-    final ui.PictureRecorder recorder = ui.PictureRecorder();
-    final Canvas canvas = Canvas(recorder);
-    const double size = 40;
-
-    // **ユーザーごとに固定の色を決める**
-    final Color userColor = _getUserColor(userName);
-
-    // **中央の丸を描画（ユーザー固有の色）**
-    final Paint circlePaint = Paint()..color = userColor;
-    canvas.drawCircle(
-      const Offset(size / 2, size / 2),
-      size / 2.5,
-      circlePaint,
-    );
-
-    // **外枠を描画（完全な不透明な白色）**
-    final Paint borderPaint =
-        Paint()
-          ..color = Colors.white.withOpacity(1.0) // 完全に不透明な白
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 3
-          ..blendMode = BlendMode.srcOver; // 透明にならないようにする
-
-    canvas.drawCircle(
-      const Offset(size / 2, size / 2),
-      size / 2.5,
-      borderPaint,
-    );
-
-    // **ユーザー名の冒頭3文字を取得**
-    String displayText =
-        userName.isNotEmpty
-            ? userName.substring(0, userName.length < 3 ? userName.length : 3)
-            : "？";
-
-    // **ユーザー名を描画**
-    final TextPainter textPainter = TextPainter(
-      text: TextSpan(
-        text: displayText,
-        style: const TextStyle(
-          fontSize: 14, // 少し小さめに調整
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-      textAlign: TextAlign.center,
-    );
-
-    textPainter.layout();
-    textPainter.paint(
-      canvas,
-      Offset((size - textPainter.width) / 2, (size - textPainter.height) / 2),
-    );
-
-    final ui.Image img = await recorder.endRecording().toImage(
-      size.toInt(),
-      size.toInt(),
-    );
-    final ByteData? byteData = await img.toByteData(
-      format: ui.ImageByteFormat.png,
-    );
-    final Uint8List bytes = byteData!.buffer.asUint8List();
-
-    return BitmapDescriptor.bytes(bytes);
+  static Future<BitmapDescriptor> createCustomMarker(
+    String userName,
+    String iconID,
+    String shortMessage,
+  ) async {
+    return await _PinWidget(
+      userName: userName,
+      iconPath: 'assets/images/user_icons/$iconID.jpg',
+      shortMessage: shortMessage,
+    ).toBitmapDescriptor();
   }
+}
 
-  /// **ユーザー名から固定の色を生成**
-  static Color _getUserColor(String userName) {
-    List<Color> colors = Colors.primaries;
-    int hash = userName.codeUnits.fold(0, (prev, code) => prev + code);
-    return colors[hash % colors.length];
+class _PinWidget extends StatelessWidget {
+  const _PinWidget({
+    Key? key,
+    required this.userName,
+    required this.iconPath,
+    required this.shortMessage,
+  }) : super(key: key);
+
+  final String userName;
+  final String iconPath;
+  final String shortMessage;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 300,
+      height: 90,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // 白い枠線
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.white, width: 3),
+              shape: BoxShape.circle,
+            ),
+          ),
+          // アイコン画像
+          ClipOval(
+            child: Image.asset(
+              iconPath,
+              width: 36,
+              height: 36,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Transform.translate(
+            offset: const Offset(42, 0),
+            child: Text(
+              userName,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          if (shortMessage.isNotEmpty)
+            Transform.translate(
+              offset: const Offset(0, -30),
+              child: Card(
+                elevation: 0,
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: BorderSide(color: Colors.grey, width: 0.5),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
+                  child: Text(
+                    shortMessage,
+                    style: const TextStyle(fontSize: 12, color: Colors.black),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }
