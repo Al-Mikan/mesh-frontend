@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'dart:math';
 import 'dart:ui' as ui;
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -21,9 +22,11 @@ import 'package:mesh_frontend/home_page.dart';
 import 'package:mesh_frontend/utils/format_date.dart';
 import 'package:mesh_frontend/utils/googlemaps_direction.dart';
 import 'package:mesh_frontend/utils/location_service.dart';
+import 'package:pull_down_button/pull_down_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mesh_frontend/components/custom_user_pin.dart';
 import 'package:mesh_frontend/components/arrival_confirmation_card.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 //https://www.cloudbuilders.jp/articles/4214/
 class MapSharePage extends ConsumerStatefulWidget {
@@ -450,61 +453,12 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
               right: 12,
               child: ArrivalConfirmationCard(onArrived: _onArrived),
             ),
-          Positioned(
-            top: 60,
-            right: 12,
-            child: Row(
-              children: [
-                // 🔹 招待をコピーするボタン
-                ElevatedButton.icon(
-                  onPressed: () {
-                    Clipboard.setData(
-                      ClipboardData(text: group!.inviteUrl),
-                    ).then((_) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("招待リンクをコピーしました！"),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white, // 🔹 背景を白に
-                    foregroundColor: Colors.black, // 🔹 文字とアイコンを黒に
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 16,
-                    ),
-                  ),
-                  icon: const Icon(Icons.content_copy, size: 20),
-                  label: const Text("招待をコピー", style: TextStyle(fontSize: 14)),
-                ),
-
-                const SizedBox(width: 8), // ボタン間のスペース
-                // 🔹 退出ボタン
-                ElevatedButton.icon(
-                  onPressed: () => onTapExit(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white, // 🔹 背景を白に
-                    foregroundColor: Colors.black, // 🔹 文字とアイコンを黒に
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 16,
-                    ),
-                  ),
-                  icon: const Icon(Icons.exit_to_app, size: 20),
-                  label: const Text("退出", style: TextStyle(fontSize: 14)),
-                ),
-              ],
+          if (group != null)
+            _TopAddressCard(
+              address: group!.address,
+              lat: group!.destLat,
+              lon: group!.destLon,
             ),
-          ),
           Positioned(
             bottom: 12,
             left: 12,
@@ -514,6 +468,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
               remainingTimeText: remainingTimeText,
               travelTime: travelTime,
               currentLocation: _currentLocation,
+              onTapExit: () => onTapExit(context),
             ),
           ),
         ],
@@ -556,18 +511,126 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
   }
 }
 
+class _TopAddressCard extends StatelessWidget {
+  const _TopAddressCard({
+    required this.address,
+    required this.lat,
+    required this.lon,
+  });
+
+  final String address;
+  final double lat;
+  final double lon;
+
+  // 地図アプリを開く
+  void _openMap() async {
+    final Uri googleMapsUri = Uri.parse(
+      "https://www.google.com/maps/search/?api=1&query=$lat,$lon",
+    );
+    final Uri appleMapsUri = Uri.parse("maps://?q=$lat,$lon");
+
+    if (await canLaunchUrl(googleMapsUri)) {
+      await launchUrl(googleMapsUri);
+    } else if (await canLaunchUrl(appleMapsUri)) {
+      await launchUrl(appleMapsUri);
+    } else {
+      debugPrint("地図アプリを開けませんでした");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: 60,
+      left: 12,
+      right: 12,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(32),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.7),
+              borderRadius: BorderRadius.circular(32),
+              border: Border.all(
+                color: Colors.grey.withOpacity(0.3),
+                width: 1.0,
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // 旗アイコン
+                  ShaderMask(
+                    shaderCallback: (Rect bounds) {
+                      return ui.Gradient.linear(
+                        bounds.topCenter,
+                        bounds.bottomCenter,
+                        [
+                          const Color(0xFFF86594), // ピンク
+                          const Color(0xFFFCC373), // オレンジ
+                        ],
+                      );
+                    },
+                    child: const Icon(
+                      Icons.flag,
+                      size: 24,
+                      color: Colors.white, // 白をベースにグラデーションを適用
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+
+                  // 住所
+                  Expanded(
+                    child: Text(
+                      address, // 住所を表示
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+
+                  // 「地図アプリを開く」ボタン（iOS スタイルの外部リンクアイコン）
+                  GestureDetector(
+                    onTap: _openMap,
+                    child: const Padding(
+                      padding: EdgeInsets.only(left: 6),
+                      child: Icon(
+                        Icons.open_in_new, // 🔹 iOS風の外部リンクアイコン
+                        size: 20,
+                        color: Colors.blueGrey,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _BottomCard extends StatelessWidget {
   const _BottomCard({
     required this.group,
     required this.remainingTimeText,
     this.travelTime,
     this.currentLocation,
+    required this.onTapExit,
   });
 
   final ShareGroup? group;
   final String remainingTimeText;
   final TravelTime? travelTime;
   final LocationDto? currentLocation;
+  final VoidCallback onTapExit;
 
   String _calculateDepartureTime(int? durationMinutes) {
     if (group == null ||
@@ -610,59 +673,57 @@ class _BottomCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // 旗アイコン
-                        ShaderMask(
-                          shaderCallback: (Rect bounds) {
-                            return ui.Gradient.linear(
-                              bounds.topCenter,
-                              bounds.bottomCenter,
-                              [
-                                const Color(0xFFF86594), // ピンク
-                                const Color(0xFFFCC373), // オレンジ
-                              ],
-                            );
-                          },
-                          child: const Icon(
-                            Icons.flag,
-                            size: 24,
-                            color: Colors.white, // 白をベースにグラデーションを適用
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        // 住所
-                        Expanded(
-                          child: Text(
-                            group!.address, // 住所を表示
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 2),
-                    Row(
-                      children: [
-                        const Icon(Icons.timer, size: 24, color: Colors.red),
-                        const SizedBox(width: 6),
                         Text(
                           '${formatDateTime(group!.meetingTime)} 集合', // ここは動的に変更可能
                           style: const TextStyle(
-                            fontSize: 18,
+                            fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
+                        ),
+                        const Spacer(),
+                        PullDownButton(
+                          itemBuilder:
+                              (context) => [
+                                PullDownMenuItem(
+                                  onTap: () {
+                                    Clipboard.setData(
+                                      ClipboardData(text: group!.inviteUrl),
+                                    ).then((_) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text("招待リンクをコピーしました！"),
+                                          duration: Duration(seconds: 2),
+                                        ),
+                                      );
+                                    });
+                                  },
+
+                                  title: '招待をコピーする',
+                                  icon: CupertinoIcons.doc_on_clipboard,
+                                ),
+                                PullDownMenuItem(
+                                  onTap: () {
+                                    onTapExit();
+                                  },
+                                  title: 'グループから退出する',
+                                  isDestructive: true,
+                                  icon: CupertinoIcons.delete,
+                                ),
+                              ],
+                          buttonBuilder:
+                              (context, openMenu) => IconButton(
+                                icon: const Icon(Icons.more_vert),
+                                onPressed: openMenu,
+                              ),
                         ),
                       ],
                     ),
                     // 残り時間の表示
                     Row(
                       children: [
-                        const SizedBox(width: 32),
                         Text(
                           remainingTimeText,
                           style: const TextStyle(
@@ -676,7 +737,7 @@ class _BottomCard extends StatelessWidget {
 
                     const SizedBox(height: 4),
                     const Text(
-                      "出発するべき時刻",
+                      "出発目安",
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         color: Colors.black,
