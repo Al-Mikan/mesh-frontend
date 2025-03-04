@@ -1145,21 +1145,12 @@ class LeaveShareGroupRequest extends $pb.GeneratedMessage {
 }
 
 class LeaveShareGroupResponse extends $pb.GeneratedMessage {
-  factory LeaveShareGroupResponse({
-    User? user,
-  }) {
-    final $result = create();
-    if (user != null) {
-      $result.user = user;
-    }
-    return $result;
-  }
+  factory LeaveShareGroupResponse() => create();
   LeaveShareGroupResponse._() : super();
   factory LeaveShareGroupResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory LeaveShareGroupResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'LeaveShareGroupResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'Server'), createEmptyInstance: create)
-    ..aOM<User>(1, _omitFieldNames ? '' : 'user', subBuilder: User.create)
     ..hasRequiredFields = false
   ;
 
@@ -1183,17 +1174,6 @@ class LeaveShareGroupResponse extends $pb.GeneratedMessage {
   @$core.pragma('dart2js:noInline')
   static LeaveShareGroupResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<LeaveShareGroupResponse>(create);
   static LeaveShareGroupResponse? _defaultInstance;
-
-  @$pb.TagNumber(1)
-  User get user => $_getN(0);
-  @$pb.TagNumber(1)
-  set user(User v) { setField(1, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasUser() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearUser() => clearField(1);
-  @$pb.TagNumber(1)
-  User ensureUser() => $_ensure(0);
 }
 
 class ArriveDestRequest extends $pb.GeneratedMessage {

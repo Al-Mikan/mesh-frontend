@@ -265,15 +265,11 @@ final $typed_data.Uint8List leaveShareGroupRequestDescriptor = $convert.base64De
 @$core.Deprecated('Use leaveShareGroupResponseDescriptor instead')
 const LeaveShareGroupResponse$json = {
   '1': 'LeaveShareGroupResponse',
-  '2': [
-    {'1': 'user', '3': 1, '4': 1, '5': 11, '6': '.Server.User', '10': 'user'},
-  ],
 };
 
 /// Descriptor for `LeaveShareGroupResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List leaveShareGroupResponseDescriptor = $convert.base64Decode(
-    'ChdMZWF2ZVNoYXJlR3JvdXBSZXNwb25zZRIgCgR1c2VyGAEgASgLMgwuU2VydmVyLlVzZXJSBH'
-    'VzZXI=');
+    'ChdMZWF2ZVNoYXJlR3JvdXBSZXNwb25zZQ==');
 
 @$core.Deprecated('Use arriveDestRequestDescriptor instead')
 const ArriveDestRequest$json = {
