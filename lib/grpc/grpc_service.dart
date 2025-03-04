@@ -110,13 +110,17 @@ class GrpcService {
   }
 
   // Streamで位置情報を取得
-  static Stream<ShareGroupResponse> getCurrentShareGroupStream(
+  static Stream<GetCurrentShareGroupResponse> getCurrentShareGroupStream(
     ClientChannel channel,
     String accessToken,
   ) async* {
-    final client = ShareServiceClient(channel);
-    final request = GetCurrentShareGroupRequest(accessToken: accessToken);
-    
-    yield* client.getCurrentShareGroupStream(request);
+    final client = ServiceClient(channel);
+    final stream = client.getCurrentShareGroupServerStream(
+      GetCurrentShareGroupRequest(),
+      options: CallOptions(metadata: {'token': accessToken}),
+    );
+    await for (final response in stream) {
+      yield response;
+    }
   }
 }

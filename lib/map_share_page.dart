@@ -40,7 +40,7 @@ class MapSharePage extends ConsumerStatefulWidget {
 
 class _MapSharePageState extends ConsumerState<MapSharePage> {
   late GoogleMapController mapController;
-  StreamSubscription<ShareGroupResponse>? _groupStreamSubscription;
+  StreamSubscription<GetCurrentShareGroupResponse>? _groupStreamSubscription;
   LocationDto? _currentLocation;
   final location = Location();
   static const String isolateName = "LocatorIsolate";
@@ -68,7 +68,6 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
     _loadAccessToken();
     _initializeServices();
     _startCountdownTimer();
-    _setupGroupStream();
   }
 
   Future<void> _loadAccessToken() async {
@@ -77,6 +76,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
     userId = prefs.getInt('userId');
     const apiKay = String.fromEnvironment('GOOGLE_MAPS_API_KEY');
     directionsService = GoogleMapsDirections(apiKey: apiKay);
+    _setupGroupStream();
   }
 
   // ストリームのセットアップ
@@ -374,9 +374,6 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
     try {
       // 🔹 サーバーに到着情報を送信
       await GrpcService.arriveDest(channel, accessToken!);
-
-      // 🔹 最新のグループ情報を取得して画面を更新
-      await _fetchGroup();
     } catch (e) {
       debugPrint("到着処理エラー: $e");
       ScaffoldMessenger.of(context).showSnackBar(
