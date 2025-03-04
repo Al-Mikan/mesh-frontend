@@ -57,7 +57,7 @@ class _SetNamePageState extends ConsumerState<SetNamePage> {
       await prefs.setString('groupId', widget.groupId);
       await prefs.setString('userName', userName);
       await prefs.setString('accessToken', anonymousSignUpRes.accessToken);
-
+      await prefs.setInt('userId', anonymousSignUpRes.user.id.toInt());
       // ✅ `MapSharePage` に遷移し、戻れないようにする
       if (mounted) {
         Navigator.of(context).pushAndRemoveUntil(

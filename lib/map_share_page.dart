@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'dart:math';
 import 'dart:ui' as ui;
 
@@ -45,6 +46,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
   bool hasArrived = false; // 到着済みかどうかのフラグ
   ShareGroup? group;
   String? accessToken;
+  int? userId;
 
   // timer
   Timer? fetchTimer;
@@ -68,6 +70,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
   Future<void> _loadAccessToken() async {
     final prefs = await SharedPreferences.getInstance();
     accessToken = prefs.getString('accessToken');
+    userId = prefs.getInt('userId');
     const apiKay = String.fromEnvironment('GOOGLE_MAPS_API_KEY');
     directionsService = GoogleMapsDirections(apiKey: apiKay);
   }
@@ -258,6 +261,11 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
       final BitmapDescriptor icon = await CustomUserPin.createCustomMarker(
         user.name,
       );
+      final lineWidth = (user.id == userId) ? 5 : 5;
+      final lineColor = (user.id == userId) ? Colors.orange : Colors.black12;
+      final linePattern = (user.id == userId) 
+          ? <PatternItem>[PatternItem.dash(70), PatternItem.gap(30)]
+          : <PatternItem>[PatternItem.dash(50), PatternItem.gap(50)];
 
       markers.add(
         Marker(
@@ -279,13 +287,13 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
         Polyline(
           polylineId: PolylineId('${user.name}_route'),
           points: points,
-          color: Colors.grey,
-          width: 5,
+          color: lineColor,
+          width: lineWidth,
           geodesic: true, // 地球の曲率を考慮
           jointType: JointType.round,
           startCap: Cap.roundCap,
           endCap: Cap.roundCap,
-          patterns: [PatternItem.dash(50), PatternItem.gap(50)],
+          patterns: linePattern,
         ),
       );
     }

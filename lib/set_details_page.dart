@@ -76,8 +76,8 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
     });
 
     // バリデーションエラーがある場合は処理を中断
-    if (!_formKey.currentState!.validate() || 
-        _selectedDateTime == null || 
+    if (!_formKey.currentState!.validate() ||
+        _selectedDateTime == null ||
         _selectedIconId == null) {
       return;
     }
@@ -113,6 +113,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
     await prefs.setString('groupId', createShareGroupRes.shareGroup.linkKey);
     await prefs.setString('userName', userName);
     await prefs.setString('accessToken', anonymousSignUpRes.accessToken);
+    await prefs.setInt('userId', anonymousSignUpRes.user.id.toInt());
 
     // ✅ `ShareLinkPage` に遷移し、戻れないようにする
     if (mounted) {
@@ -215,10 +216,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                     if (_selectedIconError != null)
                       Text(
                         _selectedIconError!,
-                        style: const TextStyle(
-                          color: Colors.red,
-                          fontSize: 12,
-                        ),
+                        style: const TextStyle(color: Colors.red, fontSize: 12),
                       ),
                     const SizedBox(height: 10),
                     Wrap(
