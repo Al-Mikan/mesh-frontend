@@ -441,6 +441,24 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
       );
     }
 
+    // フォーカスボタンが押されたときの処理
+    void onTapFocus() {
+      if (_currentLocation == null || group == null) return;
+
+      LatLngBounds bounds = LatLngBounds(
+        southwest: LatLng(
+          min(_currentLocation!.latitude, group!.destLat),
+          min(_currentLocation!.longitude, group!.destLon),
+        ),
+        northeast: LatLng(
+          max(_currentLocation!.latitude, group!.destLat),
+          max(_currentLocation!.longitude, group!.destLon),
+        ),
+      );
+
+      mapController.animateCamera(CameraUpdate.newLatLngBounds(bounds, 100));
+    }
+
     return Scaffold(
       body: Stack(
         children: [
@@ -484,6 +502,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
               travelTime: travelTime,
               currentLocation: _currentLocation,
               onTapExit: () => onTapExit(context),
+              onTapFocus: onTapFocus,
             ),
           ),
         ],
@@ -639,6 +658,7 @@ class _BottomCard extends StatelessWidget {
     this.travelTime,
     this.currentLocation,
     required this.onTapExit,
+    required this.onTapFocus,
   });
 
   final ShareGroup? group;
@@ -646,6 +666,7 @@ class _BottomCard extends StatelessWidget {
   final TravelTime? travelTime;
   final LocationDto? currentLocation;
   final VoidCallback onTapExit;
+  final VoidCallback onTapFocus;
 
   String _calculateDepartureTime(int? durationMinutes) {
     if (group == null ||
@@ -665,195 +686,99 @@ class _BottomCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(32),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.7),
-                borderRadius: BorderRadius.circular(32),
-                border: Border.all(
-                  color: Colors.grey.withOpacity(0.3), // 薄いグレーの枠線
-                  width: 1.0,
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 16,
-                  horizontal: 16,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FloatingActionButton(
+              onPressed: () {
+                onTapFocus();
+              },
+              backgroundColor: Colors.white,
+              shape: const CircleBorder(),
+              elevation: 4,
+              child: const Icon(Icons.near_me, color: Colors.blue, size: 30),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        Column(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(32),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.7),
+                    borderRadius: BorderRadius.circular(32),
+                    border: Border.all(
+                      color: Colors.grey.withOpacity(0.3), // 薄いグレーの枠線
+                      width: 1.0,
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 16,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          '${formatDateTime(group!.meetingTime)} 集合', // ここは動的に変更可能
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const Spacer(),
-                        PullDownButton(
-                          itemBuilder:
-                              (context) => [
-                                PullDownMenuItem(
-                                  onTap: () {
-                                    Clipboard.setData(
-                                      ClipboardData(text: group!.inviteUrl),
-                                    ).then((_) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        const SnackBar(
-                                          content: Text("招待リンクをコピーしました！"),
-                                          duration: Duration(seconds: 2),
-                                        ),
-                                      );
-                                    });
-                                  },
-
-                                  title: '招待をコピーする',
-                                  icon: CupertinoIcons.doc_on_clipboard,
-                                ),
-                                PullDownMenuItem(
-                                  onTap: () {
-                                    onTapExit();
-                                  },
-                                  title: 'グループから退出する',
-                                  isDestructive: true,
-                                  icon: CupertinoIcons.square_arrow_right,
-                                ),
-                              ],
-                          buttonBuilder:
-                              (context, openMenu) => IconButton(
-                                icon: const Icon(Icons.more_vert),
-                                onPressed: openMenu,
-                              ),
-                        ),
-                      ],
-                    ),
-                    // 残り時間の表示
-                    Row(
-                      children: [
-                        Text(
-                          remainingTimeText,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black54,
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 4),
-                    const Text(
-                      "出発目安",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        MapRouteButton(
-                          by: '徒歩',
-                          duration:
-                              travelTime?.walking != null
-                                  ? '${travelTime?.walking}分'
-                                  : '--分',
-                          departureTime: _calculateDepartureTime(
-                            travelTime?.walking,
-                          ),
-                          icon: Icons.directions_walk,
-                          onTap: () {},
-                          isCalculated: travelTime != null,
-                        ),
-                        const SizedBox(width: 8),
-                        MapRouteButton(
-                          by: '公共交通',
-                          duration:
-                              travelTime?.transit != null
-                                  ? '${travelTime?.transit}分'
-                                  : '--分',
-                          departureTime: _calculateDepartureTime(
-                            travelTime?.transit,
-                          ),
-                          icon: Icons.directions_bus,
-                          onTap: () {},
-                          isCalculated: travelTime != null,
-                        ),
-                        const SizedBox(width: 8),
-                        MapRouteButton(
-                          by: '車',
-                          duration:
-                              travelTime?.driving != null
-                                  ? '${travelTime?.driving}分'
-                                  : '--分',
-                          departureTime: _calculateDepartureTime(
-                            travelTime?.driving,
-                          ),
-                          icon: Icons.directions_car,
-                          onTap: () {},
-                          isCalculated: travelTime != null,
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 8),
-                    const Text(
-                      "メンバーへひとこと",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    TextField(
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 6,
-                          horizontal: 12,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
-                            color: Colors.orangeAccent,
-                          ),
-                        ),
-                        hintText: 'ちょっと遅れる！',
-                        hintStyle: const TextStyle(color: Colors.grey),
-                        filled: true,
-                        fillColor: Colors.white,
-                      ),
-                      style: const TextStyle(fontSize: 14),
-                      maxLines: 1,
-                      onSubmitted: (value) {
-                        // 送信処理
-                      },
-                    ),
-
-                    // 🔹 メンバー一覧
-                    Theme(
-                      data: Theme.of(
-                        context,
-                      ).copyWith(dividerColor: Colors.transparent),
-                      child: ExpansionTile(
-                        tilePadding: EdgeInsets.all(0),
-                        title: Row(
+                        Row(
                           children: [
-                            Icon(Icons.people, size: 24, color: Colors.blue),
-                            const SizedBox(width: 6),
                             Text(
-                              "${group!.users.length}人中 ${group!.users.where((p) => p.isArrived).length}人が到着済み",
+                              '${formatDateTime(group!.meetingTime)} 集合', // ここは動的に変更可能
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const Spacer(),
+                            PullDownButton(
+                              itemBuilder:
+                                  (context) => [
+                                    PullDownMenuItem(
+                                      onTap: () {
+                                        Clipboard.setData(
+                                          ClipboardData(text: group!.inviteUrl),
+                                        ).then((_) {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            const SnackBar(
+                                              content: Text("招待リンクをコピーしました！"),
+                                              duration: Duration(seconds: 2),
+                                            ),
+                                          );
+                                        });
+                                      },
+
+                                      title: '招待をコピーする',
+                                      icon: CupertinoIcons.doc_on_clipboard,
+                                    ),
+                                    PullDownMenuItem(
+                                      onTap: () {
+                                        onTapExit();
+                                      },
+                                      title: 'グループから退出する',
+                                      isDestructive: true,
+                                      icon: CupertinoIcons.square_arrow_right,
+                                    ),
+                                  ],
+                              buttonBuilder:
+                                  (context, openMenu) => IconButton(
+                                    icon: const Icon(Icons.more_vert),
+                                    onPressed: openMenu,
+                                  ),
+                            ),
+                          ],
+                        ),
+                        // 残り時間の表示
+                        Row(
+                          children: [
+                            Text(
+                              remainingTimeText,
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
@@ -862,57 +787,176 @@ class _BottomCard extends StatelessWidget {
                             ),
                           ],
                         ),
-                        children:
-                            group!.users.map((user) {
-                              bool isArrived = user.isArrived;
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 6,
-                                  horizontal: 10,
+
+                        const SizedBox(height: 4),
+                        const Text(
+                          "出発目安",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            MapRouteButton(
+                              by: '徒歩',
+                              duration:
+                                  travelTime?.walking != null
+                                      ? '${travelTime?.walking}分'
+                                      : '--分',
+                              departureTime: _calculateDepartureTime(
+                                travelTime?.walking,
+                              ),
+                              icon: Icons.directions_walk,
+                              onTap: () {},
+                              isCalculated: travelTime != null,
+                            ),
+                            const SizedBox(width: 8),
+                            MapRouteButton(
+                              by: '公共交通',
+                              duration:
+                                  travelTime?.transit != null
+                                      ? '${travelTime?.transit}分'
+                                      : '--分',
+                              departureTime: _calculateDepartureTime(
+                                travelTime?.transit,
+                              ),
+                              icon: Icons.directions_bus,
+                              onTap: () {},
+                              isCalculated: travelTime != null,
+                            ),
+                            const SizedBox(width: 8),
+                            MapRouteButton(
+                              by: '車',
+                              duration:
+                                  travelTime?.driving != null
+                                      ? '${travelTime?.driving}分'
+                                      : '--分',
+                              departureTime: _calculateDepartureTime(
+                                travelTime?.driving,
+                              ),
+                              icon: Icons.directions_car,
+                              onTap: () {},
+                              isCalculated: travelTime != null,
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 8),
+                        const Text(
+                          "メンバーへひとこと",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        TextField(
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 6,
+                              horizontal: 12,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(
+                                color: Colors.orangeAccent,
+                              ),
+                            ),
+                            hintText: 'ちょっと遅れる！',
+                            hintStyle: const TextStyle(color: Colors.grey),
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                          style: const TextStyle(fontSize: 14),
+                          maxLines: 1,
+                          onSubmitted: (value) {
+                            // 送信処理
+                          },
+                        ),
+
+                        // 🔹 メンバー一覧
+                        Theme(
+                          data: Theme.of(
+                            context,
+                          ).copyWith(dividerColor: Colors.transparent),
+                          child: ExpansionTile(
+                            tilePadding: EdgeInsets.all(0),
+                            title: Row(
+                              children: [
+                                Icon(
+                                  Icons.people,
+                                  size: 24,
+                                  color: Colors.blue,
                                 ),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      user.name,
-                                      style: const TextStyle(fontSize: 16),
+                                const SizedBox(width: 6),
+                                Text(
+                                  "${group!.users.length}人中 ${group!.users.where((p) => p.isArrived).length}人が到着済み",
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            children:
+                                group!.users.map((user) {
+                                  bool isArrived = user.isArrived;
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 6,
+                                      horizontal: 10,
                                     ),
-                                    const Spacer(),
-                                    Row(
+                                    child: Row(
                                       children: [
-                                        Icon(
-                                          isArrived
-                                              ? Icons.check_circle
-                                              : Icons.access_time,
-                                          color:
-                                              isArrived
-                                                  ? Colors.green
-                                                  : Colors.grey,
-                                          size: 20,
-                                        ),
-                                        const SizedBox(width: 4),
                                         Text(
-                                          isArrived ? "到着済み" : "未到着",
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color:
-                                                isArrived
-                                                    ? Colors.green
-                                                    : Colors.grey,
-                                          ),
+                                          user.name,
+                                          style: const TextStyle(fontSize: 16),
+                                        ),
+                                        const Spacer(),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              isArrived
+                                                  ? Icons.check_circle
+                                                  : Icons.access_time,
+                                              color:
+                                                  isArrived
+                                                      ? Colors.green
+                                                      : Colors.grey,
+                                              size: 20,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              isArrived ? "到着済み" : "未到着",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color:
+                                                    isArrived
+                                                        ? Colors.green
+                                                        : Colors.grey,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
-                                  ],
-                                ),
-                              );
-                            }).toList(),
-                      ),
+                                  );
+                                }).toList(),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
+          ],
         ),
       ],
     );
