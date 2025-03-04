@@ -41,6 +41,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
   static const String isolateName = "LocatorIsolate";
   ReceivePort port = ReceivePort();
   Set<Marker> _markers = {};
+  Set<Polyline> _polylines = {};
   bool hasArrived = false; // 到着済みかどうかのフラグ
   ShareGroup? group;
   String? accessToken;
@@ -249,6 +250,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
     if (group == null) return;
 
     Set<Marker> markers = {};
+    Set<Polyline> polylines = {};
 
     for (var user in group!.users) {
       if (!user.hasLat() || !user.hasLon()) continue;
@@ -264,6 +266,26 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
           icon: icon,
           infoWindow: InfoWindow(title: user.name),
           zIndex: 1,
+        ),
+      );
+
+      // 曲線の制御点を計算
+      final points = _calculateBezierCurve(
+        LatLng(user.lat, user.lon),
+        LatLng(group!.destLat, group!.destLon),
+      );
+
+      polylines.add(
+        Polyline(
+          polylineId: PolylineId('${user.name}_route'),
+          points: points,
+          color: Colors.grey,
+          width: 5,
+          geodesic: true, // 地球の曲率を考慮
+          jointType: JointType.round,
+          startCap: Cap.roundCap,
+          endCap: Cap.roundCap,
+          patterns: [PatternItem.dash(50), PatternItem.gap(50)],
         ),
       );
     }
@@ -283,6 +305,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
     if (mounted) {
       setState(() {
         _markers = markers;
+        _polylines = polylines;
       });
     }
   }
@@ -398,6 +421,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
             initialCameraPosition: cameraPosition,
             myLocationButtonEnabled: false,
             markers: _markers.toSet(),
+            polylines: _polylines,
           ),
           if (!hasArrived && _isNearMeetingPoint()) // 近くにいるかつ未到着なら表示
             Positioned(
@@ -475,6 +499,40 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
         ],
       ),
     );
+  }
+
+  List<LatLng> _calculateBezierCurve(LatLng start, LatLng end) {
+    // 中間地点
+    double midLat = (start.latitude + end.latitude) / 2;
+    double midLng = (start.longitude + end.longitude) / 2;
+    double latDiff = (start.latitude - end.latitude).abs();
+    double lngDiff = (start.longitude - end.longitude).abs();
+    LatLng controlPoint1 = LatLng(midLat, start.longitude);
+    LatLng controlPoint2 = LatLng(midLat, end.longitude);
+    if (latDiff < lngDiff) {
+      controlPoint1 = LatLng(start.latitude, midLng);
+      controlPoint2 = LatLng(end.latitude, midLng);
+    }
+
+    // ベジェ曲線を補間
+    List<LatLng> bezierPoints = [];
+    for (double t = 0; t <= 1; t += 0.1) {
+      double lat =
+          (1 - t) * (1 - t) * (1 - t) * start.latitude +
+          3 * (1 - t) * (1 - t) * t * controlPoint1.latitude +
+          3 * (1 - t) * t * t * controlPoint2.latitude +
+          t * t * t * end.latitude;
+
+      double lng =
+          (1 - t) * (1 - t) * (1 - t) * start.longitude +
+          3 * (1 - t) * (1 - t) * t * controlPoint1.longitude +
+          3 * (1 - t) * t * t * controlPoint2.longitude +
+          t * t * t * end.longitude;
+
+      bezierPoints.add(LatLng(lat, lng));
+    }
+
+    return bezierPoints;
   }
 }
 
