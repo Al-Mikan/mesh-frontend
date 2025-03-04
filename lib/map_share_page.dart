@@ -40,6 +40,7 @@ class MapSharePage extends ConsumerStatefulWidget {
 
 class _MapSharePageState extends ConsumerState<MapSharePage> {
   late GoogleMapController mapController;
+  StreamSubscription<GetCurrentShareGroupResponse>? _groupStreamSubscription;
   LocationDto? _currentLocation;
   final location = Location();
   static const String isolateName = "LocatorIsolate";
@@ -66,7 +67,6 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
     super.initState();
     _loadAccessToken();
     _initializeServices();
-    _fetchGroup();
     _startCountdownTimer();
   }
 
@@ -76,40 +76,41 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
     userId = prefs.getInt('userId');
     const apiKay = String.fromEnvironment('GOOGLE_MAPS_API_KEY');
     directionsService = GoogleMapsDirections(apiKey: apiKay);
+    _setupGroupStream();
   }
 
-  Future<void> _fetchGroup() async {
+  // ストリームのセットアップ
+  void _setupGroupStream() async {
+    if (accessToken == null) return;
+
     final channel = ref.read(grpcChannelProvider);
-
-    fetchTimer = Timer.periodic(const Duration(seconds: 3), (
-      Timer timer,
-    ) async {
-      try {
-        // グループ情報を取得
-        if (accessToken == null) return;
-        final res = await GrpcService.getCurrentShareGroup(
-          channel,
-          accessToken!,
-        );
-
-        if (mounted) {
-          setState(() {
-            group = res.shareGroup;
-          });
-          if (_currentLocation != null && travelTime == null) {
-            await _calculateTravelTimes();
+    try {
+      final stream = GrpcService.getCurrentShareGroupStream(channel, accessToken!);
+      _groupStreamSubscription = stream.listen(
+        (response) {
+          if (mounted) {
+            setState(() {
+              group = response.shareGroup;
+            });
+            if (_currentLocation != null && travelTime == null) {
+              _calculateTravelTimes();
+            }
+            _setCustomMarkers();
+            _fetchCurrentUser();
+            if (_checkAllArrived()) {
+              _removeAuthenticationState();
+              _navigateToAllGatheredPage();
+            }
           }
-          _setCustomMarkers();
-          _fetchCurrentUser();
-          if (_checkAllArrived()) {
-            _removeAuthenticationState();
-            _navigateToAllGatheredPage();
-          }
-        }
-      } catch (e) {
-        print(e);
-      }
-    });
+        },
+        onError: (error) {
+          debugPrint("グループストリームエラー: $error");
+        },
+        cancelOnError: true,
+      );
+    } catch (e) {
+      debugPrint("ストリーム接続エラー: $e");
+    }
   }
 
   //getCurrentUserを呼び出す
@@ -373,9 +374,6 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
     try {
       // 🔹 サーバーに到着情報を送信
       await GrpcService.arriveDest(channel, accessToken!);
-
-      // 🔹 最新のグループ情報を取得して画面を更新
-      await _fetchGroup();
     } catch (e) {
       debugPrint("到着処理エラー: $e");
       ScaffoldMessenger.of(context).showSnackBar(
@@ -406,6 +404,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
 
   @override
   void dispose() {
+    _groupStreamSubscription?.cancel();
     countdownTimer?.cancel();
     IsolateNameServer.removePortNameMapping(isolateName);
     BackgroundLocator.unRegisterLocationUpdate();
