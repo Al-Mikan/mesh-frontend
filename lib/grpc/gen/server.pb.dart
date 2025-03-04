@@ -25,6 +25,8 @@ class ShareGroup extends $pb.GeneratedMessage {
     $core.String? inviteUrl,
     $core.String? address,
     User? adminUser,
+    $core.bool? isSharingLocation,
+    $core.String? sharingLocationStartTime,
   }) {
     final $result = create();
     if (id != null) {
@@ -54,6 +56,12 @@ class ShareGroup extends $pb.GeneratedMessage {
     if (adminUser != null) {
       $result.adminUser = adminUser;
     }
+    if (isSharingLocation != null) {
+      $result.isSharingLocation = isSharingLocation;
+    }
+    if (sharingLocationStartTime != null) {
+      $result.sharingLocationStartTime = sharingLocationStartTime;
+    }
     return $result;
   }
   ShareGroup._() : super();
@@ -70,6 +78,8 @@ class ShareGroup extends $pb.GeneratedMessage {
     ..aOS(7, _omitFieldNames ? '' : 'inviteUrl', protoName: 'inviteUrl')
     ..aOS(8, _omitFieldNames ? '' : 'address')
     ..aOM<User>(9, _omitFieldNames ? '' : 'adminUser', protoName: 'adminUser', subBuilder: User.create)
+    ..aOB(10, _omitFieldNames ? '' : 'isSharingLocation', protoName: 'isSharingLocation')
+    ..aOS(11, _omitFieldNames ? '' : 'sharingLocationStartTime', protoName: 'sharingLocationStartTime')
     ..hasRequiredFields = false
   ;
 
@@ -170,6 +180,24 @@ class ShareGroup extends $pb.GeneratedMessage {
   void clearAdminUser() => clearField(9);
   @$pb.TagNumber(9)
   User ensureAdminUser() => $_ensure(8);
+
+  @$pb.TagNumber(10)
+  $core.bool get isSharingLocation => $_getBF(9);
+  @$pb.TagNumber(10)
+  set isSharingLocation($core.bool v) { $_setBool(9, v); }
+  @$pb.TagNumber(10)
+  $core.bool hasIsSharingLocation() => $_has(9);
+  @$pb.TagNumber(10)
+  void clearIsSharingLocation() => clearField(10);
+
+  @$pb.TagNumber(11)
+  $core.String get sharingLocationStartTime => $_getSZ(10);
+  @$pb.TagNumber(11)
+  set sharingLocationStartTime($core.String v) { $_setString(10, v); }
+  @$pb.TagNumber(11)
+  $core.bool hasSharingLocationStartTime() => $_has(10);
+  @$pb.TagNumber(11)
+  void clearSharingLocationStartTime() => clearField(11);
 }
 
 class User extends $pb.GeneratedMessage {
@@ -486,6 +514,7 @@ class CreateShareGroupRequest extends $pb.GeneratedMessage {
     $core.double? destLat,
     $core.String? meetingTime,
     $core.String? address,
+    $core.String? sharingLocationStartTime,
   }) {
     final $result = create();
     if (destLon != null) {
@@ -500,6 +529,9 @@ class CreateShareGroupRequest extends $pb.GeneratedMessage {
     if (address != null) {
       $result.address = address;
     }
+    if (sharingLocationStartTime != null) {
+      $result.sharingLocationStartTime = sharingLocationStartTime;
+    }
     return $result;
   }
   CreateShareGroupRequest._() : super();
@@ -511,6 +543,7 @@ class CreateShareGroupRequest extends $pb.GeneratedMessage {
     ..a<$core.double>(2, _omitFieldNames ? '' : 'destLat', $pb.PbFieldType.OD, protoName: 'destLat')
     ..aOS(3, _omitFieldNames ? '' : 'meetingTime', protoName: 'meetingTime')
     ..aOS(4, _omitFieldNames ? '' : 'address')
+    ..aOS(5, _omitFieldNames ? '' : 'sharingLocationStartTime', protoName: 'sharingLocationStartTime')
     ..hasRequiredFields = false
   ;
 
@@ -570,6 +603,15 @@ class CreateShareGroupRequest extends $pb.GeneratedMessage {
   $core.bool hasAddress() => $_has(3);
   @$pb.TagNumber(4)
   void clearAddress() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.String get sharingLocationStartTime => $_getSZ(4);
+  @$pb.TagNumber(5)
+  set sharingLocationStartTime($core.String v) { $_setString(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasSharingLocationStartTime() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearSharingLocationStartTime() => clearField(5);
 }
 
 class CreateShareGroupResponse extends $pb.GeneratedMessage {

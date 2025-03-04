@@ -26,6 +26,11 @@ const ShareGroup$json = {
     {'1': 'inviteUrl', '3': 7, '4': 1, '5': 9, '10': 'inviteUrl'},
     {'1': 'address', '3': 8, '4': 1, '5': 9, '10': 'address'},
     {'1': 'adminUser', '3': 9, '4': 1, '5': 11, '6': '.Server.User', '10': 'adminUser'},
+    {'1': 'isSharingLocation', '3': 10, '4': 1, '5': 8, '10': 'isSharingLocation'},
+    {'1': 'sharingLocationStartTime', '3': 11, '4': 1, '5': 9, '9': 0, '10': 'sharingLocationStartTime', '17': true},
+  ],
+  '8': [
+    {'1': '_sharingLocationStartTime'},
   ],
 };
 
@@ -35,7 +40,10 @@ final $typed_data.Uint8List shareGroupDescriptor = $convert.base64Decode(
     'gKB2Rlc3RMb24YAyABKAFSB2Rlc3RMb24SGAoHZGVzdExhdBgEIAEoAVIHZGVzdExhdBIiCgV1'
     'c2VycxgFIAMoCzIMLlNlcnZlci5Vc2VyUgV1c2VycxIgCgttZWV0aW5nVGltZRgGIAEoCVILbW'
     'VldGluZ1RpbWUSHAoJaW52aXRlVXJsGAcgASgJUglpbnZpdGVVcmwSGAoHYWRkcmVzcxgIIAEo'
-    'CVIHYWRkcmVzcxIqCglhZG1pblVzZXIYCSABKAsyDC5TZXJ2ZXIuVXNlclIJYWRtaW5Vc2Vy');
+    'CVIHYWRkcmVzcxIqCglhZG1pblVzZXIYCSABKAsyDC5TZXJ2ZXIuVXNlclIJYWRtaW5Vc2VyEi'
+    'wKEWlzU2hhcmluZ0xvY2F0aW9uGAogASgIUhFpc1NoYXJpbmdMb2NhdGlvbhI/ChhzaGFyaW5n'
+    'TG9jYXRpb25TdGFydFRpbWUYCyABKAlIAFIYc2hhcmluZ0xvY2F0aW9uU3RhcnRUaW1liAEBQh'
+    'sKGV9zaGFyaW5nTG9jYXRpb25TdGFydFRpbWU=');
 
 @$core.Deprecated('Use userDescriptor instead')
 const User$json = {
@@ -109,6 +117,10 @@ const CreateShareGroupRequest$json = {
     {'1': 'destLat', '3': 2, '4': 1, '5': 1, '10': 'destLat'},
     {'1': 'meetingTime', '3': 3, '4': 1, '5': 9, '10': 'meetingTime'},
     {'1': 'address', '3': 4, '4': 1, '5': 9, '10': 'address'},
+    {'1': 'sharingLocationStartTime', '3': 5, '4': 1, '5': 9, '9': 0, '10': 'sharingLocationStartTime', '17': true},
+  ],
+  '8': [
+    {'1': '_sharingLocationStartTime'},
   ],
 };
 
@@ -116,7 +128,9 @@ const CreateShareGroupRequest$json = {
 final $typed_data.Uint8List createShareGroupRequestDescriptor = $convert.base64Decode(
     'ChdDcmVhdGVTaGFyZUdyb3VwUmVxdWVzdBIYCgdkZXN0TG9uGAEgASgBUgdkZXN0TG9uEhgKB2'
     'Rlc3RMYXQYAiABKAFSB2Rlc3RMYXQSIAoLbWVldGluZ1RpbWUYAyABKAlSC21lZXRpbmdUaW1l'
-    'EhgKB2FkZHJlc3MYBCABKAlSB2FkZHJlc3M=');
+    'EhgKB2FkZHJlc3MYBCABKAlSB2FkZHJlc3MSPwoYc2hhcmluZ0xvY2F0aW9uU3RhcnRUaW1lGA'
+    'UgASgJSABSGHNoYXJpbmdMb2NhdGlvblN0YXJ0VGltZYgBAUIbChlfc2hhcmluZ0xvY2F0aW9u'
+    'U3RhcnRUaW1l');
 
 @$core.Deprecated('Use createShareGroupResponseDescriptor instead')
 const CreateShareGroupResponse$json = {
