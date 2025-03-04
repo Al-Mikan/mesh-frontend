@@ -123,4 +123,17 @@ class GrpcService {
       yield response;
     }
   }
+
+  static Future<UpdateShortMessageResponse> updateShortMessage(
+    ClientChannel channel,
+    String? message,
+    String accessToken,
+  ) async {
+    final client = ServiceClient(channel);
+    final res = await client.updateShortMessage(
+      UpdateShortMessageRequest(shortMessage: message),
+      options: CallOptions(metadata: {'token': accessToken}),
+    );
+    return res;
+  }
 }

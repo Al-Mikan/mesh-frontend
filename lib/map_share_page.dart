@@ -512,6 +512,14 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
       mapController.animateCamera(CameraUpdate.newLatLngBounds(bounds, 60));
     }
 
+    // メッセージを送信したときの処理
+    void onSubmitMessage(String message) async {
+      if (accessToken == null) return;
+
+      final channel = ref.read(grpcChannelProvider);
+      await GrpcService.updateShortMessage(channel, message, accessToken!);
+    }
+
     return Scaffold(
       body: Stack(
         children: [
@@ -556,6 +564,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
               currentLocation: _currentLocation,
               onTapExit: () => onTapExit(context),
               onTapFocus: onTapFocus,
+              onSubmitMessage: onSubmitMessage,
             ),
           ),
         ],
@@ -712,6 +721,7 @@ class _BottomCard extends StatelessWidget {
     this.currentLocation,
     required this.onTapExit,
     required this.onTapFocus,
+    required this.onSubmitMessage,
   });
 
   final ShareGroup? group;
@@ -720,6 +730,7 @@ class _BottomCard extends StatelessWidget {
   final LocationDto? currentLocation;
   final VoidCallback onTapExit;
   final VoidCallback onTapFocus;
+  final ValueChanged<String> onSubmitMessage;
 
   String _calculateDepartureTime(int? durationMinutes) {
     if (group == null ||
@@ -927,9 +938,7 @@ class _BottomCard extends StatelessWidget {
                           ),
                           style: const TextStyle(fontSize: 14),
                           maxLines: 1,
-                          onSubmitted: (value) {
-                            // 送信処理
-                          },
+                          onSubmitted: onSubmitMessage,
                         ),
 
                         // 🔹 メンバー一覧
