@@ -710,7 +710,7 @@ class _BottomCard extends StatelessWidget {
                                   },
                                   title: 'グループから退出する',
                                   isDestructive: true,
-                                  icon: CupertinoIcons.delete,
+                                  icon: CupertinoIcons.square_arrow_right,
                                 ),
                               ],
                           buttonBuilder:
