@@ -85,7 +85,10 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
 
     final channel = ref.read(grpcChannelProvider);
     try {
-      final stream = GrpcService.getCurrentShareGroupStream(channel, accessToken!);
+      final stream = GrpcService.getCurrentShareGroupStream(
+        channel,
+        accessToken!,
+      );
       _groupStreamSubscription = stream.listen(
         (response) {
           if (mounted) {
@@ -245,15 +248,39 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
   }
 
   void onTapExit(BuildContext context) async {
-    IsolateNameServer.removePortNameMapping(isolateName);
-    BackgroundLocator.unRegisterLocationUpdate();
+    final bool? result = await showGeneralDialog<bool>(
+      context: context,
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return CupertinoAlertDialog(
+          title: const Text('確認'),
+          content: const Text('本当にグループから退出しますか？'),
+          actions: [
+            CupertinoDialogAction(
+              child: const Text('いいえ', style: TextStyle(color: Colors.black)),
+              onPressed: () => Navigator.of(context).pop(false), // キャンセル
+            ),
+            CupertinoDialogAction(
+              isDestructiveAction: true,
+              child: const Text('はい'),
+              onPressed: () => Navigator.of(context).pop(true), // OK
+            ),
+          ],
+        );
+      },
+    );
 
-    if (context.mounted) {
-      await _removeAuthenticationState();
-      await Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const HomePage()),
-        (Route<dynamic> route) => false, // すべての前のルートを削除
-      );
+    // 「はい」を選択した場合のみ退出処理を実行
+    if (result == true) {
+      IsolateNameServer.removePortNameMapping(isolateName);
+      BackgroundLocator.unRegisterLocationUpdate();
+
+      if (context.mounted) {
+        await _removeAuthenticationState();
+        await Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const HomePage()),
+          (Route<dynamic> route) => false, // すべての前のルートを削除
+        );
+      }
     }
   }
 
@@ -436,7 +463,9 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
                     await prefs.remove('accessToken');
                     if (context.mounted) {
                       await Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => const HomePage()),
+                        MaterialPageRoute(
+                          builder: (context) => const HomePage(),
+                        ),
                         (Route<dynamic> route) => false, // すべての前のルートを削除
                       );
                     }
@@ -517,7 +546,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
               lon: group!.destLon,
             ),
           Positioned(
-            bottom: 12,
+            bottom: 30,
             left: 12,
             right: 12,
             child: _BottomCard(
