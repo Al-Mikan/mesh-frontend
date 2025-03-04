@@ -444,19 +444,22 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
     // フォーカスボタンが押されたときの処理
     void onTapFocus() {
       if (_currentLocation == null || group == null) return;
+      final latDiff = _currentLocation!.latitude - group!.destLat;
+      final northOffset = latDiff.abs() * 0.3;
+      final southOffset = latDiff.abs() * 0.9;
 
       LatLngBounds bounds = LatLngBounds(
         southwest: LatLng(
-          min(_currentLocation!.latitude, group!.destLat),
+          min(_currentLocation!.latitude, group!.destLat) - southOffset,
           min(_currentLocation!.longitude, group!.destLon),
         ),
         northeast: LatLng(
-          max(_currentLocation!.latitude, group!.destLat),
+          max(_currentLocation!.latitude, group!.destLat) + northOffset,
           max(_currentLocation!.longitude, group!.destLon),
         ),
       );
 
-      mapController.animateCamera(CameraUpdate.newLatLngBounds(bounds, 100));
+      mapController.animateCamera(CameraUpdate.newLatLngBounds(bounds, 60));
     }
 
     return Scaffold(
@@ -696,7 +699,7 @@ class _BottomCard extends StatelessWidget {
               backgroundColor: Colors.white,
               shape: const CircleBorder(),
               elevation: 4,
-              child: const Icon(Icons.near_me, color: Colors.blue, size: 30),
+              child: const Icon(Icons.route, color: Colors.orange, size: 30),
             ),
           ],
         ),
