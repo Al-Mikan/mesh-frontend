@@ -108,4 +108,16 @@ class GrpcService {
     );
     return res;
   }
+
+  static Future<GetCurrentShareGroupResponse> getCurrentShareGroup(
+    ClientChannel channel,
+    String accessToken,
+  ) async {
+    final client = ServiceClient(channel);
+    final res = await client.getCurrentShareGroup(
+      GetCurrentShareGroupRequest(),
+      options: CallOptions(metadata: {'token': accessToken}),
+    );
+    return res;
+  }
 }

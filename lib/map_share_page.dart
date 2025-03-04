@@ -85,14 +85,24 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
       Timer timer,
     ) async {
       try {
+        // グループ情報を取得
         final res = await GrpcService.getShareGroupByLinkKey(
           channel,
           widget.groupId,
         );
+        // グループ情報を取得(開始前)
+        var group = res.shareGroup;
+        if (!res.shareGroup.isSharingLocation && accessToken != null) {
+          final beforeStartRes = await GrpcService.getCurrentShareGroup(
+            channel,
+            accessToken!,
+          );
+          group = beforeStartRes.shareGroup;
+        }
 
         if (mounted) {
           setState(() {
-            group = res.shareGroup;
+            this.group = group;
           });
           if (_currentLocation != null && travelTime == null) {
             await _calculateTravelTimes();
