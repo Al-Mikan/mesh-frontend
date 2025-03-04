@@ -33,7 +33,7 @@ class _PinWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 300,
+      width: 200,
       height: 90,
       child: Stack(
         alignment: Alignment.center,
@@ -57,11 +57,11 @@ class _PinWidget extends StatelessWidget {
             ),
           ),
           Transform.translate(
-            offset: const Offset(42, 0),
+            offset: const Offset(0, 30),
             child: Text(
               userName,
               style: const TextStyle(
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
