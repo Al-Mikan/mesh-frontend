@@ -1,14 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
+    as picker;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart'; // 日付のフォーマットに使用
+import 'package:mesh_frontend/components/button.dart';
 import 'package:mesh_frontend/grpc/grpc_channel_provider.dart';
 import 'package:mesh_frontend/grpc/grpc_service.dart';
 import 'package:mesh_frontend/set_name_page.dart';
 import 'package:mesh_frontend/share_link_page.dart';
-import 'package:mesh_frontend/components/button.dart';
-import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
-    as picker;
-import 'package:intl/intl.dart'; // 日付のフォーマットに使用
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SetDetailsPage extends ConsumerStatefulWidget {
@@ -28,6 +28,7 @@ class SetDetailsPage extends ConsumerStatefulWidget {
 }
 
 class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
+  DateTime? _sharingLocationStartTime;
   DateTime? _selectedDateTime;
   final _nameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -50,7 +51,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
   }
 
   /// 📌 日時ピッカー
-  void _pickDateTime() {
+  void _pickDateTime(void Function(DateTime) setDate) {
     picker.DatePicker.showDateTimePicker(
       context,
       showTitleActions: true, // 上部に「完了」「キャンセル」などのボタンを表示
@@ -59,9 +60,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
       locale: picker.LocaleType.jp, // 日本語ロケール
       onChanged: (date) {},
       onConfirm: (date) {
-        setState(() {
-          _selectedDateTime = date;
-        });
+        setDate(date);
       },
       currentTime: DateTime.now(),
     );
@@ -103,6 +102,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
       channel,
       widget.destLat,
       widget.destLon,
+      _sharingLocationStartTime!.toIso8601String(), // JSTのみ考慮する
       _selectedDateTime!.toIso8601String(), // JSTのみ考慮する
       widget.address ?? "",
       anonymousSignUpRes.accessToken,
@@ -136,6 +136,10 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final displaySharingStartDateTime =
+        _sharingLocationStartTime == null
+            ? '日付と時間を選択してください'
+            : DateFormat('MM月dd日 HH:mm').format(_sharingLocationStartTime!);
     final displayDateTime =
         _selectedDateTime == null
             ? '日付と時間を選択してください'
@@ -157,9 +161,56 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    // 🔹 日時選択フィールド
+                    // 🔹 共有開始日時選択フィールド
                     GestureDetector(
-                      onTap: _pickDateTime,
+                      onTap: () {
+                        _pickDateTime((date) {
+                          setState(() {
+                            // 待ち合わせ日時と矛盾しないように設定
+                            if (_selectedDateTime != null &&
+                                date.isAfter(_selectedDateTime!)) {
+                              _sharingLocationStartTime = _selectedDateTime;
+                            } else {
+                              _sharingLocationStartTime = date;
+                            }
+                          });
+                        });
+                      },
+                      child: AbsorbPointer(
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            labelText: '共有開始日時',
+                            hintText: '日付と時間を選択',
+                            suffixIcon: const Icon(Icons.calendar_today),
+                            filled: true,
+                            fillColor: Colors.grey[100],
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          controller: TextEditingController(
+                            text: displaySharingStartDateTime,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 42),
+
+                    // 🔹 待ち合わせ日時選択フィールド
+                    GestureDetector(
+                      onTap: () {
+                        _pickDateTime((date) {
+                          setState(() {
+                            // 共有開始日時と矛盾しないように設定
+                            if (_sharingLocationStartTime != null &&
+                                _sharingLocationStartTime!.isAfter(date)) {
+                              _selectedDateTime = _sharingLocationStartTime;
+                            } else {
+                              _selectedDateTime = date;
+                            }
+                          });
+                        });
+                      },
                       child: AbsorbPointer(
                         child: TextFormField(
                           decoration: InputDecoration(
