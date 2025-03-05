@@ -25,7 +25,7 @@ const ShareGroup$json = {
     {'1': 'meetingTime', '3': 6, '4': 1, '5': 9, '10': 'meetingTime'},
     {'1': 'inviteUrl', '3': 7, '4': 1, '5': 9, '10': 'inviteUrl'},
     {'1': 'address', '3': 8, '4': 1, '5': 9, '10': 'address'},
-    {'1': 'adminUser', '3': 9, '4': 1, '5': 11, '6': '.Server.User', '10': 'adminUser'},
+    {'1': 'adminUser', '3': 9, '4': 1, '5': 11, '6': '.Server.AdminUser', '10': 'adminUser'},
     {'1': 'isSharingLocation', '3': 10, '4': 1, '5': 8, '10': 'isSharingLocation'},
     {'1': 'sharingLocationStartTime', '3': 11, '4': 1, '5': 9, '9': 0, '10': 'sharingLocationStartTime', '17': true},
   ],
@@ -40,10 +40,10 @@ final $typed_data.Uint8List shareGroupDescriptor = $convert.base64Decode(
     'gKB2Rlc3RMb24YAyABKAFSB2Rlc3RMb24SGAoHZGVzdExhdBgEIAEoAVIHZGVzdExhdBIiCgV1'
     'c2VycxgFIAMoCzIMLlNlcnZlci5Vc2VyUgV1c2VycxIgCgttZWV0aW5nVGltZRgGIAEoCVILbW'
     'VldGluZ1RpbWUSHAoJaW52aXRlVXJsGAcgASgJUglpbnZpdGVVcmwSGAoHYWRkcmVzcxgIIAEo'
-    'CVIHYWRkcmVzcxIqCglhZG1pblVzZXIYCSABKAsyDC5TZXJ2ZXIuVXNlclIJYWRtaW5Vc2VyEi'
-    'wKEWlzU2hhcmluZ0xvY2F0aW9uGAogASgIUhFpc1NoYXJpbmdMb2NhdGlvbhI/ChhzaGFyaW5n'
-    'TG9jYXRpb25TdGFydFRpbWUYCyABKAlIAFIYc2hhcmluZ0xvY2F0aW9uU3RhcnRUaW1liAEBQh'
-    'sKGV9zaGFyaW5nTG9jYXRpb25TdGFydFRpbWU=');
+    'CVIHYWRkcmVzcxIvCglhZG1pblVzZXIYCSABKAsyES5TZXJ2ZXIuQWRtaW5Vc2VyUglhZG1pbl'
+    'VzZXISLAoRaXNTaGFyaW5nTG9jYXRpb24YCiABKAhSEWlzU2hhcmluZ0xvY2F0aW9uEj8KGHNo'
+    'YXJpbmdMb2NhdGlvblN0YXJ0VGltZRgLIAEoCUgAUhhzaGFyaW5nTG9jYXRpb25TdGFydFRpbW'
+    'WIAQFCGwoZX3NoYXJpbmdMb2NhdGlvblN0YXJ0VGltZQ==');
 
 @$core.Deprecated('Use userDescriptor instead')
 const User$json = {
@@ -80,6 +80,19 @@ final $typed_data.Uint8List userDescriptor = $convert.base64Decode(
     'IMc2hvcnRNZXNzYWdliAEBEhYKBmljb25JRBgKIAEoCVIGaWNvbklEQg0KC19zaGFyZUdyb3Vw'
     'Qg8KDV9zaGFyZUdyb3VwSWRCBgoEX2xhdEIGCgRfbG9uQg0KC19wb3NpdGlvbkF0Qg8KDV9zaG'
     '9ydE1lc3NhZ2U=');
+
+@$core.Deprecated('Use adminUserDescriptor instead')
+const AdminUser$json = {
+  '1': 'AdminUser',
+  '2': [
+    {'1': 'id', '3': 1, '4': 1, '5': 4, '10': 'id'},
+    {'1': 'name', '3': 2, '4': 1, '5': 9, '10': 'name'},
+  ],
+};
+
+/// Descriptor for `AdminUser`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List adminUserDescriptor = $convert.base64Decode(
+    'CglBZG1pblVzZXISDgoCaWQYASABKARSAmlkEhIKBG5hbWUYAiABKAlSBG5hbWU=');
 
 @$core.Deprecated('Use anonymousSignUpRequestDescriptor instead')
 const AnonymousSignUpRequest$json = {

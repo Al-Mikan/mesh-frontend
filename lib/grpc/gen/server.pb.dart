@@ -24,7 +24,7 @@ class ShareGroup extends $pb.GeneratedMessage {
     $core.String? meetingTime,
     $core.String? inviteUrl,
     $core.String? address,
-    User? adminUser,
+    AdminUser? adminUser,
     $core.bool? isSharingLocation,
     $core.String? sharingLocationStartTime,
   }) {
@@ -77,7 +77,7 @@ class ShareGroup extends $pb.GeneratedMessage {
     ..aOS(6, _omitFieldNames ? '' : 'meetingTime', protoName: 'meetingTime')
     ..aOS(7, _omitFieldNames ? '' : 'inviteUrl', protoName: 'inviteUrl')
     ..aOS(8, _omitFieldNames ? '' : 'address')
-    ..aOM<User>(9, _omitFieldNames ? '' : 'adminUser', protoName: 'adminUser', subBuilder: User.create)
+    ..aOM<AdminUser>(9, _omitFieldNames ? '' : 'adminUser', protoName: 'adminUser', subBuilder: AdminUser.create)
     ..aOB(10, _omitFieldNames ? '' : 'isSharingLocation', protoName: 'isSharingLocation')
     ..aOS(11, _omitFieldNames ? '' : 'sharingLocationStartTime', protoName: 'sharingLocationStartTime')
     ..hasRequiredFields = false
@@ -171,15 +171,15 @@ class ShareGroup extends $pb.GeneratedMessage {
   void clearAddress() => clearField(8);
 
   @$pb.TagNumber(9)
-  User get adminUser => $_getN(8);
+  AdminUser get adminUser => $_getN(8);
   @$pb.TagNumber(9)
-  set adminUser(User v) { setField(9, v); }
+  set adminUser(AdminUser v) { setField(9, v); }
   @$pb.TagNumber(9)
   $core.bool hasAdminUser() => $_has(8);
   @$pb.TagNumber(9)
   void clearAdminUser() => clearField(9);
   @$pb.TagNumber(9)
-  User ensureAdminUser() => $_ensure(8);
+  AdminUser ensureAdminUser() => $_ensure(8);
 
   @$pb.TagNumber(10)
   $core.bool get isSharingLocation => $_getBF(9);
@@ -376,6 +376,70 @@ class User extends $pb.GeneratedMessage {
   $core.bool hasIconID() => $_has(9);
   @$pb.TagNumber(10)
   void clearIconID() => clearField(10);
+}
+
+class AdminUser extends $pb.GeneratedMessage {
+  factory AdminUser({
+    $fixnum.Int64? id,
+    $core.String? name,
+  }) {
+    final $result = create();
+    if (id != null) {
+      $result.id = id;
+    }
+    if (name != null) {
+      $result.name = name;
+    }
+    return $result;
+  }
+  AdminUser._() : super();
+  factory AdminUser.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory AdminUser.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'AdminUser', package: const $pb.PackageName(_omitMessageNames ? '' : 'Server'), createEmptyInstance: create)
+    ..a<$fixnum.Int64>(1, _omitFieldNames ? '' : 'id', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
+    ..aOS(2, _omitFieldNames ? '' : 'name')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  AdminUser clone() => AdminUser()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  AdminUser copyWith(void Function(AdminUser) updates) => super.copyWith((message) => updates(message as AdminUser)) as AdminUser;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static AdminUser create() => AdminUser._();
+  AdminUser createEmptyInstance() => create();
+  static $pb.PbList<AdminUser> createRepeated() => $pb.PbList<AdminUser>();
+  @$core.pragma('dart2js:noInline')
+  static AdminUser getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AdminUser>(create);
+  static AdminUser? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $fixnum.Int64 get id => $_getI64(0);
+  @$pb.TagNumber(1)
+  set id($fixnum.Int64 v) { $_setInt64(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get name => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set name($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasName() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearName() => clearField(2);
 }
 
 class AnonymousSignUpRequest extends $pb.GeneratedMessage {
