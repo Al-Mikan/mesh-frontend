@@ -1,14 +1,14 @@
 import 'package:intl/intl.dart';
 
 String formatDateTime(String dateTime) {
-  final dateTimeObj = DateTime.parse(dateTime);
+  final dateTimeObj = DateTime.parse(dateTime).toLocal();
   final now = DateTime.now();
   final today = DateTime(now.year, now.month, now.day);
   final yesterday = today.subtract(const Duration(days: 1));
   final tomorrow = today.add(const Duration(days: 1));
-  
+
   final date = DateTime(dateTimeObj.year, dateTimeObj.month, dateTimeObj.day);
-  
+
   String dateText;
   if (date == today) {
     dateText = '今日';
@@ -19,8 +19,6 @@ String formatDateTime(String dateTime) {
   } else {
     dateText = DateFormat('MM/dd').format(dateTimeObj);
   }
-  
+
   return '$dateText ${DateFormat('HH:mm').format(dateTimeObj)}';
 }
-
-

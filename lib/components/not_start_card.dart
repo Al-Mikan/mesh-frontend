@@ -20,6 +20,7 @@ class _NotStartCardState extends State<NotStartCard> {
     final startTime =
         (widget.startTime != "")
             ? DateTime.parse(widget.startTime)
+                .toLocal() // utcからjstへ変換
             : DateTime.now();
     final formattedTime =
         '${startTime.month}/${startTime.day} ${startTime.hour}:${startTime.minute.toString().padLeft(2, '0')}';
@@ -70,7 +71,7 @@ class _NotStartCardState extends State<NotStartCard> {
 
             // 右側の閉じるボタン（ラベルなし）
             IconButton(
-              onPressed: (){
+              onPressed: () {
                 setState(() {
                   isShow = false;
                 });

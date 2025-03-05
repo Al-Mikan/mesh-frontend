@@ -152,9 +152,8 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
         return;
       }
 
-      DateTime meetingTime = DateTime.parse(
-        group!.meetingTime,
-      ); // 文字列からDateTimeに変換
+      DateTime meetingTime =
+          DateTime.parse(group!.meetingTime).toLocal(); // 文字列からDateTimeに変換
       Duration difference = meetingTime.difference(DateTime.now());
 
       if (difference.isNegative) {
@@ -205,7 +204,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
     }
 
     // 通知を設定
-    final meetingTime = DateTime.parse(group!.meetingTime);
+    final meetingTime = DateTime.parse(group!.meetingTime).toLocal();
     final walkingTime = meetingTime.subtract(Duration(minutes: times.walking!));
     final bicyclingTime = meetingTime.subtract(
       Duration(minutes: times.bicycling!),
@@ -502,7 +501,10 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
     }
 
     final cameraPosition = CameraPosition(
-      target: LatLng(_currentLocation!.latitude-0.01, _currentLocation!.longitude),
+      target: LatLng(
+        _currentLocation!.latitude - 0.01,
+        _currentLocation!.longitude,
+      ),
       zoom: 14.0,
     );
 
@@ -560,12 +562,12 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
   }
 
   // フォーカスボタンが押されたときの処理
-  void onTapFocusMe(){
+  void onTapFocusMe() {
     mapController.animateCamera(
       CameraUpdate.newLatLngZoom(
         LatLng(_currentLocation!.latitude - 0.01, _currentLocation!.longitude),
         14.0,
-      )
+      ),
     );
   }
 
@@ -596,7 +598,6 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
     final channel = ref.read(grpcChannelProvider);
     await GrpcService.updateShortMessage(channel, message, accessToken!);
   }
-
 
   List<LatLng> _calculateBezierCurve(LatLng start, LatLng end) {
     // 中間地点

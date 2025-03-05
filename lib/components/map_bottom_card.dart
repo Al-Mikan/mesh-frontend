@@ -10,7 +10,7 @@ import 'package:mesh_frontend/utils/googlemaps_direction.dart';
 
 class MapBottomCard extends StatelessWidget {
   const MapBottomCard({
-    super.key, 
+    super.key,
     required this.group,
     required this.remainingTimeText,
     this.travelTime,
@@ -37,7 +37,7 @@ class MapBottomCard extends StatelessWidget {
       return '--:--';
     }
 
-    final meetingTime = DateTime.parse(group!.meetingTime);
+    final meetingTime = DateTime.parse(group!.meetingTime).toLocal();
     final departureTime = meetingTime.subtract(
       Duration(minutes: durationMinutes),
     );
@@ -54,23 +54,33 @@ class MapBottomCard extends StatelessWidget {
             Column(
               children: [
                 FloatingActionButton(
+                  heroTag: 'me',
                   onPressed: () {
                     onTapFocusMe();
                   },
                   backgroundColor: Colors.white,
                   shape: const CircleBorder(),
                   elevation: 2,
-                  child: const Icon(Icons.near_me, color: Colors.orange, size: 30),
+                  child: const Icon(
+                    Icons.near_me,
+                    color: Colors.orange,
+                    size: 30,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 FloatingActionButton(
+                  heroTag: 'route',
                   onPressed: () {
                     onTapFocusRoute();
                   },
                   backgroundColor: Colors.white,
                   shape: const CircleBorder(),
                   elevation: 2,
-                  child: const Icon(Icons.route, color: Colors.orange, size: 30),
+                  child: const Icon(
+                    Icons.route,
+                    color: Colors.orange,
+                    size: 30,
+                  ),
                 ),
               ],
             ),
@@ -111,7 +121,10 @@ class MapBottomCard extends StatelessWidget {
                               ),
                             ),
                             const Spacer(),
-                            MapPullDownButton(group: group, onTapExit: onTapExit),
+                            MapPullDownButton(
+                              group: group,
+                              onTapExit: onTapExit,
+                            ),
                           ],
                         ),
                         // 残り時間の表示

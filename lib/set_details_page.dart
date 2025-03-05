@@ -102,8 +102,10 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
       channel,
       widget.destLat,
       widget.destLon,
-      _sharingLocationStartTime!.toIso8601String(), // JSTのみ考慮する
-      _selectedDateTime!.toIso8601String(), // JSTのみ考慮する
+      _sharingLocationStartTime!
+          .toUtc()
+          .toIso8601String(), // Zをつけないとバックエンドがクラッシュする
+      _selectedDateTime!.toUtc().toIso8601String(), // Zをつけないとバックエンドがクラッシュする
       widget.address ?? "",
       anonymousSignUpRes.accessToken,
     );
