@@ -34,7 +34,7 @@ class _PinWidget extends StatelessWidget {
     return SizedBox(
       width: 200,
 
-      height: 90,
+      height: 92,
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -45,6 +45,14 @@ class _PinWidget extends StatelessWidget {
             decoration: BoxDecoration(
               border: Border.all(color: Colors.white, width: 3),
               shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.orange.withOpacity(0.4),
+                  spreadRadius: 1,
+                  blurRadius: 3,
+                  offset: const Offset(0, 2),
+                ),
+              ]
             ),
           ),
           // アイコン画像
@@ -87,7 +95,7 @@ class _PinWidget extends StatelessWidget {
           ),
           if (shortMessage.isNotEmpty)
             Transform.translate(
-              offset: const Offset(0, -30),
+              offset: const Offset(0, -34),
               child: Card(
                 elevation: 0,
                 color: Colors.white,
