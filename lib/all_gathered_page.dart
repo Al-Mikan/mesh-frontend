@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
+import 'package:haptic_feedback/haptic_feedback.dart';
 import 'package:mesh_frontend/home_page.dart';
 import 'package:mesh_frontend/components/button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,6 +20,7 @@ class _AllGatheredPageState extends State<AllGatheredPage> {
   @override
   void initState() {
     super.initState();
+    Haptics.vibrate(HapticsType.success);
     _controller.play();
   }
 

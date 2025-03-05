@@ -19,6 +19,8 @@ PODS:
   - GoogleMaps (9.3.0):
     - GoogleMaps/Maps (= 9.3.0)
   - GoogleMaps/Maps (9.3.0)
+  - haptic_feedback (0.5.1):
+    - Flutter
   - location (0.0.1):
     - Flutter
   - permission_handler_apple (9.3.0):
@@ -37,6 +39,7 @@ DEPENDENCIES:
   - geocoding_ios (from `.symlinks/plugins/geocoding_ios/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - google_maps_flutter_ios (from `.symlinks/plugins/google_maps_flutter_ios/ios`)
+  - haptic_feedback (from `.symlinks/plugins/haptic_feedback/ios`)
   - location (from `.symlinks/plugins/location/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
@@ -62,6 +65,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/geolocator_apple/ios"
   google_maps_flutter_ios:
     :path: ".symlinks/plugins/google_maps_flutter_ios/ios"
+  haptic_feedback:
+    :path: ".symlinks/plugins/haptic_feedback/ios"
   location:
     :path: ".symlinks/plugins/location/ios"
   permission_handler_apple:
@@ -81,6 +86,7 @@ SPEC CHECKSUMS:
   Google-Maps-iOS-Utils: 0a484b05ed21d88c9f9ebbacb007956edd508a96
   google_maps_flutter_ios: e31555a04d1986ab130f2b9f24b6cdc861acc6d3
   GoogleMaps: b58e9627004f47043897eeae830c3ef023678f3b
+  haptic_feedback: 8cb3ee0cb6b797946c2b0df9c99ebc8f7ed79c71
   location: d5cf8598915965547c3f36761ae9cc4f4e87d22e
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78

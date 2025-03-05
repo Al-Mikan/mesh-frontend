@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:haptic_feedback/haptic_feedback.dart';
 import 'package:mesh_frontend/map_share_page.dart';
 import 'package:mesh_frontend/components/button.dart';
 import 'package:mesh_frontend/components/meeting_details_card.dart'; // ✅ 新しいコンポーネントをインポート
@@ -24,6 +25,7 @@ class ShareLinkPage extends StatelessWidget {
 
   void _copyToClipboard(BuildContext context) {
     Clipboard.setData(ClipboardData(text: shareUrl));
+    Haptics.vibrate(HapticsType.success);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('リンクをコピーしました！'),

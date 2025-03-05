@@ -56,6 +56,7 @@ dependencies:
   widget_to_marker: ^1.0.6
   flutter_local_notifications: ^18.0.1
   confetti: ^0.6.0-nullsafetys
+  haptic_feedback: ^0.5.1+1
 
 dev_dependencies:
   flutter_test:
