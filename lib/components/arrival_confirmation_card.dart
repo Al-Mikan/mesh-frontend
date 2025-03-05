@@ -10,40 +10,31 @@ class ArrivalConfirmationCard extends StatelessWidget {
     return Card(
       color: Colors.white,
       margin: const EdgeInsets.all(0),
-      elevation: 6, // カードの影を強めに
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             // アイコンとタイトル
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.location_on, color: Colors.redAccent, size: 28),
-                const SizedBox(width: 8),
-                const Text(
-                  "待ち合わせ場所付近です！",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-              ],
+            const SizedBox(height: 4),
+            const Text(
+              "待ち合わせ場所付近です",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
             ),
-
-            const SizedBox(height: 12),
-
             // 説明文
             const Text(
-              "到着しましたか？ ボタンを押して通知しましょう。",
+              "到着したら、メンバーに知らせましょう",
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 15, color: Colors.black54),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
 
             // 到着ボタン
             SizedBox(
@@ -52,9 +43,9 @@ class ArrivalConfirmationCard extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange, // ボタンの色
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(100),
+                    borderRadius: BorderRadius.circular(24),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
                 onPressed: onArrived,
                 icon: const Icon(
