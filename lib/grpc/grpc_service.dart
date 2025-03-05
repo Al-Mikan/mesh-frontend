@@ -30,6 +30,7 @@ class GrpcService {
     ClientChannel channel,
     double destLat,
     double destLon,
+    String sharingLocationStartTime,
     String meetingTime,
     String address,
     String accessToken,
@@ -39,6 +40,7 @@ class GrpcService {
       CreateShareGroupRequest(
         destLat: destLat,
         destLon: destLon,
+        sharingLocationStartTime:sharingLocationStartTime,
         meetingTime: meetingTime,
         address: address,
       ),
