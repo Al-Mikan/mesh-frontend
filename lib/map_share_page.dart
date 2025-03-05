@@ -519,7 +519,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
           ),
           if (!hasArrived && _isNearMeetingPoint()) // 近くにいるかつ未到着なら表示
             Positioned(
-              top: 140,
+              top: 130,
               left: 12,
               right: 12,
               child: ArrivalConfirmationCard(onArrived: _onArrived),

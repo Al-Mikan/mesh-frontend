@@ -18,7 +18,7 @@ class ArrivalConfirmationCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             // アイコンとタイトル
-            const SizedBox(height: 4),
+            const SizedBox(height: 8),
             const Text(
               "待ち合わせ場所付近です",
               style: TextStyle(
