@@ -3,12 +3,12 @@ import 'package:http/http.dart' as http;
 
 class TravelTime {
   final int? walking;
-  final int? transit;
+  final int? bicycling;
   final int? driving;
 
   TravelTime({
     this.walking,
-    this.transit,
+    this.bicycling,
     this.driving,
   });
 }
@@ -23,7 +23,7 @@ class GoogleMapsDirections {
     final baseUrl = 'https://maps.googleapis.com/maps/api/directions/json';
 
     // 移動手段ごとのURLパラメータ
-    final modes = ['walking', 'transit', 'driving'];
+    final modes = ['walking', 'bicycling', 'driving'];
     final travelTimes = <String, int>{};
 
     for (final mode in modes) {
@@ -42,7 +42,7 @@ class GoogleMapsDirections {
 
     return TravelTime(
       walking: travelTimes['walking'],
-      transit: travelTimes['transit'],
+      bicycling: travelTimes['bicycling'],
       driving: travelTimes['driving'],
     );
   }

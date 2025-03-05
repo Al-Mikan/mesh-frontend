@@ -496,7 +496,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
       if (_currentLocation == null || group == null) return;
       final latDiff = _currentLocation!.latitude - group!.destLat;
       final northOffset = latDiff.abs() * 0.3;
-      final southOffset = latDiff.abs() * 0.9;
+      final southOffset = latDiff.abs() * 1.2;
 
       LatLngBounds bounds = LatLngBounds(
         southwest: LatLng(
@@ -878,15 +878,15 @@ class _BottomCard extends StatelessWidget {
                             ),
                             const SizedBox(width: 8),
                             MapRouteButton(
-                              by: '公共交通',
+                              by: '自転車',
                               duration:
-                                  travelTime?.transit != null
-                                      ? '${travelTime?.transit}分'
+                                  travelTime?.bicycling != null
+                                      ? '${travelTime?.bicycling}分'
                                       : '--分',
                               departureTime: _calculateDepartureTime(
-                                travelTime?.transit,
+                                travelTime?.bicycling,
                               ),
-                              icon: Icons.directions_bus,
+                              icon: Icons.directions_bike,
                               onTap: () {},
                               isCalculated: travelTime != null,
                             ),
@@ -1069,6 +1069,7 @@ class MapRouteButton extends StatelessWidget {
                       size: 24,
                       color: isCalculated ? Colors.deepOrange : Colors.grey,
                     ),
+                    const SizedBox(width: 4),
                     Text(
                       departureTime,
                       style: TextStyle(
