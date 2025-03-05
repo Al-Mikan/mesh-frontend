@@ -20,11 +20,10 @@ class CustomUserPin {
 
 class _PinWidget extends StatelessWidget {
   const _PinWidget({
-    Key? key,
     required this.userName,
     required this.iconPath,
     required this.shortMessage,
-  }) : super(key: key);
+  });
 
   final String userName;
   final String iconPath;
