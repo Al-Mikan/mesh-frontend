@@ -98,7 +98,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: '待ち合わせアプリ',
       theme: ThemeData(primarySwatch: Colors.orange, useMaterial3: false),
-      home: const AllGatheredPage(),
+      home: const HomePage(),
       navigatorKey: navigatorKey,
     );
   }
