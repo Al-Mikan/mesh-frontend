@@ -50,7 +50,7 @@ class ArrivalConfirmationCard extends StatelessWidget {
               width: double.infinity, // ボタンを画面幅いっぱいに
               child: ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green, // ボタンの色
+                  backgroundColor: Colors.orange, // ボタンの色
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(100),
                   ),

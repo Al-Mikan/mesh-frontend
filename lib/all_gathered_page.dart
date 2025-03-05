@@ -1,10 +1,26 @@
+import 'dart:math';
+
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:mesh_frontend/home_page.dart';
 import 'package:mesh_frontend/components/button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AllGatheredPage extends StatelessWidget {
+class AllGatheredPage extends StatefulWidget {
   const AllGatheredPage({super.key});
+
+  @override
+  State<AllGatheredPage> createState() => _AllGatheredPageState();
+}
+
+class _AllGatheredPageState extends State<AllGatheredPage> {
+  final _controller = ConfettiController(duration: const Duration(seconds: 1));
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.play();
+  }
 
   Future<void> _handleOkButton(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
@@ -28,6 +44,24 @@ class AllGatheredPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ConfettiWidget(
+                      confettiController: _controller,
+                      emissionFrequency: 0,
+                      blastDirection: -pi/4,
+                      numberOfParticles: 30,
+                      
+                    ),
+                    ConfettiWidget(
+                      confettiController: _controller,
+                      emissionFrequency: 0,
+                      numberOfParticles: 30,
+                      blastDirection: -pi*3/4,
+                    ),
+                  ],
+                ),
                 const Icon(
                   Icons.celebration,
                   size: 80,

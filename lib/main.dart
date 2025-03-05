@@ -4,6 +4,7 @@ import 'package:app_links/app_links.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:mesh_frontend/all_gathered_page.dart';
 import 'package:mesh_frontend/home_page.dart';
 import 'package:mesh_frontend/invited_page.dart';
 import 'package:mesh_frontend/utils/notification_service.dart';
@@ -97,7 +98,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: '待ち合わせアプリ',
       theme: ThemeData(primarySwatch: Colors.orange, useMaterial3: false),
-      home: const HomePage(),
+      home: const AllGatheredPage(),
       navigatorKey: navigatorKey,
     );
   }
