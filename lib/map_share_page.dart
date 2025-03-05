@@ -502,38 +502,9 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
     }
 
     final cameraPosition = CameraPosition(
-      target: LatLng(_currentLocation!.latitude, _currentLocation!.longitude),
+      target: LatLng(_currentLocation!.latitude-0.01, _currentLocation!.longitude),
       zoom: 14.0,
     );
-
-    // フォーカスボタンが押されたときの処理
-    void onTapFocus() {
-      if (_currentLocation == null || group == null) return;
-      final latDiff = _currentLocation!.latitude - group!.destLat;
-      final northOffset = latDiff.abs() * 0.3;
-      final southOffset = latDiff.abs() * 1.2;
-
-      LatLngBounds bounds = LatLngBounds(
-        southwest: LatLng(
-          min(_currentLocation!.latitude, group!.destLat) - southOffset,
-          min(_currentLocation!.longitude, group!.destLon),
-        ),
-        northeast: LatLng(
-          max(_currentLocation!.latitude, group!.destLat) + northOffset,
-          max(_currentLocation!.longitude, group!.destLon),
-        ),
-      );
-
-      mapController.animateCamera(CameraUpdate.newLatLngBounds(bounds, 60));
-    }
-
-    // メッセージを送信したときの処理
-    void onSubmitMessage(String message) async {
-      if (accessToken == null) return;
-
-      final channel = ref.read(grpcChannelProvider);
-      await GrpcService.updateShortMessage(channel, message, accessToken!);
-    }
 
     return Scaffold(
       body: Stack(
@@ -578,7 +549,8 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
               travelTime: travelTime,
               currentLocation: _currentLocation,
               onTapExit: () => onTapExit(context),
-              onTapFocus: onTapFocus,
+              onTapFocusMe: onTapFocusMe,
+              onTapFocusRoute: onTapFocusRoute,
               onSubmitMessage: onSubmitMessage,
             ),
           ),
@@ -586,6 +558,45 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
       ),
     );
   }
+
+  // フォーカスボタンが押されたときの処理
+  void onTapFocusMe(){
+    mapController.animateCamera(
+      CameraUpdate.newLatLngZoom(
+        LatLng(_currentLocation!.latitude - 0.01, _currentLocation!.longitude),
+        14.0,
+      )
+    );
+  }
+
+  void onTapFocusRoute() {
+    if (_currentLocation == null || group == null) return;
+    final latDiff = _currentLocation!.latitude - group!.destLat;
+    final northOffset = latDiff.abs() * 0.3;
+    final southOffset = latDiff.abs() * 1.2;
+
+    LatLngBounds bounds = LatLngBounds(
+      southwest: LatLng(
+        min(_currentLocation!.latitude, group!.destLat) - southOffset,
+        min(_currentLocation!.longitude, group!.destLon),
+      ),
+      northeast: LatLng(
+        max(_currentLocation!.latitude, group!.destLat) + northOffset,
+        max(_currentLocation!.longitude, group!.destLon),
+      ),
+    );
+
+    mapController.animateCamera(CameraUpdate.newLatLngBounds(bounds, 60));
+  }
+
+  // メッセージを送信したときの処理
+  void onSubmitMessage(String message) async {
+    if (accessToken == null) return;
+
+    final channel = ref.read(grpcChannelProvider);
+    await GrpcService.updateShortMessage(channel, message, accessToken!);
+  }
+
 
   List<LatLng> _calculateBezierCurve(LatLng start, LatLng end) {
     // 中間地点

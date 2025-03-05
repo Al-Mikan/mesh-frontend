@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:mesh_frontend/components/map_pull_down_button.dart';
 import 'package:mesh_frontend/components/map_route_button.dart';
 import 'package:mesh_frontend/grpc/gen/server.pb.dart';
-import 'package:mesh_frontend/map_share_page.dart';
 import 'package:mesh_frontend/utils/format_date.dart';
 import 'package:mesh_frontend/utils/googlemaps_direction.dart';
 
@@ -17,7 +16,8 @@ class MapBottomCard extends StatelessWidget {
     this.travelTime,
     this.currentLocation,
     required this.onTapExit,
-    required this.onTapFocus,
+    required this.onTapFocusMe,
+    required this.onTapFocusRoute,
     required this.onSubmitMessage,
   });
 
@@ -26,7 +26,8 @@ class MapBottomCard extends StatelessWidget {
   final TravelTime? travelTime;
   final LocationDto? currentLocation;
   final VoidCallback onTapExit;
-  final VoidCallback onTapFocus;
+  final VoidCallback onTapFocusMe;
+  final VoidCallback onTapFocusRoute;
   final ValueChanged<String> onSubmitMessage;
 
   String _calculateDepartureTime(int? durationMinutes) {
@@ -50,14 +51,28 @@ class MapBottomCard extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            FloatingActionButton(
-              onPressed: () {
-                onTapFocus();
-              },
-              backgroundColor: Colors.white,
-              shape: const CircleBorder(),
-              elevation: 4,
-              child: const Icon(Icons.route, color: Colors.orange, size: 30),
+            Column(
+              children: [
+                FloatingActionButton(
+                  onPressed: () {
+                    onTapFocusMe();
+                  },
+                  backgroundColor: Colors.white,
+                  shape: const CircleBorder(),
+                  elevation: 2,
+                  child: const Icon(Icons.near_me, color: Colors.orange, size: 30),
+                ),
+                const SizedBox(height: 8),
+                FloatingActionButton(
+                  onPressed: () {
+                    onTapFocusRoute();
+                  },
+                  backgroundColor: Colors.white,
+                  shape: const CircleBorder(),
+                  elevation: 2,
+                  child: const Icon(Icons.route, color: Colors.orange, size: 30),
+                ),
+              ],
             ),
           ],
         ),
