@@ -91,6 +91,11 @@ class NotificationService {
     // 既存の通知を削除
     await deleteAll();
 
+    // 現在時刻より前のスケジュールは通知しない
+    if (scheduledTime.isBefore(DateTime.now())) {
+      return;
+    }
+
     await flutterLocalNotificationsPlugin.zonedSchedule(
       type.index, // 通知IDとしてenumのindexを使用
       title, // タイトル
