@@ -21,6 +21,7 @@ import 'package:mesh_frontend/grpc/grpc_service.dart';
 import 'package:mesh_frontend/home_page.dart';
 import 'package:mesh_frontend/utils/googlemaps_direction.dart';
 import 'package:mesh_frontend/utils/location_service.dart';
+import 'package:mesh_frontend/utils/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mesh_frontend/components/custom_user_pin.dart';
 import 'package:mesh_frontend/components/arrival_confirmation_card.dart';
@@ -93,7 +94,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
               group = response.shareGroup;
             });
             if (_currentLocation != null && travelTime == null) {
-              _calculateTravelTimes();
+              _calculateTravlTimesAndSetNotification();
             }
             _setCustomMarkers();
             _fetchCurrentUser();
@@ -187,7 +188,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
   }
 
   // 集合場所と現在地との移動時間を計算
-  Future<void> _calculateTravelTimes() async {
+  Future<void> _calculateTravlTimesAndSetNotification() async {
     if (_currentLocation == null || group == null) return;
 
     final times = await directionsService.getTravelTimes(
@@ -202,6 +203,21 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
         travelTime = times;
       });
     }
+
+    // 通知を設定
+    final meetingTime = DateTime.parse(group!.meetingTime);
+    final walkingTime = meetingTime.subtract(Duration(minutes: times.walking!));
+    final bicyclingTime = meetingTime.subtract(
+      Duration(minutes: times.bicycling!),
+    );
+    final drivingTime = meetingTime.subtract(Duration(minutes: times.driving!));
+    NotificationService().create(AppNotificationType.meeting, meetingTime);
+    NotificationService().create(AppNotificationType.walkingStart, walkingTime);
+    NotificationService().create(
+      AppNotificationType.bicyclingStart,
+      bicyclingTime,
+    );
+    NotificationService().create(AppNotificationType.drivingStart, drivingTime);
   }
 
   Future<void> _initializeServices() async {
@@ -219,7 +235,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
           _currentLocation = LocationDto.fromJson(data);
         });
         if (group != null && travelTime == null) {
-          await _calculateTravelTimes();
+          await _calculateTravlTimesAndSetNotification();
         }
 
         if (accessToken != null) {
@@ -420,10 +436,14 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
   Future<void> _removeAuthenticationState() async {
     final channel = ref.read(grpcChannelProvider);
     await GrpcService.leaveShareGroup(channel, accessToken!);
+    await _removePrefStateAndNotification();
+  }
 
+  Future<void> _removePrefStateAndNotification() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('groupId');
     await prefs.remove('accessToken');
+    NotificationService().deleteAll();
   }
 
   @override
@@ -455,9 +475,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
               child: Center(
                 child: TextButton(
                   onPressed: () async {
-                    final prefs = await SharedPreferences.getInstance();
-                    await prefs.remove('groupId');
-                    await prefs.remove('accessToken');
+                    await _removePrefStateAndNotification();
                     if (context.mounted) {
                       await Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(

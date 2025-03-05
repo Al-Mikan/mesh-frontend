@@ -2,19 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>FlutterDeepLinkingEnabled</key>
-    <true/>
-    <key>CFBundleURLTypes</key>
-    <array>
-        <dict>
-        <key>CFBundleTypeRole</key>
-        <string>Editor</string>
-        <key>CFBundleURLSchemes</key>
-        <array>
-        <string>mesh</string>
-        </array>
-        </dict>
-    </array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -35,20 +22,37 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>mesh</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>FlutterDeepLinkingEnabled</key>
+	<true/>
 	<key>Google Maps API Key</key>
 	<string>$(GOOGLE_MAPS_API_KEY)</string>
+	<key>LSApplicationCategoryType</key>
+	<string>Privacy - User Notifications Usage Description</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSLocationUsageDescription</key>
-	<string>地図表示と位置情報共有のために位置情報へのアクセスが必要です</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>地図表示と位置情報共有のために位置情報へのアクセスが必要です</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>地図表示と位置情報共有のために位置情報へのアクセスが必要です</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>地図表示と位置情報共有のために位置情報へのアクセスが必要です</string>
+	<key>NSLocationUsageDescription</key>
+	<string>地図表示と位置情報共有のために位置情報へのアクセスが必要です</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>地図表示と位置情報共有のために位置情報へのアクセスが必要です</string>
+	<key>NSUserNotificationsUsageDescription</key>
+	<string>出発のタイミングなどを通知するために使用します</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

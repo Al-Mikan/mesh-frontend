@@ -6,9 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mesh_frontend/home_page.dart';
 import 'package:mesh_frontend/invited_page.dart';
+import 'package:mesh_frontend/utils/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final notificationService = NotificationService();
+  await notificationService.init();
+  await notificationService.requestIOSPermissions(); // iOS用の通知権限リクエスト
   runApp(const ProviderScope(child: MyApp()));
 }
 
