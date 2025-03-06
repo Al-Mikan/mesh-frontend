@@ -28,12 +28,13 @@ class SetDetailsPage extends ConsumerStatefulWidget {
 }
 
 class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
-  DateTime? _sharingLocationStartTime;
+  DateTime? _sharingLocationStartTime = DateTime.now();
   DateTime? _selectedDateTime;
   final _nameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool _isSubmitting = false; // 🔹 ローディング制御用
-  bool _isDateTimeError = false; // 🔹 日時未選択時のエラー表示
+  bool _isSubmitting = false; // ローディング制御用
+  bool _isDateTimeError = false; // 日時未選択時のエラー表示
+  bool _isStartDateTimeError = false; // 共有開始日時未選択時のエラー表示
   String? _selectedIconId;
   String? _selectedIconError;
   late final List<String> _iconIds;
@@ -71,6 +72,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
     // すべてのバリデーションをまとめて実行
     setState(() {
       _isDateTimeError = _selectedDateTime == null;
+      _isStartDateTimeError = _sharingLocationStartTime == null;
       _selectedIconError = _selectedIconId == null ? 'アイコンを選択してください' : null;
     });
 
@@ -189,6 +191,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
+                            errorText: _isStartDateTimeError ? '日時を選択してください' : null,
                           ),
                           controller: TextEditingController(
                             text: displaySharingStartDateTime,
