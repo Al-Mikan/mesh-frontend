@@ -73,15 +73,14 @@ class _SetNamePageState extends ConsumerState<SetNamePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            const Spacer(), // ✅ 上部のスペースを確保し、フォームを中央寄せ
-            Column(
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SizedBox(height: 40),
                 const Text(
                   'あなたの名前を入力してください',
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
@@ -132,14 +131,13 @@ class _SetNamePageState extends ConsumerState<SetNamePage> {
                   )).toList(),
                 ),
                 const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 80), // ✅ ボタンの位置を下から80pxに設定
+                  child: OriginalButton(text: '次へ', onPressed: _submit),
+                ),
               ],
             ),
-            const Spacer(), // ✅ 下部のスペースを確保
-            Padding(
-              padding: const EdgeInsets.only(bottom: 80), // ✅ ボタンの位置を下から80pxに設定
-              child: OriginalButton(text: '次へ', onPressed: _submit),
-            ),
-          ],
+          ),
         ),
       ),
     );
