@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 
-String formatDateTime(String dateTime) {
-  final dateTimeObj = DateTime.parse(dateTime).toLocal();
+String formatDateTime(dynamic dateTime) {
+  final dateTimeObj = dateTime is String ? DateTime.parse(dateTime).toLocal() : dateTime.toLocal();
   final now = DateTime.now();
   final today = DateTime(now.year, now.month, now.day);
   final yesterday = today.subtract(const Duration(days: 1));

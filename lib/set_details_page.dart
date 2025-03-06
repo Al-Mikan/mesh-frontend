@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
     as picker;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:intl/intl.dart'; // 日付のフォーマットに使用
 import 'package:mesh_frontend/components/button.dart';
 import 'package:mesh_frontend/grpc/grpc_channel_provider.dart';
 import 'package:mesh_frontend/grpc/grpc_service.dart';
 import 'package:mesh_frontend/set_name_page.dart';
 import 'package:mesh_frontend/share_link_page.dart';
+import 'package:mesh_frontend/utils/format_date.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SetDetailsPage extends ConsumerStatefulWidget {
@@ -87,9 +87,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
       _isSubmitting = true; // ローディング開始
     });
 
-    final formattedDateTime = DateFormat(
-      'MM月dd日 HH:mm',
-    ).format(_selectedDateTime!);
+    final formattedDateTime = formatDateTime(_selectedDateTime!);
     final userName = _nameController.text.trim();
 
     // 匿名ログイン
@@ -143,11 +141,11 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
     final displaySharingStartDateTime =
         _sharingLocationStartTime == null
             ? '日付と時間を選択してください'
-            : DateFormat('MM月dd日 HH:mm').format(_sharingLocationStartTime!);
+            : formatDateTime(_sharingLocationStartTime!);
     final displayDateTime =
         _selectedDateTime == null
             ? '日付と時間を選択してください'
-            : DateFormat('MM月dd日 HH:mm').format(_selectedDateTime!);
+            : formatDateTime(_selectedDateTime!);
 
     return Scaffold(
       appBar: CupertinoNavigationBar(middle: const Text('詳細設定')),
