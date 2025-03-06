@@ -244,7 +244,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                       child: TextFormField(
                         controller: _nameController,
                         decoration: InputDecoration(
-                          labelText: '名前を入力',
+                          labelText: 'あなたの名前を入力',
                           hintText: '例: たかし',
                           prefixIcon: const Icon(Icons.person),
                           filled: true,
