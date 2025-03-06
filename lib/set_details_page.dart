@@ -199,7 +199,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 42),
+                    const SizedBox(height: 24),
 
                     // 🔹 待ち合わせ日時選択フィールド
                     GestureDetector(
@@ -235,7 +235,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 42),
+                    const SizedBox(height: 24),
 
                     // 🔹 名前入力フォーム
                     Form(
@@ -260,7 +260,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                         },
                       ),
                     ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 12),
                     const Text(
                       'アイコンを選択',
                       style: TextStyle(
@@ -268,13 +268,13 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 4),
                     if (_selectedIconError != null)
                       Text(
                         _selectedIconError!,
                         style: const TextStyle(color: Colors.red, fontSize: 12),
                       ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 8),
                     Wrap(
                       spacing: 12,
                       runSpacing: 12,
