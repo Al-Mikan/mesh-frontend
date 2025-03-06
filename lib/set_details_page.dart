@@ -165,41 +165,6 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    // 🔹 共有開始日時選択フィールド
-                    GestureDetector(
-                      onTap: () {
-                        _pickDateTime((date) {
-                          setState(() {
-                            // 待ち合わせ日時と矛盾しないように設定
-                            if (_selectedDateTime != null &&
-                                date.isAfter(_selectedDateTime!)) {
-                              _sharingLocationStartTime = _selectedDateTime;
-                            } else {
-                              _sharingLocationStartTime = date;
-                            }
-                          });
-                        });
-                      },
-                      child: AbsorbPointer(
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                            labelText: '共有開始日時',
-                            hintText: '日付と時間を選択',
-                            suffixIcon: const Icon(Icons.calendar_today),
-                            filled: true,
-                            fillColor: Colors.grey[100],
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            errorText: _isStartDateTimeError ? '日時を選択してください' : null,
-                          ),
-                          controller: TextEditingController(
-                            text: displaySharingStartDateTime,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
 
                     // 🔹 待ち合わせ日時選択フィールド
                     GestureDetector(
@@ -231,6 +196,42 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                           ),
                           controller: TextEditingController(
                             text: displayDateTime,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // 🔹 共有開始日時選択フィールド
+                    GestureDetector(
+                      onTap: () {
+                        _pickDateTime((date) {
+                          setState(() {
+                            // 待ち合わせ日時と矛盾しないように設定
+                            if (_selectedDateTime != null &&
+                                date.isAfter(_selectedDateTime!)) {
+                              _sharingLocationStartTime = _selectedDateTime;
+                            } else {
+                              _sharingLocationStartTime = date;
+                            }
+                          });
+                        });
+                      },
+                      child: AbsorbPointer(
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            labelText: '共有開始日時',
+                            hintText: '日付と時間を選択',
+                            suffixIcon: const Icon(Icons.calendar_today),
+                            filled: true,
+                            fillColor: Colors.grey[100],
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            errorText: _isStartDateTimeError ? '日時を選択してください' : null,
+                          ),
+                          controller: TextEditingController(
+                            text: displaySharingStartDateTime,
                           ),
                         ),
                       ),
