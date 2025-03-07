@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mesh_frontend/search_address_page.dart';
 import 'package:mesh_frontend/set_details_page.dart';
 import 'package:mesh_frontend/components/button.dart';
 import 'package:google_maps_webservice/geocoding.dart' as geo;
@@ -37,7 +38,6 @@ class _SetLocationPageState extends State<SetLocationPage> {
     super.dispose();
   }
 
-  /// 📌 **現在地を取得**
   Future<void> _getCurrentLocation() async {
     Location location = Location();
 
@@ -117,6 +117,28 @@ class _SetLocationPageState extends State<SetLocationPage> {
     }
   }
 
+  /// 📌 **住所を検索してマップを移動**
+  Future<void> _searchAddress() async {
+    final selectedLocation = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder:
+            (context) => SearchAddressPage(
+              // 🔹 現在地を渡す
+              initialLocation: _selectedLocation,
+            ),
+      ),
+    );
+
+    if (selectedLocation != null && selectedLocation is LatLng) {
+      setState(() {
+        _selectedLocation = selectedLocation;
+      });
+
+      _mapController?.animateCamera(CameraUpdate.newLatLng(selectedLocation));
+      await _fetchAddress(selectedLocation);
+    }
+  }
+
   /// 📌 **目的地決定**
   void _confirmLocation() {
     if (_selectedLocation == null) return;
@@ -164,12 +186,16 @@ class _SetLocationPageState extends State<SetLocationPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
-                          Icons.location_on,
-                          size: 50,
-                          color: Color.fromARGB(255, 255, 118, 33),
+                        SizedBox(
+                          height: 60,
+                          width: 80,
+                          child: const Icon(
+                            Icons.location_on,
+                            size: 65,
+                            color: Color.fromARGB(255, 255, 118, 33),
+                          ),
                         ),
-                        const SizedBox(height: 10),
+                        SizedBox(height: 60),
                       ],
                     ),
                   ),
@@ -201,15 +227,39 @@ class _SetLocationPageState extends State<SetLocationPage> {
                             ),
                             const SizedBox(height: 15),
 
-                            // 📌 住所取得中は「住所取得中...」を表示
-                            Text(
-                              _isFetchingAddress
-                                  ? "住所取得中..."
-                                  : _fetchedAddress ??
-                                      _fetchedAddressErrMessage ??
-                                      "${_selectedLocation!.latitude.toStringAsFixed(6)}, ${_selectedLocation!.longitude.toStringAsFixed(6)}",
-                              style: const TextStyle(fontSize: 16),
-                              textAlign: TextAlign.center,
+                            // 🔹 住所 & 検索ボタンを横並びにする
+                            Row(
+                              children: [
+                                // 住所の表示部分
+                                Expanded(
+                                  child: Text(
+                                    _isFetchingAddress
+                                        ? "住所取得中..."
+                                        : _fetchedAddress ??
+                                            _fetchedAddressErrMessage ??
+                                            "${_selectedLocation!.latitude.toStringAsFixed(6)}, ${_selectedLocation!.longitude.toStringAsFixed(6)}",
+                                    style: const TextStyle(fontSize: 16),
+                                  ),
+                                ),
+
+                                const SizedBox(width: 10), // 余白
+                                // 🔹 検索ボタン
+                                ElevatedButton(
+                                  onPressed: _searchAddress,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white, // 白背景
+                                    shape: const CircleBorder(),
+                                    padding: const EdgeInsets.all(
+                                      12,
+                                    ), // ボタンのサイズ調整
+                                  ),
+                                  child: const Icon(
+                                    Icons.search,
+                                    size: 24,
+                                    color: Colors.black, // アイコンの色もオレンジ
+                                  ),
+                                ),
+                              ],
                             ),
 
                             const SizedBox(height: 15),
