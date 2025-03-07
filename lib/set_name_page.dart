@@ -27,6 +27,7 @@ class _SetNamePageState extends ConsumerState<SetNamePage> {
     super.initState();
     _iconIds = _getIconIds();
   }
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -124,15 +125,23 @@ class _SetNamePageState extends ConsumerState<SetNamePage> {
                   spacing: 12,
                   runSpacing: 12,
                   children:
-                      _iconIds.map((iconId) => UserIconButton(
-                    iconId: iconId,
-                    isSelected: _selectedIconId == iconId,
-                    onTap: () => setState(() => _selectedIconId = iconId),
-                  )).toList(),
+                      _iconIds
+                          .map(
+                            (iconId) => UserIconButton(
+                              iconId: iconId,
+                              isSelected: _selectedIconId == iconId,
+                              onTap:
+                                  () =>
+                                      setState(() => _selectedIconId = iconId),
+                            ),
+                          )
+                          .toList(),
                 ),
                 const SizedBox(height: 20),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 80), // ✅ ボタンの位置を下から80pxに設定
+                  padding: const EdgeInsets.only(
+                    bottom: 80,
+                  ), // ✅ ボタンの位置を下から80pxに設定
                   child: OriginalButton(text: '次へ', onPressed: _submit),
                 ),
               ],
@@ -145,18 +154,21 @@ class _SetNamePageState extends ConsumerState<SetNamePage> {
 
   List<String> _getIconIds() {
     final iconFiles = [
-      'ahiru.jpg',
-      'beetle.jpg',
-      'crocodile.jpg',
+      'azarashi.jpg',
+      'bear.jpg',
+      'bird.jpg',
+      'cat.jpg',
+      'chicken.jpg',
+      'cow.jpg',
+      'deer.jpg',
+      'elephant.jpg',
+      'fox.jpg',
+      'lion.jpg',
       'monkey.jpg',
-      'penguin.jpg',
-      'pig.jpg',
-      'saurus.jpg',
-      'sunflower.jpg'
+      'panda.jpg',
     ];
     return iconFiles.map((file) => file.split('.').first).toList();
   }
-
 }
 
 class UserIconButton extends StatelessWidget {

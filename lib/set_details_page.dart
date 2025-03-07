@@ -319,14 +319,18 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
 
   List<String> _getIconIds() {
     final iconFiles = [
-      'ahiru.jpg',
-      'beetle.jpg',
-      'crocodile.jpg',
+      'azarashi.jpg',
+      'bear.jpg',
+      'bird.jpg',
+      'cat.jpg',
+      'chicken.jpg',
+      'cow.jpg',
+      'deer.jpg',
+      'elephant.jpg',
+      'fox.jpg',
+      'lion.jpg',
       'monkey.jpg',
-      'penguin.jpg',
-      'pig.jpg',
-      'saurus.jpg',
-      'sunflower.jpg',
+      'panda.jpg',
     ];
     return iconFiles.map((file) => file.split('.').first).toList();
   }
