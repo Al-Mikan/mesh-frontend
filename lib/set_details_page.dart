@@ -46,13 +46,14 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
   String? _selectedIconId;
   String? _selectedIconError;
   late final List<String> _iconIds;
-  String? _selectedStartTime;
-  final List<DropdownItem> _startTimeItems = [
+  String? _selectedStartFormat;
+  Duration? _selectedDuration;
+  final List<DropdownItem> _startFormatItems = [
     DropdownItem(value: 'now', text: '今から'),
     DropdownItem(value: '2h', text: '2時間前'),
     DropdownItem(value: '1h', text: '1時間前'),
     DropdownItem(value: '30min', text: '30分前'),
-    DropdownItem(value: 'custom', text: 'カスタム'),
+    // DropdownItem(value: 'custom', text: 'カスタム'),
   ];
 
   @override
@@ -82,6 +83,20 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
       currentTime: DateTime.now(),
     );
   }
+
+  // /// 📌 時間ピッカー
+  // void _pickTime(void Function(DateTime) setDate) {
+  //   picker.DatePicker.showTimePicker(
+  //     context,
+  //     showTitleActions: true, // 上部に「完了」「キャンセル」などのボタンを表示
+  //     locale: picker.LocaleType.jp, // 日本語ロケール
+  //     onChanged: (date) {},
+  //     onConfirm: (date) {
+  //       setDate(date);
+  //     },
+  //     currentTime: DateTime.now(),
+  //   );
+  // }
 
   /// 📌 「次へ」ボタンを押したとき
   void _submitDetails() async {
@@ -113,6 +128,16 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
       userName,
       _selectedIconId!,
     );
+
+    switch (_selectedStartFormat) {
+      case 'now':
+        _sharingLocationStartTime = DateTime.now();
+        break;
+      default:
+        _sharingLocationStartTime = _selectedDateTime!.subtract(
+          _selectedDuration!,
+        );
+    }
 
     final createShareGroupRes = await GrpcService.createShareGroup(
       channel,
@@ -184,13 +209,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                       onTap: () {
                         _pickDateTime((date) {
                           setState(() {
-                            // 共有開始日時と矛盾しないように設定
-                            if (_sharingLocationStartTime != null &&
-                                _sharingLocationStartTime!.isAfter(date)) {
-                              _selectedDateTime = _sharingLocationStartTime;
-                            } else {
-                              _selectedDateTime = date;
-                            }
+                            _selectedDateTime = date;
                           });
                         });
                       },
@@ -227,7 +246,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                         errorText: _isStartDateTimeError ? '選択してください' : null,
                       ),
                       items:
-                          _startTimeItems.map((item) {
+                          _startFormatItems.map((item) {
                             return DropdownMenuItem<String>(
                               value: item.value,
                               child: Text(
@@ -236,8 +255,17 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                               ),
                             );
                           }).toList(),
-                      onSaved: (value) {
-                        _selectedStartTime = value;
+                      onChanged: (value) {
+                        _selectedStartFormat = value;
+                        if (value == "2h") {
+                          _selectedDuration = const Duration(hours: 2);
+                        } else if (value == "1h") {
+                          _selectedDuration = const Duration(hours: 1);
+                        } else if (value == "30min") {
+                          _selectedDuration = const Duration(minutes: 30);
+                        } else {
+                          _selectedDuration = const Duration();
+                        }
                       },
                       dropdownStyleData: DropdownStyleData(
                         decoration: BoxDecoration(
@@ -247,19 +275,13 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                     ),
                     const SizedBox(height: 24),
 
-                    if (_selectedStartTime == 'custom')
+                    if (_selectedStartFormat == 'custom')
                       // 🔹 共有開始日時選択フィールド
                       GestureDetector(
                         onTap: () {
                           _pickDateTime((date) {
                             setState(() {
-                              // 待ち合わせ日時と矛盾しないように設定
-                              if (_selectedDateTime != null &&
-                                  date.isAfter(_selectedDateTime!)) {
-                                _sharingLocationStartTime = _selectedDateTime;
-                              } else {
-                                _sharingLocationStartTime = date;
-                              }
+                              _sharingLocationStartTime = date;
                             });
                           });
                         },
@@ -281,7 +303,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                           ),
                         ),
                       ),
-                    if (_selectedStartTime == 'custom')
+                    if (_selectedStartFormat == 'custom')
                       const SizedBox(height: 24),
 
                     // 🔹 名前入力フォーム
