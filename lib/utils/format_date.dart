@@ -28,10 +28,10 @@ String formatDuration(Duration duration) {
   final minutes = duration.inMinutes.remainder(60);
 
   if (hours > 0 && minutes == 0) {
-    return '$hours時間前から';
+    return '$hours 時間前から';
   } else if (hours > 0 && minutes > 0) {
-    return '$hours時間$minutes分前から';
+    return '$hours 時間 $minutes 分前から';
   } else {
-    return '$minutes分前から';
+    return '$minutes 分前から';
   }
 }

@@ -230,6 +230,10 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
+                            contentPadding: EdgeInsets.symmetric(
+                              vertical: 20,
+                              horizontal: 28,
+                            ),
                             errorText: _isDateTimeError ? '日時を選択してください' : null,
                           ),
                           controller: TextEditingController(
@@ -303,6 +307,10 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                               fillColor: Colors.grey[100],
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
+                              ),
+                              contentPadding: EdgeInsets.symmetric(
+                                vertical: 20,
+                                horizontal: 28,
                               ),
                             ),
                             controller: TextEditingController(
