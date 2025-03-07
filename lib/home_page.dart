@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> {
                     '待ち合わせアプリ mesh',
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                  const Text('まちあわせリンクを生成して共有しましょう'),
+                  const Text('待ち合わせリンクを生成して共有しましょう'),
                   const SizedBox(height: 120),
                   OriginalButton(text: '始める', onPressed: _generateNewGroup),
                 ],
