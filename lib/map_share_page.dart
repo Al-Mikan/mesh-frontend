@@ -312,7 +312,7 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
       );
       final lineWidth = (user.id == userId) ? 5 : 5;
       final lineColor = (user.id == userId) ? Colors.orange : Colors.black12;
-      final linePattern =
+      var linePattern =
           (user.id == userId)
               ? <PatternItem>[PatternItem.dash(70), PatternItem.gap(30)]
               : <PatternItem>[PatternItem.dash(50), PatternItem.gap(50)];
@@ -334,14 +334,15 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
         LatLng(group!.destLat, group!.destLon),
       );
 
-      // ユーザーと目的地の距離が1000km以上なら線を描画しない
       final distance = _calculateDistance(
         user.lat,
         user.lon,
         group!.destLat,
         group!.destLon,
       );
-      if (distance > 1000000) continue; // 1000km = 1,000,000m
+      if (distance > 100000) { // 100km以上なら
+        linePattern = <PatternItem>[]; // 実線にする
+      }
 
       polylines.add(
         Polyline(
