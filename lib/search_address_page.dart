@@ -24,7 +24,7 @@ class _SearchAddressPageState extends State<SearchAddressPage> {
   void _onTextChanged(String query) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
-    _debounce = Timer(const Duration(milliseconds: 300), () {
+    _debounce = Timer(const Duration(milliseconds: 1000), () {
       _searchAddress(query);
     });
   }
