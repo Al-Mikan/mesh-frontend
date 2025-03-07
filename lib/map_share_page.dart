@@ -334,6 +334,15 @@ class _MapSharePageState extends ConsumerState<MapSharePage> {
         LatLng(group!.destLat, group!.destLon),
       );
 
+      // ユーザーと目的地の距離が1000km以上なら線を描画しない
+      final distance = _calculateDistance(
+        user.lat,
+        user.lon,
+        group!.destLat,
+        group!.destLon,
+      );
+      if (distance > 1000000) continue; // 1000km = 1,000,000m
+
       polylines.add(
         Polyline(
           polylineId: PolylineId('${user.name}_route'),
