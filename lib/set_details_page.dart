@@ -45,7 +45,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
   String? _selectedIconId;
   String? _selectedIconError;
   late final List<String> _iconIds;
-  String _selectedStartFormat = '2h';
+  String _selectedStartFormat = 'now';
   Duration? _selectedDuration;
   final List<DropdownItem> _startFormatItems = [
     DropdownItem(value: 'now', text: '今から'),
