@@ -22,3 +22,16 @@ String formatDateTime(dynamic dateTime) {
 
   return '$dateText ${DateFormat('HH:mm').format(dateTimeObj)}';
 }
+
+String formatDuration(Duration duration) {
+  final hours = duration.inHours;
+  final minutes = duration.inMinutes.remainder(60);
+
+  if (hours > 0 && minutes == 0) {
+    return '$hours 時間前から';
+  } else if (hours > 0 && minutes > 0) {
+    return '$hours 時間 $minutes 分前から';
+  } else {
+    return '$minutes 分前から';
+  }
+}

@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
@@ -27,17 +28,33 @@ class SetDetailsPage extends ConsumerStatefulWidget {
   ConsumerState<SetDetailsPage> createState() => _SetDetailsAndNamePageState();
 }
 
+class DropdownItem {
+  final String value;
+  final String text;
+
+  const DropdownItem({required this.value, required this.text});
+}
+
 class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
-  DateTime? _sharingLocationStartTime = DateTime.now();
+  DateTime? _sharingLocationStartTime;
   DateTime? _selectedDateTime;
   final _nameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isSubmitting = false; // ローディング制御用
   bool _isDateTimeError = false; // 日時未選択時のエラー表示
-  bool _isStartDateTimeError = false; // 共有開始日時未選択時のエラー表示
+  bool _isStartTimeFormatError = false; // 共有開始日時未選択時のエラー表示
   String? _selectedIconId;
   String? _selectedIconError;
   late final List<String> _iconIds;
+  String? _selectedStartFormat;
+  Duration? _selectedDuration;
+  final List<DropdownItem> _startFormatItems = [
+    DropdownItem(value: 'now', text: '今から'),
+    DropdownItem(value: '2h', text: '2時間前から'),
+    DropdownItem(value: '1h', text: '1時間前から'),
+    DropdownItem(value: '30min', text: '30分前から'),
+    DropdownItem(value: 'custom', text: 'カスタム'),
+  ];
 
   @override
   void initState() {
@@ -67,12 +84,32 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
     );
   }
 
+  /// 📌 時間間隔ピッカー
+  void _pickTimeDuration(
+    Duration? defaultDuration,
+    void Function(Duration) setDate,
+  ) {
+    picker.DatePicker.showTimePicker(
+      context,
+      showSecondsColumn: false, // 秒を非表示
+      showTitleActions: true, // 上部に「完了」「キャンセル」などのボタンを表示
+      locale: picker.LocaleType.jp, // 日本語ロケール
+      onChanged: (date) {
+        setDate(Duration(hours: date.hour, minutes: date.minute));
+      },
+      onConfirm: (date) {
+        setDate(Duration(hours: date.hour, minutes: date.minute));
+      },
+      currentTime: DateTime(0).add(defaultDuration ?? Duration.zero),
+    );
+  }
+
   /// 📌 「次へ」ボタンを押したとき
   void _submitDetails() async {
     // すべてのバリデーションをまとめて実行
     setState(() {
       _isDateTimeError = _selectedDateTime == null;
-      _isStartDateTimeError = _sharingLocationStartTime == null;
+      _isStartTimeFormatError = _selectedStartFormat == null;
       _selectedIconError = _selectedIconId == null ? 'アイコンを選択してください' : null;
     });
 
@@ -97,6 +134,16 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
       userName,
       _selectedIconId!,
     );
+
+    switch (_selectedStartFormat) {
+      case 'now':
+        _sharingLocationStartTime = DateTime.now();
+        break;
+      default:
+        _sharingLocationStartTime = _selectedDateTime!.subtract(
+          _selectedDuration!,
+        );
+    }
 
     final createShareGroupRes = await GrpcService.createShareGroup(
       channel,
@@ -138,14 +185,14 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final displaySharingStartDateTime =
-        _sharingLocationStartTime == null
-            ? '日付と時間を選択してください'
-            : formatDateTime(_sharingLocationStartTime!);
     final displayDateTime =
         _selectedDateTime == null
             ? '日付と時間を選択してください'
             : formatDateTime(_selectedDateTime!);
+    final displayDuration =
+        _selectedDuration == null
+            ? '位置共有開始時間を選択してください'
+            : formatDuration(_selectedDuration!);
 
     return Scaffold(
       appBar: CupertinoNavigationBar(middle: const Text('詳細設定')),
@@ -163,19 +210,12 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-
                     // 🔹 待ち合わせ日時選択フィールド
                     GestureDetector(
                       onTap: () {
                         _pickDateTime((date) {
                           setState(() {
-                            // 共有開始日時と矛盾しないように設定
-                            if (_sharingLocationStartTime != null &&
-                                _sharingLocationStartTime!.isAfter(date)) {
-                              _selectedDateTime = _sharingLocationStartTime;
-                            } else {
-                              _selectedDateTime = date;
-                            }
+                            _selectedDateTime = date;
                           });
                         });
                       },
@@ -190,6 +230,10 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
+                            contentPadding: EdgeInsets.symmetric(
+                              vertical: 20,
+                              horizontal: 28,
+                            ),
                             errorText: _isDateTimeError ? '日時を選択してください' : null,
                           ),
                           controller: TextEditingController(
@@ -200,41 +244,83 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                     ),
                     const SizedBox(height: 24),
 
-                    // 🔹 共有開始日時選択フィールド
-                    GestureDetector(
-                      onTap: () {
-                        _pickDateTime((date) {
-                          setState(() {
-                            // 待ち合わせ日時と矛盾しないように設定
-                            if (_selectedDateTime != null &&
-                                date.isAfter(_selectedDateTime!)) {
-                              _sharingLocationStartTime = _selectedDateTime;
-                            } else {
-                              _sharingLocationStartTime = date;
-                            }
-                          });
+                    DropdownButtonFormField2<String>(
+                      isExpanded: true,
+                      decoration: InputDecoration(
+                        labelText: '位置共有開始',
+                        filled: true,
+                        fillColor: Colors.grey[100],
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        errorText: _isStartTimeFormatError ? '選択してください' : null,
+                      ),
+                      items:
+                          _startFormatItems.map((item) {
+                            return DropdownMenuItem<String>(
+                              value: item.value,
+                              child: Text(
+                                item.text,
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            );
+                          }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedStartFormat = value;
+                          if (value == "2h") {
+                            _selectedDuration = const Duration(hours: 2);
+                          } else if (value == "1h") {
+                            _selectedDuration = const Duration(hours: 1);
+                          } else if (value == "30min") {
+                            _selectedDuration = const Duration(minutes: 30);
+                          } else {
+                            _selectedDuration = const Duration(hours: 2);
+                          }
                         });
                       },
-                      child: AbsorbPointer(
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                            labelText: '共有開始日時',
-                            hintText: '日付と時間を選択',
-                            suffixIcon: const Icon(Icons.calendar_today),
-                            filled: true,
-                            fillColor: Colors.grey[100],
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            errorText: _isStartDateTimeError ? '日時を選択してください' : null,
-                          ),
-                          controller: TextEditingController(
-                            text: displaySharingStartDateTime,
-                          ),
+                      dropdownStyleData: DropdownStyleData(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                     ),
                     const SizedBox(height: 24),
+
+                    if (_selectedStartFormat == 'custom')
+                      // 🔹 共有開始日時選択フィールド
+                      GestureDetector(
+                        onTap: () {
+                          _pickTimeDuration(_selectedDuration, (date) {
+                            setState(() {
+                              _selectedDuration = date;
+                            });
+                          });
+                        },
+                        child: AbsorbPointer(
+                          child: TextFormField(
+                            decoration: InputDecoration(
+                              labelText: '共有開始をカスタム',
+                              hintText: '日付と時間を選択',
+                              suffixIcon: const Icon(Icons.calendar_today),
+                              filled: true,
+                              fillColor: Colors.grey[100],
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              contentPadding: EdgeInsets.symmetric(
+                                vertical: 20,
+                                horizontal: 28,
+                              ),
+                            ),
+                            controller: TextEditingController(
+                              text: displayDuration,
+                            ),
+                          ),
+                        ),
+                      ),
+                    if (_selectedStartFormat == 'custom')
+                      const SizedBox(height: 24),
 
                     // 🔹 名前入力フォーム
                     Form(
