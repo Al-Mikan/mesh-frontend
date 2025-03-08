@@ -42,11 +42,10 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
   final _formKey = GlobalKey<FormState>();
   bool _isSubmitting = false; // ローディング制御用
   bool _isDateTimeError = false; // 日時未選択時のエラー表示
-  bool _isStartTimeFormatError = false; // 共有開始日時未選択時のエラー表示
   String? _selectedIconId;
   String? _selectedIconError;
   late final List<String> _iconIds;
-  String? _selectedStartFormat;
+  String _selectedStartFormat = '2h';
   Duration? _selectedDuration;
   final List<DropdownItem> _startFormatItems = [
     DropdownItem(value: 'now', text: '今から'),
@@ -109,7 +108,6 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
     // すべてのバリデーションをまとめて実行
     setState(() {
       _isDateTimeError = _selectedDateTime == null;
-      _isStartTimeFormatError = _selectedStartFormat == null;
       _selectedIconError = _selectedIconId == null ? 'アイコンを選択してください' : null;
     });
 
@@ -245,6 +243,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                     const SizedBox(height: 24),
 
                     DropdownButtonFormField2<String>(
+                      value: _selectedStartFormat,
                       isExpanded: true,
                       decoration: InputDecoration(
                         labelText: '位置共有開始',
@@ -253,7 +252,6 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        errorText: _isStartTimeFormatError ? '選択してください' : null,
                       ),
                       items:
                           _startFormatItems.map((item) {
@@ -267,6 +265,7 @@ class _SetDetailsAndNamePageState extends ConsumerState<SetDetailsPage> {
                           }).toList(),
                       onChanged: (value) {
                         setState(() {
+                          if (value == null) return;
                           _selectedStartFormat = value;
                           if (value == "2h") {
                             _selectedDuration = const Duration(hours: 2);
